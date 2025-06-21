@@ -10,14 +10,20 @@ class JainViewModel : ViewModel() {
 
     private val repository = JainRepository()
 
+    // TITHI
     private val _tithiList = MutableLiveData<List<Tithi>>()
     val tithiList: LiveData<List<Tithi>> = _tithiList
 
-    private val _eventList = MutableLiveData<List<Event>>()
+    // EVENT
+    private val _eventList = MutableLiveData<List<Event>>()   // Filtered list
     val eventList: LiveData<List<Event>> = _eventList
+    private val _allEvents = mutableListOf<Event>()            // Full backup list for search
 
+    // MAHARAJ
     private val _maharajList = MutableLiveData<List<Maharaj>>()
     val maharajList: LiveData<List<Maharaj>> = _maharajList
+
+    // ---------------------- TITHIS ----------------------
 
     fun fetchTithis() {
         Log.d("JainViewModel_Tithi", "STEP 1A: fetchTithis() function was called.")
@@ -55,23 +61,57 @@ class JainViewModel : ViewModel() {
         }
     }
 
+    // ---------------------- EVENTS ----------------------
+
     fun fetchEvents() {
         viewModelScope.launch {
             try {
-                _eventList.value = repository.getEvents()
+                val result = repository.getEvents()
+                _allEvents.clear()
+                _allEvents.addAll(result)
+                _eventList.value = result
             } catch (e: Exception) {
-                // handle error
                 _eventList.value = emptyList()
             }
         }
     }
+
+    fun filterEventsByState(state: String) {
+        val filtered = _allEvents.filter {
+            it.location.contains(state, ignoreCase = true)
+        }
+        _eventList.value = filtered
+    }
+
+    fun filterUpcomingEvents() {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val today = sdf.format(Calendar.getInstance().time)
+
+        val upcoming = _allEvents.filter { it.date > today }
+        _eventList.value = upcoming
+    }
+
+
+    fun filterEvents(query: String) {
+        val lowerQuery = query.trim().lowercase()
+
+        val filtered = _allEvents.filter { event ->
+            event.name.lowercase().contains(lowerQuery) ||
+                    event.location.lowercase().contains(lowerQuery) ||
+                    event.date.lowercase().contains(lowerQuery) ||
+                    event.description!!.lowercase().contains(lowerQuery)
+        }
+
+        _eventList.value = filtered
+    }
+
+    // ---------------------- MAHARAJ ----------------------
 
     fun fetchMaharaj() {
         viewModelScope.launch {
             try {
                 _maharajList.value = repository.getMaharaj()
             } catch (e: Exception) {
-                // handle error
                 _maharajList.value = emptyList()
             }
         }
