@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
+
+    <TextView
+        android:id="@+id/tvMaharajName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        tools:text="Maharaj Name"/> <!-- tools:text provides sample data for layout preview -->
+
+    <TextView
+        android:id="@+id/tvMaharajSthan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp"
+        tools:text="Current Sthan"/>
+
+    <!-- TextView for City -->
+    <TextView
+        android:id="@+id/tvMaharajCity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp"
+        tools:text="City"/>
+
+    <!-- TextView for Date -->
+    <TextView
+        android:id="@+id/tvMaharajDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp"
+        tools:text="Date"/>
+
+    <TextView
+        android:id="@+id/tvMaharajSampraday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp"
+        tools:text="Sampraday"
+        android:visibility="gone"/> <!-- Initially gone, adapter makes it visible if sampraday exists -->
+
+    <TextView
+        android:id="@+id/tvMaharajContact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp"
+        tools:text="Contact Info"
+        android:visibility="gone"/> <!-- Initially gone, adapter makes it visible if contact exists -->
+
+</LinearLayout>

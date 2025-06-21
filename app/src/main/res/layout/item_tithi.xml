@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="?android:attr/selectableItemBackground">
+
+    <TextView
+        android:id="@+id/tvTithiName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        tools:text="Tithi Name/Title"/> <!-- Use tools:text for preview -->
+
+    <TextView
+        android:id="@+id/tvTithiDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        tools:text="Date"
+        android:layout_marginTop="4dp"/>
+
+    <TextView
+        android:id="@+id/tvTithiDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        tools:text="Tithi Description or Details"
+        android:layout_marginTop="4dp"
+        android:visibility="gone"/> <!-- Initially gone, make visible if description exists -->
+
+</LinearLayout>
