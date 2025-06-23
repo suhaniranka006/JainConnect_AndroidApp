@@ -10,39 +10,63 @@ class JainViewModel : ViewModel() {
 
     private val repository = JainRepository()
 
-    // TITHI
+    // ---------------------- TITHIS ----------------------
+
     private val _tithiList = MutableLiveData<List<Tithi>>()
     val tithiList: LiveData<List<Tithi>> = _tithiList
 
-    // EVENT
-    private val _eventList = MutableLiveData<List<Event>>()   // Filtered list
-    val eventList: LiveData<List<Event>> = _eventList
-    private val _allEvents = mutableListOf<Event>()            // Full backup list for search
+    private val _filteredTithis = MutableLiveData<List<Tithi>>()
+    val filteredTithis: LiveData<List<Tithi>> get() = _filteredTithis
 
-    // MAHARAJ
-    private val _maharajList = MutableLiveData<List<Maharaj>>()
-    val maharajList: LiveData<List<Maharaj>> = _maharajList
 
-    // ---------------------- TITHIS ----------------------
 
     fun fetchTithis() {
-        Log.d("JainViewModel_Tithi", "STEP 1A: fetchTithis() function was called.")
         viewModelScope.launch {
             try {
                 val tithisFromRepo = repository.getTithis()
-                Log.d("JainViewModel_Tithi", "STEP 1B: Tithis from repository. Count = ${tithisFromRepo.size}")
-
-                if (tithisFromRepo.isNotEmpty()) {
-                    Log.d("JainViewModel_Tithi", "STEP 1C: First Tithi data = ${tithisFromRepo[0]}")
-                }
-
-                val filteredTithis = filterNext5Days(tithisFromRepo)
-                _tithiList.value = filteredTithis
-
+                val upcomingTithis = filterUpcomingTithis(tithisFromRepo)
+                _tithiList.value = upcomingTithis
+                _filteredTithis.value = upcomingTithis // ✅ show all by default
             } catch (e: Exception) {
-                Log.e("JainViewModel_Tithi", "STEP 1D: ERROR fetching Tithis!", e)
                 _tithiList.value = emptyList()
+                _filteredTithis.value = emptyList()
             }
+        }
+    }
+
+
+
+    fun filterTithisByQuery(query: String) {
+        _tithiList.value?.let { originalList ->
+            val filtered = originalList.filter {
+                it.name.contains(query, ignoreCase = true) ||
+                        it.details?.contains(query, ignoreCase = true) == true ||
+                        it.date.contains(query, ignoreCase = true)
+            }
+            _filteredTithis.postValue(filtered)
+        }
+    }
+
+    fun filterTithisByDays(days: Int) {
+        if (days == 0) {
+            _filteredTithis.postValue(_tithiList.value ?: emptyList())
+            return
+        }
+
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val today = Calendar.getInstance().time
+        val endDate = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, days) }.time
+
+        _tithiList.value?.let { originalList ->
+            val filtered = originalList.filter {
+                val date = try {
+                    sdf.parse(it.date)
+                } catch (e: Exception) {
+                    null
+                }
+                date != null && date >= today && date <= endDate
+            }
+            _filteredTithis.postValue(filtered)
         }
     }
 
@@ -61,7 +85,18 @@ class JainViewModel : ViewModel() {
         }
     }
 
+    private fun filterUpcomingTithis(allTithis: List<Tithi>): List<Tithi> {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val today = sdf.format(Calendar.getInstance().time)
+        return allTithis.filter { it.date >= today }
+    }
+
+
     // ---------------------- EVENTS ----------------------
+
+    private val _eventList = MutableLiveData<List<Event>>()   // Filtered list
+    val eventList: LiveData<List<Event>> = _eventList
+    private val _allEvents = mutableListOf<Event>()            // Full backup list for search
 
     fun fetchEvents() {
         viewModelScope.launch {
@@ -91,7 +126,6 @@ class JainViewModel : ViewModel() {
         _eventList.value = upcoming
     }
 
-
     fun filterEvents(query: String) {
         val lowerQuery = query.trim().lowercase()
 
@@ -99,13 +133,16 @@ class JainViewModel : ViewModel() {
             event.name.lowercase().contains(lowerQuery) ||
                     event.location.lowercase().contains(lowerQuery) ||
                     event.date.lowercase().contains(lowerQuery) ||
-                    event.description!!.lowercase().contains(lowerQuery)
+                    event.description?.lowercase()?.contains(lowerQuery) == true
         }
 
         _eventList.value = filtered
     }
 
     // ---------------------- MAHARAJ ----------------------
+
+    private val _maharajList = MutableLiveData<List<Maharaj>>()
+    val maharajList: LiveData<List<Maharaj>> = _maharajList
 
     fun fetchMaharaj() {
         viewModelScope.launch {
