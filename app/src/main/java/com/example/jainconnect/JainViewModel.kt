@@ -33,15 +33,17 @@ class JainViewModel : ViewModel() {
     }
 
     fun filterTithisByQuery(query: String) {
+        val q = query.trim().lowercase()
         _tithiList.value?.let { originalList ->
             val filtered = originalList.filter {
-                it.name.contains(query, ignoreCase = true) ||
-                        it.details?.contains(query, ignoreCase = true) == true ||
-                        it.date.contains(query, ignoreCase = true)
+                it.name.lowercase().contains(q) ||
+                        it.details?.lowercase()?.contains(q) == true ||
+                        it.date.lowercase().contains(q)
             }
-            _filteredTithis.postValue(filtered)
+            _filteredTithis.value = filtered
         }
     }
+
 
     fun filterTithisByDays(days: Int) {
         if (days == 0) {
