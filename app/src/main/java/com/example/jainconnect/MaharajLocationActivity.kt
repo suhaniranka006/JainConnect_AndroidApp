@@ -1,38 +1,83 @@
 package com.example.jainconnect
 
 import android.os.Bundle
+import android.widget.Button
+import android.widget.SearchView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-// Import MaharajAdapter, Maharaj data class, JainViewModel
 
 class MaharajLocationActivity : AppCompatActivity() {
 
     private lateinit var viewModel: JainViewModel
-    private lateinit var maharajAdapter: MaharajAdapter // You need to create MaharajAdapter
+    private lateinit var maharajAdapter: MaharajAdapter
     private lateinit var recyclerViewMaharaj: RecyclerView
+    private lateinit var searchView: SearchView
+    private lateinit var filterButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maharaj_location)
 
+        // View bindings
         recyclerViewMaharaj = findViewById(R.id.recyclerViewMaharaj)
-        recyclerViewMaharaj.layoutManager = LinearLayoutManager(this)
+        searchView = findViewById(R.id.searchViewMaharaj)
+        filterButton = findViewById(R.id.buttonFilterMaharaj)
 
-        // Initialize MaharajAdapter (Make sure MaharajAdapter.kt exists)
-        maharajAdapter = MaharajAdapter(emptyList()) // MaharajAdapter needs an updateData method
+        recyclerViewMaharaj.layoutManager = LinearLayoutManager(this)
+        maharajAdapter = MaharajAdapter(emptyList())
         recyclerViewMaharaj.adapter = maharajAdapter
 
-        // Initialize ViewModel
-        viewModel = ViewModelProvider(this).get(JainViewModel::class.java)
+        // ViewModel
+        viewModel = ViewModelProvider(this)[JainViewModel::class.java]
 
-        // Observe LiveData for maharaj locations
-        viewModel.maharajList.observe(this) { maharajs -> // Make sure maharajList LiveData exists in JainViewModel
-            maharajAdapter.updateData(maharajs ?: emptyList())
+        // Observe LiveData
+        viewModel.filteredMaharaj.observe(this) { filteredList ->
+            maharajAdapter.updateData(filteredList ?: emptyList())
         }
 
-        // Fetch maharaj location data
-        viewModel.fetchMaharaj() // Make sure fetchMaharajs() method exists in JainViewModel
+        // Fetch initial data
+        viewModel.fetchMaharaj()
+
+        // Search Filter
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?) = true
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.filterMaharajByQuery(newText.orEmpty())
+                return true
+            }
+        })
+
+        // Filter Button
+        filterButton.setOnClickListener {
+            val options = arrayOf("Upcoming Dates", "Filter by City", "Show All")
+            AlertDialog.Builder(this)
+                .setTitle("Filter Maharaj Data")
+                .setItems(options) { _, which ->
+                    when (which) {
+                        0 -> viewModel.filterUpcomingMaharaj()
+                        1 -> showCityFilterDialog()
+                        2 -> viewModel.resetMaharajFilter()
+                    }
+                }
+                .show()
+        }
+    }
+
+    private fun showCityFilterDialog() {
+        val currentList = viewModel.maharajList.value ?: return
+        val cities = currentList.map { it.city }.filterNotNull().toSet().sorted().toTypedArray()
+
+        if (cities.isNotEmpty()) {
+            AlertDialog.Builder(this)
+                .setTitle("Select City")
+                .setItems(cities) { _, index ->
+                    viewModel.filterMaharajByCity(cities[index])
+                }
+                .show()
+        }
     }
 }

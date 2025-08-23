@@ -11,7 +11,7 @@ data class Tithi(
     @SerializedName("id") // If your JSON *did* have an 'id' field
     val id: String? = null, // Making it nullable as it's not in the current JSON
 
-    @SerializedName("title") // Maps JSON "title" to Kotlin "name"
+    @SerializedName("tithi") // Maps JSON "title" to Kotlin "name"
     val name: String,
 
     @SerializedName("date") // Maps JSON "date" to Kotlin "date" (already matches but good for clarity)

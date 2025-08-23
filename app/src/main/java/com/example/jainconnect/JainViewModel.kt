@@ -18,8 +18,6 @@ class JainViewModel : ViewModel() {
     private val _filteredTithis = MutableLiveData<List<Tithi>>()
     val filteredTithis: LiveData<List<Tithi>> get() = _filteredTithis
 
-
-
     fun fetchTithis() {
         viewModelScope.launch {
             try {
@@ -33,8 +31,6 @@ class JainViewModel : ViewModel() {
             }
         }
     }
-
-
 
     fun filterTithisByQuery(query: String) {
         _tithiList.value?.let { originalList ->
@@ -70,25 +66,17 @@ class JainViewModel : ViewModel() {
         }
     }
 
-    private fun filterNext5Days(allTithis: List<Tithi>): List<Tithi> {
-        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val today = Calendar.getInstance()
-        val fiveDaysLater = Calendar.getInstance().apply {
-            add(Calendar.DAY_OF_YEAR, 4)
-        }
-
-        val todayStr = sdf.format(today.time)
-        val endStr = sdf.format(fiveDaysLater.time)
-
-        return allTithis.filter { tithi ->
-            tithi.date >= todayStr && tithi.date <= endStr
-        }
-    }
-
     private fun filterUpcomingTithis(allTithis: List<Tithi>): List<Tithi> {
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val today = sdf.format(Calendar.getInstance().time)
-        return allTithis.filter { it.date >= today }
+        val today = Calendar.getInstance().time
+        return allTithis.filter {
+            try {
+                val tithiDate = sdf.parse(it.date)
+                tithiDate != null && !tithiDate.before(today) // today ya future dates
+            } catch (e: Exception) {
+                false // agar parsing fail ho jaye
+            }
+        }
     }
 
 
@@ -144,13 +132,58 @@ class JainViewModel : ViewModel() {
     private val _maharajList = MutableLiveData<List<Maharaj>>()
     val maharajList: LiveData<List<Maharaj>> = _maharajList
 
+    private val _filteredMaharaj = MutableLiveData<List<Maharaj>>()
+    val filteredMaharaj: LiveData<List<Maharaj>> = _filteredMaharaj
+
     fun fetchMaharaj() {
         viewModelScope.launch {
             try {
-                _maharajList.value = repository.getMaharaj()
+                val list = repository.getMaharaj()
+                _maharajList.value = list
+                _filteredMaharaj.value = list // show all by default
             } catch (e: Exception) {
                 _maharajList.value = emptyList()
+                _filteredMaharaj.value = emptyList()
             }
         }
+    }
+
+    fun filterMaharajByQuery(query: String) {
+        val q = query.trim().lowercase()
+        _maharajList.value?.let { original ->
+            _filteredMaharaj.value = original.filter {
+                it.name.lowercase().contains(q) ||
+                        (it.city?.lowercase() ?: "").contains(q) ||
+                        (it.currentSthan?.lowercase() ?: "").contains(q)
+            }
+        }
+    }
+
+
+    fun filterMaharajByCity(city: String) {
+        _maharajList.value?.let { list ->
+            _filteredMaharaj.value = list.filter { it.city.equals(city, true) }
+        }
+    }
+
+    fun filterUpcomingMaharaj() {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val todayDate = Calendar.getInstance().time
+
+        _maharajList.value?.let { list ->
+            _filteredMaharaj.value = list.filter {
+                try {
+                    val date = sdf.parse(it.relevantDate)
+                    date != null && date.after(todayDate)
+                } catch (e: Exception) {
+                    false
+                }
+            }
+        }
+    }
+
+
+    fun resetMaharajFilter() {
+        _filteredMaharaj.value = _maharajList.value
     }
 }

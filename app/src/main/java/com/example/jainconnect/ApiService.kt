@@ -3,12 +3,12 @@ package com.example.jainconnect
 import retrofit2.http.GET
 
 interface ApiService {
-    @GET("tithis")
+    @GET("api/tithis")
     suspend fun getTithis(): List<Tithi>
 
-    @GET("events")
+    @GET("api/events")
     suspend fun getEvents(): List<Event>
 
-    @GET("maharaj")
+    @GET("api/maharajs")
     suspend fun getMaharaj(): List<Maharaj>
 }
