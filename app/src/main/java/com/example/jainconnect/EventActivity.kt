@@ -9,35 +9,38 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-
+/**
+ * EventActivity displays a list of events in a RecyclerView.
+ * Supports search, state-based filtering, upcoming events, and reset all filters.
+ */
 class EventActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: JainViewModel
-    private lateinit var eventAdapter: EventAdapter
-    private lateinit var recyclerViewEvents: RecyclerView
+    private lateinit var viewModel: JainViewModel         // ViewModel instance
+    private lateinit var eventAdapter: EventAdapter      // RecyclerView adapter
+    private lateinit var recyclerViewEvents: RecyclerView // RecyclerView UI component
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_events)
 
-        // Initialize ViewModel
+        // -------------------- ViewModel Setup --------------------
         viewModel = ViewModelProvider(this)[JainViewModel::class.java]
 
-        // Setup RecyclerView and Adapter
+        // -------------------- RecyclerView Setup --------------------
         recyclerViewEvents = findViewById(R.id.recyclerViewEvents)
-        recyclerViewEvents.layoutManager = LinearLayoutManager(this)
-        eventAdapter = EventAdapter(emptyList())
+        recyclerViewEvents.layoutManager = LinearLayoutManager(this) // Vertical list
+        eventAdapter = EventAdapter(emptyList())                    // Initially empty
         recyclerViewEvents.adapter = eventAdapter
 
-        // Observe events and update adapter
+        // -------------------- Observe LiveData --------------------
         viewModel.eventList.observe(this) { events ->
-            eventAdapter.updateData(events)
+            eventAdapter.updateData(events) // Update RecyclerView when data changes
         }
 
-        // Fetch events first
-        viewModel.fetchEvents()
+        // -------------------- Fetch Initial Data --------------------
+        viewModel.fetchEvents() // Fetch events from backend via ViewModel
 
-        // State filter setup
+        // -------------------- State Filter --------------------
         val indianStates = listOf(
             "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
             "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand",
@@ -51,44 +54,42 @@ class EventActivity : AppCompatActivity() {
         )
 
         val stateButton = findViewById<Button>(R.id.buttonStateFilter)
-        // Default to show all events
-        stateButton.text = "All"
+        stateButton.text = "All" // Default
 
         stateButton.setOnClickListener {
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Select State")
-
             val options = listOf("All") + indianStates
             builder.setItems(options.toTypedArray()) { _, which ->
                 val choice = options[which]
                 if (choice == "All") {
-                    viewModel.filterEvents("")
+                    viewModel.filterEvents("")   // Show all events
                     stateButton.text = "All"
                 } else {
-                    viewModel.filterEventsByState(choice)
+                    viewModel.filterEventsByState(choice) // Filter by selected state
                     stateButton.text = choice
                 }
             }
             builder.show()
         }
 
-        // All button resets filters
+        // -------------------- All / Upcoming Filters --------------------
         findViewById<Button>(R.id.buttonAll).setOnClickListener {
-            viewModel.filterEvents("")
+            viewModel.filterEvents("") // Reset all filters
             stateButton.text = "All"
         }
 
-        // Upcoming button filter
         findViewById<Button>(R.id.buttonUpcoming).setOnClickListener {
-            viewModel.filterUpcomingEvents()
+            viewModel.filterUpcomingEvents() // Filter only upcoming events
             stateButton.text = "All"
         }
 
-        // SearchView filter
-        findViewById<SearchView>(R.id.searchView).setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        // -------------------- SearchView Filter --------------------
+        findViewById<SearchView>(R.id.searchView).setOnQueryTextListener(object :
+            SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?) = true
             override fun onQueryTextChange(newText: String?): Boolean {
-                viewModel.filterEvents(newText ?: "")
+                viewModel.filterEvents(newText ?: "") // Filter events dynamically
                 return true
             }
         })

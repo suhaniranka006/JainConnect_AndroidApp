@@ -6,25 +6,38 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * JainViewModel is responsible for providing UI-related data
+ * for Tithis, Events, and Maharaj.
+ *
+ * It fetches data from JainRepository and exposes it via LiveData.
+ * It also provides filtering functions for search and date-based filtering.
+ */
 class JainViewModel : ViewModel() {
 
+    // Repository instance to fetch data from backend
     private val repository = JainRepository()
 
     // ---------------------- TITHIS ----------------------
-
+    // LiveData holding the list of all Tithis
     private val _tithiList = MutableLiveData<List<Tithi>>()
     val tithiList: LiveData<List<Tithi>> = _tithiList
 
+    // LiveData holding filtered Tithis (search or date filter)
     private val _filteredTithis = MutableLiveData<List<Tithi>>()
     val filteredTithis: LiveData<List<Tithi>> get() = _filteredTithis
 
+    /**
+     * Fetches Tithis from repository and stores upcoming Tithis
+     * in both _tithiList and _filteredTithis
+     */
     fun fetchTithis() {
         viewModelScope.launch {
             try {
                 val tithisFromRepo = repository.getTithis()
                 val upcomingTithis = filterUpcomingTithis(tithisFromRepo)
                 _tithiList.value = upcomingTithis
-                _filteredTithis.value = upcomingTithis // ✅ show all by default
+                _filteredTithis.value = upcomingTithis // show all by default
             } catch (e: Exception) {
                 _tithiList.value = emptyList()
                 _filteredTithis.value = emptyList()
@@ -32,6 +45,9 @@ class JainViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Filters Tithis by a search query (name, details, date)
+     */
     fun filterTithisByQuery(query: String) {
         val q = query.trim().lowercase()
         _tithiList.value?.let { originalList ->
@@ -44,7 +60,9 @@ class JainViewModel : ViewModel() {
         }
     }
 
-
+    /**
+     * Filters Tithis occurring within the next 'days' days
+     */
     fun filterTithisByDays(days: Int) {
         if (days == 0) {
             _filteredTithis.postValue(_tithiList.value ?: emptyList())
@@ -68,26 +86,30 @@ class JainViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Returns only upcoming Tithis (today or future)
+     */
     private fun filterUpcomingTithis(allTithis: List<Tithi>): List<Tithi> {
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val today = Calendar.getInstance().time
         return allTithis.filter {
             try {
                 val tithiDate = sdf.parse(it.date)
-                tithiDate != null && !tithiDate.before(today) // today ya future dates
+                tithiDate != null && !tithiDate.before(today) // today or future
             } catch (e: Exception) {
-                false // agar parsing fail ho jaye
+                false // ignore parsing errors
             }
         }
     }
 
-
     // ---------------------- EVENTS ----------------------
-
     private val _eventList = MutableLiveData<List<Event>>()   // Filtered list
     val eventList: LiveData<List<Event>> = _eventList
-    private val _allEvents = mutableListOf<Event>()            // Full backup list for search
+    private val _allEvents = mutableListOf<Event>()            // Full backup list
 
+    /**
+     * Fetch all events from repository
+     */
     fun fetchEvents() {
         viewModelScope.launch {
             try {
@@ -101,6 +123,9 @@ class JainViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Filter events by state/location
+     */
     fun filterEventsByState(state: String) {
         val filtered = _allEvents.filter {
             it.location.contains(state, ignoreCase = true)
@@ -108,6 +133,9 @@ class JainViewModel : ViewModel() {
         _eventList.value = filtered
     }
 
+    /**
+     * Filter events happening after today
+     */
     fun filterUpcomingEvents() {
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val today = sdf.format(Calendar.getInstance().time)
@@ -116,6 +144,9 @@ class JainViewModel : ViewModel() {
         _eventList.value = upcoming
     }
 
+    /**
+     * Filter events by search query (name, location, date, description)
+     */
     fun filterEvents(query: String) {
         val lowerQuery = query.trim().lowercase()
 
@@ -130,13 +161,15 @@ class JainViewModel : ViewModel() {
     }
 
     // ---------------------- MAHARAJ ----------------------
-
     private val _maharajList = MutableLiveData<List<Maharaj>>()
     val maharajList: LiveData<List<Maharaj>> = _maharajList
 
     private val _filteredMaharaj = MutableLiveData<List<Maharaj>>()
     val filteredMaharaj: LiveData<List<Maharaj>> = _filteredMaharaj
 
+    /**
+     * Fetch Maharaj list from repository
+     */
     fun fetchMaharaj() {
         viewModelScope.launch {
             try {
@@ -150,6 +183,9 @@ class JainViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Filter Maharaj by query (name, city, currentSthan)
+     */
     fun filterMaharajByQuery(query: String) {
         val q = query.trim().lowercase()
         _maharajList.value?.let { original ->
@@ -161,13 +197,18 @@ class JainViewModel : ViewModel() {
         }
     }
 
-
+    /**
+     * Filter Maharaj by city (exact match)
+     */
     fun filterMaharajByCity(city: String) {
         _maharajList.value?.let { list ->
             _filteredMaharaj.value = list.filter { it.city.equals(city, true) }
         }
     }
 
+    /**
+     * Show only Maharaj with relevantDate after today
+     */
     fun filterUpcomingMaharaj() {
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val todayDate = Calendar.getInstance().time
@@ -184,7 +225,9 @@ class JainViewModel : ViewModel() {
         }
     }
 
-
+    /**
+     * Reset Maharaj filter to show all
+     */
     fun resetMaharajFilter() {
         _filteredMaharaj.value = _maharajList.value
     }
