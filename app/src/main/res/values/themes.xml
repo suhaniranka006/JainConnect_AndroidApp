@@ -2,27 +2,18 @@
 
     <!-- Base application theme -->
     <style name="Base.Theme.JainConnect" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light/dark theme colors -->
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryVariant">@color/white</item>
-        <item name="colorOnPrimary">@android:color/white</item>
-        <!-- Add other common theme attributes here -->
+        <item name="colorOnPrimary">@android:color/black</item>
+        <item name="android:windowBackground">@android:color/white</item> <!-- system default bg -->
+
     </style>
 
     <!-- Main app theme -->
     <style name="Theme.JainConnect" parent="Base.Theme.JainConnect" />
 
-    <!-- Splash Screen theme -->
-    <style name="Theme.JainConnect.Splash" parent="Base.Theme.JainConnect">
-        <!-- Background color for splash screen -->
-        <item name="android:windowBackground">@color/white</item>
-        <!-- Remove title bar -->
-        <item name="android:windowNoTitle">true</item>
-        <!-- Optional: Fullscreen -->
-        <item name="android:windowFullscreen">true</item>
-    </style>
-
-
 
 
 </resources>
+
+

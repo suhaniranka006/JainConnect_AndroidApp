@@ -9,6 +9,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 
 /**
  * TithiActivity displays a list of Tithis in a RecyclerView.
@@ -63,7 +64,8 @@ class TithiActivity : AppCompatActivity() {
         // Show keyboard automatically when searchView is focused
         searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                val imm =
+                    getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
                 imm.showSoftInput(searchView.findFocus(), 0)
             }
         }
@@ -77,23 +79,26 @@ class TithiActivity : AppCompatActivity() {
             }
         })
 
-        // -------------------- Filter Button Setup --------------------
-        val filterButton = findViewById<Button>(R.id.buttonFilterTithi)
-        filterButton.setOnClickListener {
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle("Select Filter")
-            val options = arrayOf("Next 7 Days", "Next 15 Days", "Show All")
-            builder.setItems(options) { _, which ->
-                when (which) {
-                    0 -> viewModel.filterTithisByDays(7)
-                    1 -> viewModel.filterTithisByDays(15)
-                    2 -> viewModel.filterTithisByDays(0)
-                }
-            }
-            builder.show()
+
+        // -------------------- Filter Buttons Setup --------------------
+
+// Show All
+        findViewById<MaterialButton>(R.id.buttonShowAll).setOnClickListener {
+            viewModel.filterTithisByDays(0) // 0 = show all
         }
 
-        // -------------------- Fetch Initial Data --------------------
+// Next 7 Days
+        findViewById<MaterialButton>(R.id.buttonNext7Days).setOnClickListener {
+            viewModel.filterTithisByDays(7)
+        }
+
+// Next 15 Days
+        findViewById<MaterialButton>(R.id.buttonNext15Days).setOnClickListener {
+            viewModel.filterTithisByDays(15)
+        }
+
+// -------------------- Fetch Initial Data --------------------
         viewModel.fetchTithis() // Fetch tithis from backend via ViewModel
+
     }
 }

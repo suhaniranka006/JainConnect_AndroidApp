@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FAFAFA"
+    android:background="@color/white"
     tools:context=".TithiActivity">
 
     <!-- Screen Title -->
@@ -14,12 +14,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Upcoming Tithis"
-        android:textSize="24sp"
+        android:textSize="28sp"
         android:textStyle="bold"
         android:textColor="#212121"
         android:gravity="center"
-        android:paddingTop="16dp"
-        android:paddingBottom="8dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="16dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
@@ -28,33 +28,90 @@
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searchViewTithi"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:queryHint="Search Tithi, date or description"
         android:iconifiedByDefault="false"
         android:focusable="true"
-    android:focusableInTouchMode="true"
-    android:clickable="true"
-    android:background="@drawable/search_background"
-    app:layout_constraintTop_toBottomOf="@id/textViewTithiScreenTitle"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    android:layout_marginHorizontal="16dp"
-    android:layout_marginTop="8dp"/>
+        android:focusableInTouchMode="true"
+        android:clickable="true"
+        android:background="@drawable/search_background"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        app:layout_constraintTop_toBottomOf="@id/textViewTithiScreenTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="12dp"/>
+
+<!--    &lt;!&ndash; Filter Button &ndash;&gt;-->
+<!--    <com.google.android.material.button.MaterialButton-->
+<!--        android:id="@+id/buttonFilterTithi"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="48dp"-->
+<!--        android:text="Upcoming"-->
+<!--        android:textColor="@android:color/white"-->
+<!--        android:backgroundTint="@color/black"-->
+<!--        app:cornerRadius="16dp"-->
+<!--        app:iconPadding="8dp"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/searchViewTithi"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        android:layout_marginStart="16dp"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:elevation="4dp"/>-->
 
 
-    <!-- Filter Button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/buttonFilterTithi"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Upcoming"
-        android:textColor="#FFFFFF"
-        android:backgroundTint="#3F51B5"
-        app:cornerRadius="12dp"
+    <!-- Filter Buttons Row -->
+    <LinearLayout
+        android:id="@+id/linearLayoutFilterButtons"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintTop_toBottomOf="@id/searchViewTithi"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        android:weightSum="3">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonShowAll"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Show All"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/black"
+            app:cornerRadius="16dp"
+            android:elevation="4dp"
+            android:layout_marginEnd="4dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonNext7Days"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Next 7 Days"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/black"
+            app:cornerRadius="16dp"
+            android:elevation="4dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonNext15Days"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Next 15 Days"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/black"
+            app:cornerRadius="16dp"
+            android:elevation="4dp"
+            android:layout_marginStart="4dp"/>
+    </LinearLayout>
+
 
     <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
@@ -62,10 +119,12 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        android:paddingTop="8dp"
+        android:paddingTop="12dp"
         android:paddingBottom="16dp"
-        app:layout_constraintTop_toBottomOf="@id/buttonFilterTithi"
+        app:layout_constraintTop_toBottomOf="@id/linearLayoutFilterButtons"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/item_tithi"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
