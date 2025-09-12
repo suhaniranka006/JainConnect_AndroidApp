@@ -33,10 +33,9 @@ class LoginActivity : AppCompatActivity() {
         btnLogin.setOnClickListener {
             progressBar.visibility = android.view.View.VISIBLE
 
-            // Firebase logic baad me add karenge
-            // Abhi ke liye dummy navigation
-            startActivity(Intent(this, EventActivity::class.java))
-            progressBar.visibility = android.view.View.GONE
+            // ✅ Move to next activity directly
+            val intent = Intent(this, MainActivity::class.java) // Replace NextActivity with your activity
+            startActivity(intent)
             finish()
         }
     }

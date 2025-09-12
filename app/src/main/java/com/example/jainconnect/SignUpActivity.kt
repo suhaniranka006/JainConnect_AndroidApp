@@ -51,6 +51,11 @@ class SignUpActivity : AppCompatActivity() {
 
             progressBar.visibility = android.view.View.VISIBLE
 
+            // ✅ Move to next activity directly
+            val intent = Intent(this, MainActivity::class.java) // Replace NextActivity with your activity
+            startActivity(intent)
+            finish() // optional: so user cannot go back to signup with back button
+
 
         }
     }
