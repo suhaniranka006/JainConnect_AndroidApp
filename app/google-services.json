@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "578109557185",
+    "project_id": "jain-connect-authentication",
+    "storage_bucket": "jain-connect-authentication.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:578109557185:android:35204d87f9dbe0e2028740",
+        "android_client_info": {
+          "package_name": "com.example.jainconnect"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyp_TxCGFq7jBOo51l7vpF80qPP5eLuOg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
