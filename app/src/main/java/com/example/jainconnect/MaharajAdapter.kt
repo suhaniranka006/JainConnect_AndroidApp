@@ -23,7 +23,7 @@ class MaharajAdapter(private var maharajList: List<Maharaj>) :
      */
     class MaharajViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvMaharajName: TextView = itemView.findViewById(R.id.tvMaharajName)
-        val tvMaharajSthan: TextView = itemView.findViewById(R.id.tvMaharajSthan)
+
         val tvMaharajCity: TextView = itemView.findViewById(R.id.tvMaharajCity)
         val tvMaharajDate: TextView = itemView.findViewById(R.id.tvMaharajDate)
         val tvMaharajSampraday: TextView = itemView.findViewById(R.id.tvMaharajSampraday)
@@ -48,7 +48,7 @@ class MaharajAdapter(private var maharajList: List<Maharaj>) :
 
         // Required fields
         holder.tvMaharajName.text = maharaj.name
-        holder.tvMaharajSthan.text = maharaj.currentSthan
+
 
         // Optional fields
         holder.tvMaharajCity.apply {

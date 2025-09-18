@@ -26,15 +26,6 @@
             android:textColor="#212121"
             tools:text="Maharaj Name"/>
 
-        <!-- Current Sthan -->
-        <TextView
-            android:id="@+id/tvMaharajSthan"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="#757575"
-            android:layout_marginTop="4dp"
-            tools:text="Current Sthan"/>
 
         <!-- City -->
         <TextView

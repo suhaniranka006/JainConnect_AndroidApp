@@ -9,8 +9,7 @@ data class Maharaj(
     @SerializedName("name")
     val name: String,
 
-    @SerializedName("Location") // Case-sensitive: Maps JSON "Location" (capital L)
-    val currentSthan: String,
+
 
     @SerializedName("title") // Mapping JSON "title" to sampraday
     val sampraday: String?,

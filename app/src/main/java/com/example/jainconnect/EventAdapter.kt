@@ -21,7 +21,9 @@ class EventAdapter(
     class EventViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvEventName: TextView = itemView.findViewById(R.id.tvEventName)
         val tvEventDateTime: TextView = itemView.findViewById(R.id.tvEventDateTime)
+        val tvEventTime: TextView = itemView.findViewById(R.id.tvEventTime)
         val tvEventLocation: TextView = itemView.findViewById(R.id.tvEventLocation)
+
         val tvEventDescription: TextView = itemView.findViewById(R.id.tvEventDescription)
     }
 
@@ -43,6 +45,7 @@ class EventAdapter(
         // Bind event data to views
         holder.tvEventName.text = event.name
         holder.tvEventDateTime.text = event.date
+        holder.tvEventTime.text = event.time ?: "Time not available"
         holder.tvEventLocation.text = event.location
 
         // Handle optional description

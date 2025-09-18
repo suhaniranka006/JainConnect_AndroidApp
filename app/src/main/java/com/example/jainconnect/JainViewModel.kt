@@ -161,74 +161,134 @@ class JainViewModel : ViewModel() {
     }
 
     // ---------------------- MAHARAJ ----------------------
-    private val _maharajList = MutableLiveData<List<Maharaj>>()
-    val maharajList: LiveData<List<Maharaj>> = _maharajList
 
-    private val _filteredMaharaj = MutableLiveData<List<Maharaj>>()
-    val filteredMaharaj: LiveData<List<Maharaj>> = _filteredMaharaj
 
-    /**
-     * Fetch Maharaj list from repository
-     */
-    fun fetchMaharaj() {
-        viewModelScope.launch {
-            try {
-                val list = repository.getMaharaj()
-                _maharajList.value = list
-                _filteredMaharaj.value = list // show all by default
-            } catch (e: Exception) {
-                _maharajList.value = emptyList()
-                _filteredMaharaj.value = emptyList()
-            }
-        }
-    }
 
-    /**
-     * Filter Maharaj by query (name, city, currentSthan)
-     */
-    fun filterMaharajByQuery(query: String) {
-        val q = query.trim().lowercase()
-        _maharajList.value?.let { original ->
-            _filteredMaharaj.value = original.filter {
-                it.name.lowercase().contains(q) ||
-                        (it.city?.lowercase() ?: "").contains(q) ||
-                        (it.currentSthan?.lowercase() ?: "").contains(q)
-            }
-        }
-    }
 
-    /**
-     * Filter Maharaj by city (exact match)
-     */
-    fun filterMaharajByCity(city: String) {
-        _maharajList.value?.let { list ->
-            _filteredMaharaj.value = list.filter { it.city.equals(city, true) }
-        }
-    }
+        private val _maharajList = MutableLiveData<List<Maharaj>>()
+        val maharajList: LiveData<List<Maharaj>> = _maharajList
 
-    /**
-     * Show only Maharaj with relevantDate after today
-     */
-    fun filterUpcomingMaharaj() {
-        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val todayDate = Calendar.getInstance().time
+        private val _filteredMaharaj = MutableLiveData<List<Maharaj>>()
+       val filteredMaharaj: LiveData<List<Maharaj>> = _filteredMaharaj
 
-        _maharajList.value?.let { list ->
-            _filteredMaharaj.value = list.filter {
+        /**
+         * Fetch Maharaj list from repository
+         */
+        fun fetchMaharaj() {
+            viewModelScope.launch {
                 try {
-                    val date = sdf.parse(it.relevantDate)
-                    date != null && date.after(todayDate)
+                    val list = repository.getMaharaj()
+                    _maharajList.value = list
+                    _filteredMaharaj.value = list // show all by default
                 } catch (e: Exception) {
-                    false
+                    _maharajList.value = emptyList()
+                    _filteredMaharaj.value = emptyList()
                 }
             }
         }
-    }
+
+        /**
+         * Filter Maharaj by city
+         */
+
+        // In JainViewModel
+        fun filterBySearch(query: String) {
+            val q = query.trim().lowercase()
+            _filteredMaharaj.value = _maharajList.value?.filter { maharaj ->
+                maharaj.name.lowercase().contains(q) ||
+                        maharaj.city?.lowercase()?.contains(q) == true ||
+                        maharaj.city?.lowercase()?.contains(q) == true
+            }
+        }
+
+    fun filterByCity(city: String) {
+            _maharajList.value?.let { list ->
+                _filteredMaharaj.value = list.filter {
+                    it.city?.contains(city, ignoreCase = true) == true
+                }
+            }
+        }
+
+
 
     /**
-     * Reset Maharaj filter to show all
-     */
-    fun resetMaharajFilter() {
-        _filteredMaharaj.value = _maharajList.value
+         * Reset Maharaj filter to show all
+         */
+        fun resetFilters() {
+            _filteredMaharaj.value = _maharajList.value
+        }
     }
-}
+
+
+
+//    private val _maharajList = MutableLiveData<List<Maharaj>>()
+//    val maharajList: LiveData<List<Maharaj>> = _maharajList
+//
+//    private val _filteredMaharaj = MutableLiveData<List<Maharaj>>()
+//    val filteredMaharaj: LiveData<List<Maharaj>> = _filteredMaharaj
+//
+//    /**
+//     * Fetch Maharaj list from repository
+//     */
+//    fun fetchMaharaj() {
+//        viewModelScope.launch {
+//            try {
+//                val list = repository.getMaharaj()
+//                _maharajList.value = list
+//                _filteredMaharaj.value = list // show all by default
+//            } catch (e: Exception) {
+//                _maharajList.value = emptyList()
+//                _filteredMaharaj.value = emptyList()
+//            }
+//        }
+//    }
+//
+//    /**
+//     * Filter Maharaj by query (name, city, currentSthan)
+//     */
+//    fun filterMaharajByQuery(query: String) {
+//        val q = query.trim().lowercase()
+//        _maharajList.value?.let { original ->
+//            _filteredMaharaj.value = original.filter {
+//                it.name.lowercase().contains(q) ||
+//                        (it.city?.lowercase() ?: "").contains(q) ||
+//                        (it.currentSthan?.lowercase() ?: "").contains(q)
+//            }
+//        }
+//    }
+//
+//    /**
+//     * Filter Maharaj by city (exact match)
+//     */
+//    fun filterMaharajByCity(city: String) {
+//        _maharajList.value?.let { list ->
+//            _filteredMaharaj.value = list.filter { it.city.equals(city, true) }
+//        }
+//    }
+//
+//    /**
+//     * Show only Maharaj with relevantDate after today
+//     */
+//    fun filterUpcomingMaharaj() {
+//        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+//        val todayDate = Calendar.getInstance().time
+//
+//        _maharajList.value?.let { list ->
+//            _filteredMaharaj.value = list.filter {
+//                try {
+//                    val date = sdf.parse(it.relevantDate)
+//                    date != null && date.after(todayDate)
+//                } catch (e: Exception) {
+//                    false
+//                }
+//            }
+//        }
+//    }
+//
+//    /**
+//     * Reset Maharaj filter to show all
+//     */
+//    fun resetMaharajFilter() {
+//        _filteredMaharaj.value = _maharajList.value
+//    }
+//}

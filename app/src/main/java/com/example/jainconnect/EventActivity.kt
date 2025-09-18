@@ -54,7 +54,7 @@ class EventActivity : AppCompatActivity() {
         )
 
         val stateButton = findViewById<Button>(R.id.buttonStateFilter)
-        stateButton.text = "All" // Default
+        stateButton.text = "All States" // Default
 
         stateButton.setOnClickListener {
             val builder = AlertDialog.Builder(this)

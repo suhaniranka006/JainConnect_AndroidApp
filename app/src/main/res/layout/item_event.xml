@@ -35,6 +35,17 @@
             android:layout_marginTop="4dp"/>
 
         <TextView
+            android:id="@+id/tvEventTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="#757575"
+            android:text="Time"
+            android:layout_marginTop="4dp"/>
+
+
+
+        <TextView
             android:id="@+id/tvEventLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
