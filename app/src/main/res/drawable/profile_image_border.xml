@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Yeh ek Shape Drawable hai jo ek circular border banata hai.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval"> <!-- 'oval' shape use karne se yeh hamesha gol rahega -->
+
+    <!-- Border ka color aur motai (width) -->
+    <stroke
+        android:width="2dp"
+        android:color="#E0E0E0" /> <!-- Halkay grey rang ka border -->
+
+</shape>

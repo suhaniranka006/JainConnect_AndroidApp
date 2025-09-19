@@ -46,6 +46,9 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+    buildFeatures{
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -88,6 +91,8 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-analytics")
 
+    //for circular profile photo
+    implementation ("de.hdodenhof:circleimageview:3.1.0")
 
 
 
