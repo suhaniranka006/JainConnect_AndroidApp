@@ -69,7 +69,7 @@ class JainViewModel : ViewModel() {
             return
         }
 
-        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
         val today = Calendar.getInstance().time
         val endDate = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, days) }.time
 
@@ -90,7 +90,7 @@ class JainViewModel : ViewModel() {
      * Returns only upcoming Tithis (today or future)
      */
     private fun filterUpcomingTithis(allTithis: List<Tithi>): List<Tithi> {
-        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
         val today = Calendar.getInstance().time
         return allTithis.filter {
             try {
