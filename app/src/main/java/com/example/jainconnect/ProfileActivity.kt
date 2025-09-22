@@ -61,7 +61,7 @@ class ProfileActivity : AppCompatActivity() {
             }
 
             // Nayi activity shuru karein
-            startActivity(intent)
+              startActivity(intent)
 
             // Maujooda ProfileActivity ko foran band kar dein
             finish()
