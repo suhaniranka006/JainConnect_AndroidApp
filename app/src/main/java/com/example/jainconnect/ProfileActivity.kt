@@ -1,75 +1,89 @@
 package com.example.jainconnect
-
-
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import com.example.jainconnect.databinding.ActivityProfileBinding // Is line ko import karein
+import com.bumptech.glide.Glide
+import com.example.jainconnect.databinding.ActivityProfileBinding
 
 class ProfileActivity : AppCompatActivity() {
 
-    // View Binding ke liye ek variable banayein
     private lateinit var binding: ActivityProfileBinding
+
+    // Tag for Logcat
+    private val TAG = "ProfileActivity"
+
+    // Modern Activity Result API to get data back from EditProfileActivity
+    private val editProfileLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                // Data sent back from EditProfileActivity
+                val data = result.data
+                val updatedName = data?.getStringExtra("name") ?: ""
+                val updatedEmail = data?.getStringExtra("email") ?: ""
+                val updatedImageUrl = data?.getStringExtra("profileImageUrl") ?: ""
+
+                // Update UI
+                binding.tvProfileName.text = updatedName
+                binding.tvProfileEmail.text = updatedEmail
+
+                if (updatedImageUrl.isNotEmpty()) {
+                    // Glide can be used if image is from URL
+                    Glide.with(this)
+                        .load(updatedImageUrl)
+                        .placeholder(R.drawable.ic_profile_placeholder)
+                        .into(binding.ivProfilePicture)
+                }
+
+                Log.d(TAG, "Profile updated: $updatedName, $updatedEmail, $updatedImageUrl")
+                Toast.makeText(this, "Profile Updated!", Toast.LENGTH_SHORT).show()
+            } else {
+                Log.d(TAG, "Edit profile canceled or no data returned")
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // View Binding ko initialize karein
         binding = ActivityProfileBinding.inflate(layoutInflater)
-        // Apne layout ko set karein
         setContentView(binding.root)
 
-        // User data ko load karne ke liye ek function call karein
+        // Load default user data
         loadUserProfileData()
 
-        // Buttons ke click listeners set karein
+        // Set up buttons
         setupClickListeners()
     }
 
-    /**
-     * Is function mein hum profile ke UI elements (jaise naam, email) par data set karte hain.
-     */
     private fun loadUserProfileData() {
-        // View Binding ka use karke સીધા IDs se views ko access karein
         binding.tvProfileName.text = "Kavisha Jain"
         binding.tvProfileEmail.text = "kavisha.jain@example.com"
-
-        // Aap yahan profile picture bhi set kar sakti hain
-        // For example:
         binding.ivProfilePicture.setImageResource(R.drawable.ic_profile_placeholder)
     }
 
-    /**
-     * Is function mein hum buttons aur doosre interactive views ke liye click events handle karte hain.
-     */
     private fun setupClickListeners() {
-        // Edit Profile button ka click listener
         binding.btnEditProfile.setOnClickListener {
-            // Jab user is button par click karega, to yeh message dikhega
-            Toast.makeText(this, "Edit Profile Clicked!", Toast.LENGTH_SHORT).show()
-            // Yahan aap Edit Profile screen par jaane ka code likh sakti hain
+            // Open EditProfileActivity for result
+            val intent = Intent(this, EditProfileActivity::class.java)
+
+            // Optional: pass current data so user can see it in Edit screen
+            intent.putExtra("name", binding.tvProfileName.text.toString())
+            intent.putExtra("email", binding.tvProfileEmail.text.toString())
+
+            editProfileLauncher.launch(intent)
         }
 
-        // Logout button ka click listener
         binding.btnLogout.setOnClickListener {
-            // LoginActivity ko kholne ke liye ek naya Intent banayein
             val intent = Intent(this, LoginActivity::class.java).apply {
-                // Yeh flags pichhli saari activities ko app ki history se हटा denge.
-                // Isse user 'Back' button dabakar wapas Profile screen par nahi aa paayega.
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
-
-            // Nayi activity shuru karein
-              startActivity(intent)
-
-            // Maujooda ProfileActivity ko foran band kar dein
+            startActivity(intent)
             finish()
         }
 
-        // Profile picture par click karne par action add kar sakte hain
         binding.ivProfilePicture.setOnClickListener {
-            Toast.makeText(this, "Profile picture clicked. You can open image viewer.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Profile picture clicked", Toast.LENGTH_SHORT).show()
         }
     }
 }

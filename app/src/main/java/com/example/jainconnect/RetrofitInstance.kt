@@ -19,7 +19,7 @@ object RetrofitInstance {
     // 🔹 The base URL of your backend server.
     // All endpoints in ApiService are relative to this URL.
     // IMPORTANT: Must end with a "/" for Retrofit to work correctly.
-    private const val BASE_URL = "https://jainconnect-backened.onrender.com/"
+    private const val BASE_URL = "https://jainconnect-backened-2.onrender.com/"
 
     /**
      * HttpLoggingInterceptor logs HTTP request and response data.

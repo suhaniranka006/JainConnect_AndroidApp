@@ -8,7 +8,7 @@ data class Tithi(
     // or make it nullable and handle its absence. For now, let's assume it might exist or you need it.
     // If your JSON truly has no ID and you don't generate one, you might remove this field
     // or make it String? if it's optional. Let's make it optional for now.
-    @SerializedName("id") // If your JSON *did* have an 'id' field
+    @SerializedName("_id") // If your JSON *did* have an 'id' field
     val id: String? = null, // Making it nullable as it's not in the current JSON
 
     @SerializedName("tithi") // Maps JSON "title" to Kotlin "name"
