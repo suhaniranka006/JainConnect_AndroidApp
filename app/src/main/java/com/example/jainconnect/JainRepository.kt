@@ -60,6 +60,13 @@ class JainRepository {
     }
 
 
+
+    // YEH NAYA FUNCTION ADD KAREIN  -- login function
+    suspend fun loginUser(email: String, password: String): Response<AuthResponse> {
+        val loginRequest = LoginRequest(email = email, password = password)
+        return RetrofitInstance.api.loginUser(loginRequest)
+    }
+
     // Yahan Update Profile ka function bhi aayega...
 
 }

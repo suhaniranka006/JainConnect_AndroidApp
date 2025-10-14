@@ -26,3 +26,8 @@ data class AuthResponse(
     val token: String?,
     val user: User?
 )
+
+data class LoginRequest(
+    val email: String,
+    val password: String
+)

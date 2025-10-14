@@ -3,6 +3,7 @@ package com.example.jainconnect
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -64,4 +65,10 @@ interface ApiService {
         // Image file pehle ki tarah alag se hi rahega.
         @Part profileImage: MultipartBody.Part?
     ): Response<AuthResponse>
+
+
+
+    // YEH NAYA FUNCTION ADD KAREIN
+    @POST("api/users/login")
+    suspend fun loginUser(@Body loginRequest: LoginRequest): Response<AuthResponse>
 }

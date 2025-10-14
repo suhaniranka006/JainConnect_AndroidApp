@@ -20,6 +20,24 @@ class JainViewModel : ViewModel() {
     // Repository instance to fetch data from backend
     private val repository = JainRepository()
 
+
+
+    // YEH NAYA CODE ADD KAREIN  -- login code
+    private val _loginResult = MutableLiveData<Response<AuthResponse>?>()
+    val loginResult: LiveData<Response<AuthResponse>?> = _loginResult
+
+    fun performLogin(email: String, password: String) {
+        viewModelScope.launch {
+            try {
+                val response = repository.loginUser(email, password)
+                _loginResult.postValue(response)
+            } catch (e: Exception) {
+                Log.e("JainViewModel", "Login Exception", e)
+                _loginResult.postValue(null) // Error ke case me null bhejein
+            }
+        }
+    }
+
     // ---------------------- USER AUTHENTICATION ----------------------
     // ✅ SIGNUP code ko class ke andar sahi jagah par add kiya gaya
     private val _signupResult = MutableLiveData<Response<AuthResponse>?>()
