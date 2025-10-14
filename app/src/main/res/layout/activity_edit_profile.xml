@@ -2,96 +2,110 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp">
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <!-- Profile Image -->
         <ImageView
-            android:id="@+id/profileImageView"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_gravity="center"
-            android:src="@drawable/baseline_add_24"
+            android:id="@+id/ivEditProfile"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center_horizontal"
             android:scaleType="centerCrop"
-            android:background="@drawable/outline_app_badging_24"
-            android:padding="5dp" />
+            android:contentDescription="Profile Image" />
 
-        <!-- Choose Image Button -->
         <Button
-            android:id="@+id/chooseImageButton"
+            android:id="@+id/btnChangeImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Choose Image"
-            android:layout_gravity="center"
-            android:layout_marginTop="12dp" />
+            android:layout_gravity="center_horizontal"
+            android:text="Change Image" />
 
-        <!-- Name -->
+        <TextView
+            android:text="Email (Cannot be changed)"
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
         <EditText
-            android:id="@+id/nameEditText"
+            android:id="@+id/etEditEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter Name"
-            android:layout_marginTop="16dp"
+            android:enabled="false"
+            android:focusable="false" />
+
+        <TextView
+            android:text="Name"
+            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <EditText
+            android:id="@+id/etEditName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:inputType="textPersonName" />
 
-        <!-- Email -->
+        <TextView
+            android:text="Phone Number"
+            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
         <EditText
-            android:id="@+id/emailEditText"
+            android:id="@+id/etEditPhone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter Email"
-            android:layout_marginTop="12dp"
-            android:inputType="textEmailAddress" />
-
-        <!-- Phone -->
-        <EditText
-            android:id="@+id/phoneEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter Phone"
-            android:layout_marginTop="12dp"
             android:inputType="phone" />
 
-        <!-- Location -->
+        <TextView
+            android:text="Location"
+            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
         <EditText
-            android:id="@+id/locationEditText"
+            android:id="@+id/etEditLocation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter Location"
-            android:layout_marginTop="12dp"
             android:inputType="text" />
 
-        <!-- Date of Birth -->
+        <TextView
+            android:text="Date of Birth"
+            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
         <EditText
-            android:id="@+id/dobEditText"
+            android:id="@+id/etEditDob"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter Date of Birth (dd-MM-yyyy)"
-            android:layout_marginTop="12dp"
+            android:hint="Click to select date"
             android:focusable="false"
             android:clickable="true" />
 
-        <!-- Gender -->
+        <TextView
+            android:text="Gender"
+            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
         <EditText
-            android:id="@+id/genderEditText"
+            android:id="@+id/etEditGender"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter Gender"
-            android:layout_marginTop="12dp"
-            android:focusable="false"
-            android:clickable="true" />
+            android:inputType="text" />
 
-        <!-- Save Button -->
         <Button
-            android:id="@+id/saveButton"
+            android:id="@+id/btnSaveChanges"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Save"
-            android:layout_marginTop="20dp" />
+            android:layout_marginTop="24dp"
+            android:text="Save Changes" />
 
+        <ProgressBar
+            android:id="@+id/editProfileProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
     </LinearLayout>
 </ScrollView>

@@ -5,6 +5,7 @@ import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -71,4 +72,20 @@ interface ApiService {
     // YEH NAYA FUNCTION ADD KAREIN
     @POST("api/users/login")
     suspend fun loginUser(@Body loginRequest: LoginRequest): Response<AuthResponse>
+
+
+    // YEH DO NAYE FUNCTIONS ADD KAREIN
+
+    // 1. Current user ka profile data fetch karne ke liye (Token zaroori hai)
+    @GET("api/users/profile")
+    suspend fun getUserProfile(@Header("Authorization") token: String): Response<AuthResponse>
+
+    // 2. User profile update karne ke liye (Token zaroori hai)
+    @Multipart
+    @PUT("api/users/profile")
+    suspend fun updateUserProfile(
+        @Header("Authorization") token: String,
+        @PartMap parts: Map<String, @JvmSuppressWildcards RequestBody>,
+        @Part profileImage: MultipartBody.Part?
+    ): Response<AuthResponse>
 }

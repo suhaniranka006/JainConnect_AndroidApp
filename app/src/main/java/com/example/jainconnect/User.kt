@@ -15,9 +15,9 @@ data class User(
     val location: String?,
     val dob: String?,
     val gender: String?,
-    val password: String?,
+    val password: String?, // Yeh server se nahi aayega, but model me rehne dein
     val profileImage: String?
-)
+) : java.io.Serializable
 
 // Yeh class aapke poore Register/Login response se match karti hai
 data class AuthResponse(

@@ -9,6 +9,15 @@
 
     </style>
 
+    <style name="ProfileTextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:background">#f0f0f0</item>
+        <item name="android:layout_marginBottom">8dp</item>
+    </style>
+
     <!-- Main app theme -->
     <style name="Theme.JainConnect" parent="Base.Theme.JainConnect" />
 

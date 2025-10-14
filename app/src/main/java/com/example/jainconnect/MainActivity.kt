@@ -30,9 +30,13 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, MaharajLocationActivity::class.java))
         }
 
-        // Navigate to ProfileActivity
-        btnProfile.setOnClickListener {
-            startActivity(Intent(this, ProfileActivity::class.java))
+        // MainActivity.kt
+
+// For example, in a button's click listener:
+        val profileButton: Button = findViewById(R.id.btnGoToProfile)
+        profileButton.setOnClickListener {
+            val intent = Intent(this, ProfileActivity::class.java)
+            startActivity(intent)
         }
     }
 }
