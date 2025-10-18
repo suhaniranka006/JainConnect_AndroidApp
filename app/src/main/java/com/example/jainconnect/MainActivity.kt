@@ -12,10 +12,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // ------------------- Button Bindings -------------------
-        val btnTithis: Button = findViewById(R.id.btnGoToTithi)
-        val btnEvents: Button = findViewById(R.id.btnGoToEvents)
-        val btnMaharaj: Button = findViewById(R.id.btnGoToMaharajLocation)
-        val btnProfile: Button = findViewById(R.id.btnGoToProfile) // Profile button
+        val btnTithis: Button = findViewById(R.id.btnTithi)
+        val btnEvents: Button = findViewById(R.id.btnEvents)
+        val btnMaharaj: Button = findViewById(R.id.btnMonks)
+        val btnProfile: Button = findViewById(R.id.btnMe) // Profile button
 
         // ------------------- Button Click Listeners -------------------
         btnTithis.setOnClickListener {
@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         // MainActivity.kt
 
 // For example, in a button's click listener:
-        val profileButton: Button = findViewById(R.id.btnGoToProfile)
+        val profileButton: Button = findViewById(R.id.btnMe)
         profileButton.setOnClickListener {
             val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)

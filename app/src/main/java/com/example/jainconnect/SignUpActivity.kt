@@ -1,5 +1,3 @@
-// SignUpActivity.kt
-
 package com.example.jainconnect
 
 import android.app.DatePickerDialog
@@ -20,8 +18,12 @@ import java.util.Calendar
 class SignUpActivity : AppCompatActivity() {
 
     // --- UI Views ---
-    private lateinit var ivProfileImage: ImageView
-    private lateinit var btnSelectImage: Button
+    // FIX 1: Yeh ImageButton hai, ImageView nahi
+    private lateinit var ivProfileImage: ImageButton
+
+    // FIX 2: Yeh TextView hai, Button nahi
+    private lateinit var btnSelectImage: TextView
+
     private lateinit var etName: EditText
     private lateinit var etEmail: EditText
     private lateinit var etPassword: EditText
@@ -60,8 +62,10 @@ class SignUpActivity : AppCompatActivity() {
      * Saare UI elements ko unki ID se find karta hai.
      */
     private fun initializeViews() {
+        // Yeh lines ab aapke XML se match karti hain
         ivProfileImage = findViewById(R.id.ivProfileImage)
         btnSelectImage = findViewById(R.id.btnSelectImage)
+
         etName = findViewById(R.id.etName)
         etEmail = findViewById(R.id.etEmail)
         etPassword = findViewById(R.id.etPassword)
@@ -78,6 +82,12 @@ class SignUpActivity : AppCompatActivity() {
      * Saare buttons ke click events ko handle karta hai.
      */
     private fun setClickListeners() {
+
+        // FIX 3: Camera icon par bhi click listener add kar diya
+        ivProfileImage.setOnClickListener {
+            imagePickerLauncher.launch("image/*") // Gallery kholta hai
+        }
+
         btnSelectImage.setOnClickListener {
             imagePickerLauncher.launch("image/*") // Gallery kholta hai
         }

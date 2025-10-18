@@ -2,104 +2,272 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FAFAFA"
-    android:padding="16dp">
+    android:background="#FFFFFF"
+    tools:context=".MainActivity">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:paddingTop="32dp"
-        android:paddingBottom="32dp">
+        android:padding="20dp">
 
         <!-- App Title -->
         <TextView
+            android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="JainConnect"
+            android:text="JAINCONNECT"
+            android:textColor="@android:color/black"
             android:textSize="28sp"
-            android:textColor="#212121"
             android:textStyle="bold"
-            android:layout_marginBottom="32dp"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Tithis Button -->
+        <!-- Underline for the Title -->
+        <View
+            android:id="@+id/titleUnderline"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:background="@android:color/black"
+            app:layout_constraintEnd_toEndOf="@id/tvTitle"
+            app:layout_constraintStart_toStartOf="@id/tvTitle"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
+        <!-- Greeting and Tithi Card -->
         <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
+            android:id="@+id/cardGreeting"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:cardBackgroundColor="#E8EAF6"
             app:cardCornerRadius="16dp"
-            app:cardElevation="8dp"
-            android:layout_marginBottom="16dp">
+            app:cardElevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/titleUnderline">
 
-            <Button
-                android:id="@+id/btnGoToTithi"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Tithis"
-                android:textSize="18sp"
-                android:textColor="#FFFFFF"
-                android:backgroundTint="#3F51B5"
-                android:padding="14dp"/>
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tvGreeting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="JAI JINENDRA SUHANI!"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tvCurrentTithi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Today is ASHTAMI"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvGreeting" />
+
+                <!-- Sunrise Info -->
+                <ImageView
+                    android:id="@+id/ivSunrise"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="16dp"
+                    android:src="@drawable/ic_sunset"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvCurrentTithi"
+                    app:tint="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/tvSunriseTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="6:00 AM"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@id/ivSunrise"
+                    app:layout_constraintStart_toEndOf="@id/ivSunrise"
+                    app:layout_constraintTop_toTopOf="@id/ivSunrise" />
+
+                <!-- Sunset Info -->
+                <ImageView
+                    android:id="@+id/ivSunset"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_sunset"
+                    app:layout_constraintEnd_toStartOf="@id/tvSunsetTime"
+                    app:layout_constraintTop_toTopOf="@id/ivSunrise"
+                    android:layout_marginEnd="8dp"
+                    app:tint="@android:color/black"/>
+
+                <TextView
+                    android:id="@+id/tvSunsetTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="6:00 PM"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@id/ivSunset"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/ivSunset" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Events Button -->
-        <com.google.android.material.card.MaterialCardView
+        <!-- Menu Grid -->
+        <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp"
-            android:layout_marginBottom="16dp">
+            android:layout_marginTop="24dp"
+            android:columnCount="2"
+            app:layout_constraintTop_toBottomOf="@id/cardGreeting">
 
-            <Button
-                android:id="@+id/btnGoToEvents"
-                android:layout_width="match_parent"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnTithi"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Events"
-                android:textSize="18sp"
-                android:textColor="#FFFFFF"
-                android:backgroundTint="#FF5722"
-                android:padding="14dp"/>
-        </com.google.android.material.card.MaterialCardView>
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                android:text="TITHI"
+                app:icon="@drawable/ic_tithi"
 
-        <!-- Maharaj Location Button -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp"
-            android:layout_marginBottom="16dp">
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
+                app:cornerRadius="16dp"
+                app:iconGravity="textTop"
+                app:iconPadding="8dp"
+                android:textAllCaps="true"
+                android:textStyle="bold"
 
-            <Button
-                android:id="@+id/btnGoToMaharajLocation"
-                android:layout_width="match_parent"
+                android:backgroundTint="@android:color/white"
+                android:textColor="@android:color/black"
+                app:strokeColor="#5E7BFF"
+                app:strokeWidth="1.5dp"
+                app:iconTint="@android:color/black" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnHorizons"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Maharaj Location"
-                android:textSize="18sp"
-                android:textColor="#FFFFFF"
-                android:backgroundTint="#009688"
-                android:padding="14dp"/>
-        </com.google.android.material.card.MaterialCardView>
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                android:text="HORIZONS"
+                app:icon="@drawable/ic_horizons"
 
-        <!-- Profile Button -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp"
-            android:layout_marginTop="8dp">
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
+                app:cornerRadius="16dp"
+                app:iconGravity="textTop"
+                app:iconPadding="8dp"
+                android:textAllCaps="true"
+                android:textStyle="bold"
 
-            <Button
-                android:id="@+id/btnGoToProfile"
-                android:layout_width="match_parent"
+                android:backgroundTint="@android:color/white"
+                android:textColor="@android:color/black"
+                app:strokeColor="#5E7BFF"
+                app:strokeWidth="1.5dp"
+                app:iconTint="@android:color/black" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEvents"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Profile"
-                android:textSize="18sp"
-                android:textColor="#FFFFFF"
-                android:backgroundTint="#673AB7"
-                android:padding="14dp"/>
-        </com.google.android.material.card.MaterialCardView>
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                android:text="EVENTS"
+                app:icon="@drawable/ic_events"
 
-    </LinearLayout>
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
+                app:cornerRadius="16dp"
+                app:iconGravity="textTop"
+                app:iconPadding="8dp"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+
+                android:backgroundTint="@android:color/white"
+                android:textColor="@android:color/black"
+                app:strokeColor="#5E7BFF"
+                app:strokeWidth="1.5dp"
+                app:iconTint="@android:color/black" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnMonks"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                android:text="MONKS"
+                app:icon="@drawable/ic_monks"
+
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
+                app:cornerRadius="16dp"
+                app:iconGravity="textTop"
+                app:iconPadding="8dp"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+
+                android:backgroundTint="@android:color/white"
+                android:textColor="@android:color/black"
+                app:strokeColor="#5E7BFF"
+                app:strokeWidth="1.5dp"
+                app:iconTint="@android:color/black" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnMe"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                android:text="ME"
+                app:icon="@drawable/ic_me"
+
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
+                app:cornerRadius="16dp"
+                app:iconGravity="textTop"
+                app:iconPadding="8dp"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+
+                android:backgroundTint="@android:color/white"
+                android:textColor="@android:color/black"
+                app:strokeColor="#5E7BFF"
+                app:strokeWidth="1.5dp"
+                app:iconTint="@android:color/black" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnContact"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                android:text="CONTACT"
+                app:icon="@drawable/ic_contact"
+
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
+                app:cornerRadius="16dp"
+                app:iconGravity="textTop"
+                app:iconPadding="8dp"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+
+                android:backgroundTint="@android:color/white"
+                android:textColor="@android:color/black"
+                app:strokeColor="#5E7BFF"
+                app:strokeWidth="1.5dp"
+                app:iconTint="@android:color/black" />
+
+        </GridLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
