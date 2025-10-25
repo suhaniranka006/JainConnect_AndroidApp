@@ -2,7 +2,8 @@ package com.example.jainconnect
 
 import android.os.Bundle
 import android.widget.Button
-import android.widget.SearchView
+// import android.widget.SearchView  <-- OLD, INCORRECT IMPORT
+import androidx.appcompat.widget.SearchView // <-- NEW, CORRECT IMPORT
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -21,6 +22,7 @@ class EventActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // This layout file ID must match your XML file name
         setContentView(R.layout.activity_events)
 
         // -------------------- ViewModel Setup --------------------
@@ -85,6 +87,7 @@ class EventActivity : AppCompatActivity() {
         }
 
         // -------------------- SearchView Filter --------------------
+        // This line (88) will now work correctly with the new import
         findViewById<SearchView>(R.id.searchView).setOnQueryTextListener(object :
             SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?) = true
