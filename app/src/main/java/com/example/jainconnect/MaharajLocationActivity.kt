@@ -4,7 +4,8 @@ import android.app.DatePickerDialog
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import android.widget.SearchView
+// import android.widget.SearchView // <-- OLD, INCORRECT IMPORT
+import androidx.appcompat.widget.SearchView // <-- NEW, CORRECT IMPORT
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -26,13 +27,14 @@ class MaharajLocationActivity : AppCompatActivity() {
     private lateinit var maharajAdapter: MaharajAdapter
     private lateinit var recyclerViewMaharaj: RecyclerView
     private lateinit var buttonSelectCity: Button
-    private lateinit var buttonSelectDate: Button
+    // private lateinit var buttonSelectDate: Button // This was commented out, which is fine
 
     private var selectedCity: String? = null
     private var selectedDate: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Make sure this layout name matches your XML file
         setContentView(R.layout.activity_maharaj_location)
 
         recyclerViewMaharaj = findViewById(R.id.recyclerViewMaharaj)
@@ -52,6 +54,7 @@ class MaharajLocationActivity : AppCompatActivity() {
         viewModel.fetchMaharaj()
 
         // Search functionality
+        // This line will now work correctly with the new import
         val searchView: SearchView = findViewById(R.id.searchViewMaharaj)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?) = true
