@@ -3,6 +3,7 @@ package com.example.jainconnect
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
@@ -16,6 +17,8 @@ class MainActivity : AppCompatActivity() {
         val btnEvents: Button = findViewById(R.id.btnEvents)
         val btnMaharaj: Button = findViewById(R.id.btnMonks)
         val btnProfile: Button = findViewById(R.id.btnMe) // Profile button
+        val btnHorizon: Button = findViewById(R.id.btnHorizons)
+        val btnContact: Button = findViewById(R.id.btnContact)
 
         // ------------------- Button Click Listeners -------------------
         btnTithis.setOnClickListener {
@@ -29,6 +32,17 @@ class MainActivity : AppCompatActivity() {
         btnMaharaj.setOnClickListener {
             startActivity(Intent(this, MaharajLocationActivity::class.java))
         }
+
+
+        btnHorizon.setOnClickListener {
+            Toast.makeText(this, "COMING SOON", Toast.LENGTH_SHORT).show()
+        }
+
+        btnContact.setOnClickListener {
+            Toast.makeText(this, "COMING SOON", Toast.LENGTH_SHORT).show()
+        }
+
+
 
         // MainActivity.kt
 
