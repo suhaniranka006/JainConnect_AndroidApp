@@ -6,7 +6,8 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.LinearLayout
+// import android.widget.LinearLayout // <-- OLD, INCORRECT IMPORT
+import androidx.constraintlayout.widget.ConstraintLayout // <-- NEW, CORRECT IMPORT
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -14,13 +15,16 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
-import com.example.jainconnect.databinding.ActivityProfileBinding
+// import com.example.jainconnect.databinding.ActivityProfileBinding // This line was in your file but not used, so it's safe to keep or remove
 
 class ProfileActivity : AppCompatActivity() {
 
     private lateinit var viewModel: JainViewModel
     private lateinit var progressBar: ProgressBar
-    private lateinit var profileContent: LinearLayout
+
+    // FIX: Changed from LinearLayout to ConstraintLayout
+    private lateinit var profileContent: ConstraintLayout
+
     private lateinit var ivUserProfile: ImageView
     private lateinit var tvProfileName: TextView
     private lateinit var tvProfileEmail: TextView
@@ -61,8 +65,8 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
-        super.onResume()
-        fetchData() // Jab bhi screen par waapas aayein, data fetch karein
+        super.onResume() // <-- CORRECTED
+        fetchData()
     }
 
     private fun fetchData() {
@@ -81,7 +85,10 @@ class ProfileActivity : AppCompatActivity() {
     private fun initializeViews() {
         // ... findViewById for all views ...
         progressBar = findViewById(R.id.profileProgressBar)
+
+        // This line will now work correctly
         profileContent = findViewById(R.id.profileContent)
+
         ivUserProfile = findViewById(R.id.ivUserProfile)
         tvProfileName = findViewById(R.id.tvProfileName)
         tvProfileEmail = findViewById(R.id.tvProfileEmail)
