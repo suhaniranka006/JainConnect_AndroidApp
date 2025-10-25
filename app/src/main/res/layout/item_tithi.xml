@@ -1,35 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:background="?android:attr/selectableItemBackground">
+    android:layout_marginHorizontal="4dp"
+    android:layout_marginVertical="6dp"
 
-    <TextView
-        android:id="@+id/tvTithiName"
-        android:layout_width="wrap_content"
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp"
+    app:strokeColor="#5E7BFF"
+    app:strokeWidth="1.5dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
-        tools:text="Tithi Name/Title"/> <!-- Use tools:text for preview -->
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="?android:attr/selectableItemBackground">
 
-    <TextView
-        android:id="@+id/tvTithiDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="14sp"
-        tools:text="Date"
-        android:layout_marginTop="4dp"/>
+        <TextView
+            android:id="@+id/tvTithiName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            tools:text="Tithi Name/Title"/>
 
-    <TextView
-        android:id="@+id/tvTithiDescription"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="14sp"
-        tools:text="Tithi Description or Details"
-        android:layout_marginTop="4dp"></TextView>
+        <TextView
+            android:id="@+id/tvTithiDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            tools:text="Date"
+            android:layout_marginTop="4dp"/>
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/tvTithiDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            tools:text="Tithi Description or Details"
+            android:layout_marginTop="4dp" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
