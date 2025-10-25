@@ -1,111 +1,244 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:background="@android:color/white"
+    android:fillViewport="true"
+    tools:context=".EditProfileActivity">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="24dp">
 
-        <ImageView
-            android:id="@+id/ivEditProfile"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_gravity="center_horizontal"
-            android:scaleType="centerCrop"
-            android:contentDescription="Profile Image" />
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardEditProfile"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="32dp"
+            app:cardCornerRadius="60dp"
+            app:cardElevation="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <Button
+            <ImageView
+                android:id="@+id/ivEditProfile"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="Profile Image"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_launcher_background"
+                tools:srcCompat="@tools:sample/avatars" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
             android:id="@+id/btnChangeImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="Change Image" />
+            android:layout_marginTop="8dp"
+            android:padding="8dp"
+            android:text="Change Image"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cardEditProfile" />
 
         <TextView
-            android:text="Email (Cannot be changed)"
-            android:layout_marginTop="16dp"
+            android:id="@+id/labelEmail"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="24dp"
+            android:text="Email"
+            android:textColor="@android:color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnChangeImage" />
+
         <EditText
             android:id="@+id/etEditEmail"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="32dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_edit_rounded_light"
             android:enabled="false"
-            android:focusable="false" />
+            android:focusable="false"
+            android:gravity="center"
+            android:padding="14dp"
+            android:textColor="@android:color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/labelEmail"
+            tools:text="suhaniranka964@gmail.com" />
 
         <TextView
-            android:text="Name"
-            android:layout_marginTop="8dp"
+            android:id="@+id/labelName"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:text="Name"
+            android:textColor="@android:color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/etEditEmail" />
+
         <EditText
             android:id="@+id/etEditName"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName" />
+            android:layout_marginHorizontal="32dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_edit_rounded_light"
+            android:gravity="center"
+            android:inputType="textPersonName"
+            android:padding="14dp"
+            android:textColor="@android:color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/labelName"
+            tools:text="Suhani Ranka" />
 
         <TextView
-            android:text="Phone Number"
-            android:layout_marginTop="8dp"
+            android:id="@+id/labelPhone"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:text="Phone"
+            android:textColor="@android:color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/etEditName" />
+
         <EditText
             android:id="@+id/etEditPhone"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:inputType="phone" />
+            android:layout_marginHorizontal="32dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_edit_rounded_light"
+            android:gravity="center"
+            android:inputType="phone"
+            android:padding="14dp"
+            android:textColor="@android:color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/labelPhone"
+            tools:text="7851976119" />
 
         <TextView
-            android:text="Location"
-            android:layout_marginTop="8dp"
+            android:id="@+id/labelLocation"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:text="Location"
+            android:textColor="@android:color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/etEditPhone" />
+
         <EditText
             android:id="@+id/etEditLocation"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:inputType="text" />
+            android:layout_marginHorizontal="32dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_edit_rounded_light"
+            android:gravity="center"
+            android:inputType="text"
+            android:padding="14dp"
+            android:textColor="@android:color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/labelLocation"
+            tools:text="Udaipur" />
 
         <TextView
-            android:text="Date of Birth"
-            android:layout_marginTop="8dp"
+            android:id="@+id/labelDob"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:text="Date of birth"
+            android:textColor="@android:color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/etEditLocation" />
+
         <EditText
             android:id="@+id/etEditDob"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Click to select date"
+            android:layout_marginHorizontal="32dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_edit_rounded_light"
+            android:clickable="true"
             android:focusable="false"
-            android:clickable="true" />
+            android:gravity="center"
+            android:hint="Click to select date"
+            android:padding="14dp"
+            android:textColor="@android:color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/labelDob"
+            tools:text="2006-02-01" />
 
         <TextView
-            android:text="Gender"
-            android:layout_marginTop="8dp"
+            android:id="@+id/labelGender"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:text="Gender"
+            android:textColor="@android:color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/etEditDob" />
+
         <EditText
             android:id="@+id/etEditGender"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:inputType="text" />
+            android:layout_marginHorizontal="32dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_edit_rounded_light"
+            android:gravity="center"
+            android:inputType="text"
+            android:padding="14dp"
+            android:textColor="@android:color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/labelGender"
+            tools:text="Female" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSaveChanges"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="32dp"
             android:layout_marginTop="24dp"
-            android:text="Save Changes" />
+            android:layout_marginBottom="32dp"
+            android:paddingVertical="12dp"
+            android:text="Save Changes"
+            android:textColor="@android:color/white"
+            app:backgroundTint="#A0C4FF"
+            app:cornerRadius="30dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/etEditGender" />
 
         <ProgressBar
             android:id="@+id/editProfileProgress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"/>
-    </LinearLayout>
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

@@ -6,7 +6,12 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.*
+import android.widget.Button // This is fine, it's used for btnSaveChanges
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.TextView // <-- Make sure this import is here
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -20,13 +25,16 @@ class EditProfileActivity : AppCompatActivity() {
 
     // ✅ FIX: Saare UI elements declare kiye gaye hain
     private lateinit var ivEditProfile: ImageView
-    private lateinit var btnChangeImage: Button
+
+    // FIX: Changed from Button to TextView to match the new XML layout
+    private lateinit var btnChangeImage: TextView
+
     private lateinit var etEditEmail: EditText
     private lateinit var etEditName: EditText
     private lateinit var etEditPhone: EditText
     private lateinit var etEditLocation: EditText
     private lateinit var etEditDob: EditText
-    private lateinit var etEditGender: EditText // Assuming you have an EditText for gender
+    private lateinit var etEditGender: EditText
     private lateinit var btnSaveChanges: Button
     private lateinit var editProfileProgress: ProgressBar
 
@@ -56,10 +64,13 @@ class EditProfileActivity : AppCompatActivity() {
     // ✅ FIX: initializeViews() function add kiya gaya hai
     private fun initializeViews() {
         ivEditProfile = findViewById(R.id.ivEditProfile)
+
+        // This line will now work correctly
         btnChangeImage = findViewById(R.id.btnChangeImage)
+
         etEditEmail = findViewById(R.id.etEditEmail)
         etEditName = findViewById(R.id.etEditName)
-        etEditPhone = findViewById(R.id.etEditPhone) // Assuming you have these IDs in your XML
+        etEditPhone = findViewById(R.id.etEditPhone)
         etEditLocation = findViewById(R.id.etEditLocation)
         etEditDob = findViewById(R.id.etEditDob)
         etEditGender = findViewById(R.id.etEditGender)
