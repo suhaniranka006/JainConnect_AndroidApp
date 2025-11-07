@@ -10,6 +10,10 @@ import androidx.recyclerview.widget.RecyclerView
  * Adapter class for displaying Event items in a RecyclerView.
  * Each item displays name, date/time, location, and optional description.
  */
+
+
+//factory worker that connects data to recyclerview
+//extends recyclerview.adpater
 class EventAdapter(
     private var eventList: List<Event> // List of events to display
 ) : RecyclerView.Adapter<EventAdapter.EventViewHolder>() {
@@ -18,6 +22,9 @@ class EventAdapter(
      * ViewHolder class for Event items.
      * Holds references to the views for each item in the RecyclerView.
      */
+
+
+    //cache holds references to textviews from item_event.xml
     class EventViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvEventName: TextView = itemView.findViewById(R.id.tvEventName)
         val tvEventDateTime: TextView = itemView.findViewById(R.id.tvEventDateTime)
@@ -51,7 +58,7 @@ class EventAdapter(
         // Handle optional description
         if (!event.description.isNullOrEmpty()) {
             holder.tvEventDescription.text = event.description
-            holder.tvEventDescription.visibility = View.VISIBLE
+            holder.tvEventDescription.visibility = View.VISIBLE //only visible when its not null
         } else {
             holder.tvEventDescription.visibility = View.GONE
         }

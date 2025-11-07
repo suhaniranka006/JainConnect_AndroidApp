@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onCreate(savedInstanceState) //used to restore activity,s state after is has beed destroyed and recreated
         setContentView(R.layout.activity_main)
 
         // ------------------- Button Bindings -------------------

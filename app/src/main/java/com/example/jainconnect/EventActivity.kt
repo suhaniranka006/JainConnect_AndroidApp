@@ -25,16 +25,25 @@ class EventActivity : AppCompatActivity() {
         // This layout file ID must match your XML file name
         setContentView(R.layout.activity_events)
 
+
+
         // -------------------- ViewModel Setup --------------------
         viewModel = ViewModelProvider(this)[JainViewModel::class.java]
 
+
+
+
         // -------------------- RecyclerView Setup --------------------
         recyclerViewEvents = findViewById(R.id.recyclerViewEvents)
-        recyclerViewEvents.layoutManager = LinearLayoutManager(this) // Vertical list
-        eventAdapter = EventAdapter(emptyList())                    // Initially empty
-        recyclerViewEvents.adapter = eventAdapter
+        recyclerViewEvents.layoutManager = LinearLayoutManager(this) // Vertical list - infalte the items from top to bottom
+
+        eventAdapter = EventAdapter(emptyList())      //initially empty list                // Initially empty
+        recyclerViewEvents.adapter = eventAdapter //assigns adaptter to recylcerview items
+
+
 
         // -------------------- Observe LiveData --------------------
+        //observes evetnlist(livedata) inside viewmodel
         viewModel.eventList.observe(this) { events ->
             eventAdapter.updateData(events) // Update RecyclerView when data changes
         }

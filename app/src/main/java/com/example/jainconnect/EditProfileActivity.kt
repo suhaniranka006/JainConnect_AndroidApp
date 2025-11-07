@@ -101,7 +101,7 @@ class EditProfileActivity : AppCompatActivity() {
     }
 
     private fun handleSaveChanges() {
-        // ... (Aapka pehle ka code, bilkul sahi hai)
+
         val name = etEditName.text.toString().trim()
         val phone = etEditPhone.text.toString().trim()
         val location = etEditLocation.text.toString().trim()

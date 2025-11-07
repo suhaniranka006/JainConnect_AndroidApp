@@ -84,6 +84,8 @@ class LoginActivity : AppCompatActivity() {
 
     // LoginActivity.kt
 // ...
+
+    //checks if response if successful
     private fun observeLoginResult() {
         viewModel.loginResult.observe(this) { response ->
             loginProgressBar.visibility = View.GONE
@@ -119,6 +121,8 @@ class LoginActivity : AppCompatActivity() {
     }
 // ...
 
+
+    //on success , it saves the received token to shredprefrernces , this is how app will remeber the user is logged in
     private fun saveAuthToken(token: String) {
         val sharedPref = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE) ?: return
         with(sharedPref.edit()) {

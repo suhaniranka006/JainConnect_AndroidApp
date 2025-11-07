@@ -6,6 +6,8 @@ data class Event(
     // Assuming 'id' is not provided by this specific API endpoint for events.
     // If you need an ID client-side, you might generate it or get it from elsewhere.
     // For now, making it nullable as it's not in the JSON.
+
+    //maps json keys to kotlin property names
     @SerializedName("id") // If your JSON *might* someday have an 'id'
     val id: String? = null,
 

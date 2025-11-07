@@ -115,7 +115,6 @@ class SignUpActivity : AppCompatActivity() {
 
                 //shared prefernce
 
-                // --- CHANGES HERE ---
                 // 1. Session ko 'logged in' set karein
                 val session = SessionManager(this)
                 session.saveLoginStatus(true)

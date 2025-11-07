@@ -29,6 +29,7 @@ class TithiAdapter(private var tithiList: List<Tithi>) :
     /**
      * Called when RecyclerView needs a new ViewHolder of the given type to represent an item.
      */
+    //called when new row needs to be created
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TithiViewHolder {
         Log.d(TAG, "onCreateViewHolder called")
         val view = LayoutInflater.from(parent.context)

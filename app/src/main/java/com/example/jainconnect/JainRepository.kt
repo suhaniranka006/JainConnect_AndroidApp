@@ -8,6 +8,10 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Response
 import java.io.File
 
+
+
+//repo is used to abstract data resource , used as mediator bw rest of the app and data resource
+//useful for decoupling,single source of truth, testability
 class JainRepository {
 
     // --- Tithi, Event, Maharaj Functions ---
@@ -15,14 +19,17 @@ class JainRepository {
     suspend fun getEvents(): List<Event> = RetrofitInstance.api.getEvents()
     suspend fun getMaharaj(): List<Maharaj> = RetrofitInstance.api.getMaharaj()
 
+
+
+
     // --- User Authentication Functions ---
 
     suspend fun registerUser(
         name: String, email: String, password: String, phone: String,
         location: String, dob: String, gender: String, imageFile: File?
     ): Response<AuthResponse> {
-        val partsMap = mutableMapOf<String, RequestBody>()
-        partsMap["name"] = name.toRequestBody("text/plain".toMediaTypeOrNull())
+        val partsMap = mutableMapOf<String, RequestBody>()  //mutable map to hold everything that i need to send in multipart request
+        partsMap["name"] = name.toRequestBody("text/plain".toMediaTypeOrNull())   //convert string into request body object which retrofit needs
         partsMap["email"] = email.toRequestBody("text/plain".toMediaTypeOrNull())
         partsMap["password"] = password.toRequestBody("text/plain".toMediaTypeOrNull())
         partsMap["gender"] = gender.toRequestBody("text/plain".toMediaTypeOrNull())
@@ -37,31 +44,48 @@ class JainRepository {
             partsMap["dob"] = dob.toRequestBody("text/plain".toMediaTypeOrNull())
         }
 
+
+        //handles image part
         val imagePart: MultipartBody.Part? = imageFile?.let {
             val requestFile = it.asRequestBody("image/*".toMediaTypeOrNull())
             MultipartBody.Part.createFormData("profileImage", it.name, requestFile)
         }
 
+
+        //calls api and pass parts and imagepart
         return RetrofitInstance.api.registerUser(
             parts = partsMap,
             profileImage = imagePart
         )
     }
 
+
+
+
+
+    //ask for login credentials and do api calls
     suspend fun loginUser(email: String, password: String): Response<AuthResponse> {
         val loginRequest = LoginRequest(email = email, password = password)
         return RetrofitInstance.api.loginUser(loginRequest)
     }
 
+
+    //it asks for bearer token from api and then authneticate and gives realted profile
     suspend fun getUserProfile(token: String): Response<AuthResponse> {
         return RetrofitInstance.api.getUserProfile("Bearer $token")
     }
 
+
+
+
+    //works similar with register user but it also passes bearer token for auth
     suspend fun updateUserProfile(
         token: String, name: String, phone: String, location: String,
         dob: String, gender: String, imageFile: File?
     ): Response<AuthResponse> {
         val partsMap = mutableMapOf<String, RequestBody>()
+
+        //we are using nonempty so that only the part we are updating will go to backened, helpe to avoid override existing data to empty string
         if (name.isNotEmpty()) partsMap["name"] = name.toRequestBody("text/plain".toMediaTypeOrNull())
         if (phone.isNotEmpty()) partsMap["phone"] = phone.toRequestBody("text/plain".toMediaTypeOrNull())
         if (location.isNotEmpty()) partsMap["location"] = location.toRequestBody("text/plain".toMediaTypeOrNull())

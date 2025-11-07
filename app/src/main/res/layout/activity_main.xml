@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!--
+scroll view is used to ensure it content is too tall for small phone screen , then user can scroll down to see all buttons
+-->
+
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -25,6 +30,9 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+
+        <!-- view is used for line
+        -->
         <View
             android:id="@+id/titleUnderline"
             android:layout_width="0dp"
@@ -42,9 +50,11 @@
             app:cardBackgroundColor="@color/lightest_saffron"
             app:cardCornerRadius="16dp"
             app:cardElevation="4dp"
+
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/titleUnderline">
+
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
