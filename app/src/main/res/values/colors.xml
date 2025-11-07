@@ -1,7 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Your main saffron color -->
+    <color name="saffron">#FF9933</color>
+
+    <!-- A slightly darker saffron for the status bar, etc. -->
+    <color name="saffron_dark">#E68A2E</color>
+
+    <!-- The light saffron you requested for secondary elements -->
+    <color name="saffron_light">#FFE7CC</color>
+
+    <!-- White text to be used on top of saffron buttons for contrast -->
+    <color name="text_on_saffron">#FF000000</color>
+
+    <!-- Your existing default colors (leave these) -->
     <color name="black">#FF000000</color>
-    <color name="white">#F6F6F6</color>
-<color name="purple_500">#E08686</color>
-    <color name="blue">#8CD3DC</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="lightest_saffron">#fff4e9</color>
+
+
+    <!-- ... other colors ... -->
+
+
+    <!-- Define specific colors for Dark Mode -->
+
+    <!-- Standard dark background (nearly black) -->
+    <color name="app_background_dark">#121212</color>
+
+    <!-- Slightly lighter dark for surfaces like cards, dialogs -->
+    <color name="surface_dark">#1E1E1E</color>
+
+    <!-- Standard text color for dark backgrounds (light gray/off-white) -->
+    <color name="text_on_dark">#E0E0E0</color>
+
+    <!-- ADDED: A medium gray color specifically for hint text -->
+    <color name="text_on_dark_secondary">#9E9E9E</color>
 </resources>
+

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/saffron_light"
     tools:context=".MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -15,11 +15,12 @@
 
         <TextView
             android:id="@+id/tvTitle"
+            android:layout_marginTop="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="JAINCONNECT"
-            android:textColor="@android:color/black"
-            android:textSize="28sp"
+            android:textColor="@color/saffron_dark"
+            android:textSize="35dp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -28,7 +29,7 @@
             android:id="@+id/titleUnderline"
             android:layout_width="0dp"
             android:layout_height="2dp"
-            android:background="@android:color/black"
+            android:background="@color/saffron_dark"
             app:layout_constraintEnd_toEndOf="@id/tvTitle"
             app:layout_constraintStart_toStartOf="@id/tvTitle"
             app:layout_constraintTop_toBottomOf="@id/tvTitle" />
@@ -37,8 +38,8 @@
             android:id="@+id/cardGreeting"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            app:cardBackgroundColor="#E8EAF6"
+            android:layout_marginTop="40dp"
+            app:cardBackgroundColor="@color/lightest_saffron"
             app:cardCornerRadius="16dp"
             app:cardElevation="4dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -47,7 +48,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="128dp"
                 android:padding="16dp">
 
                 <TextView
@@ -97,11 +98,11 @@
                     android:id="@+id/ivSunset"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:layout_marginEnd="8dp"
                     android:src="@drawable/ic_sunset"
                     app:layout_constraintEnd_toStartOf="@id/tvSunsetTime"
                     app:layout_constraintTop_toTopOf="@id/ivSunrise"
-                    android:layout_marginEnd="8dp"
-                    app:tint="@null"/>
+                    app:tint="@null" />
 
                 <TextView
                     android:id="@+id/tvSunsetTime"
@@ -118,13 +119,14 @@
         </com.google.android.material.card.MaterialCardView>
 
         <GridLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_width="368dp"
+            android:layout_height="433dp"
+            android:layout_marginTop="35dp"
             android:columnCount="2"
-            app:layout_constraintTop_toBottomOf="@id/cardGreeting"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/cardGreeting">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnTithi"
@@ -132,20 +134,21 @@
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
                 android:layout_margin="8dp"
-                android:text="TITHI"
-                app:icon="@drawable/ic_tithi"
-                app:iconSize="36dp"
-                app:iconTint="@null" android:paddingTop="20dp"
+                android:backgroundTint="@android:color/white"
+                android:paddingTop="20dp"
                 android:paddingBottom="20dp"
+                android:text="TITHI"
+                android:textAllCaps="true"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
                 app:cornerRadius="16dp"
+                app:icon="@drawable/ic_tithi"
                 app:iconGravity="textTop"
                 app:iconPadding="8dp"
-                android:textAllCaps="true"
-                android:textStyle="bold"
 
-                android:backgroundTint="@android:color/white"
-                android:textColor="@android:color/black"
-                app:strokeColor="#5E7BFF"
+                app:iconSize="36dp"
+                app:iconTint="@null"
+                app:strokeColor="@color/saffron_dark"
                 app:strokeWidth="1.5dp" />
 
             <com.google.android.material.button.MaterialButton
@@ -154,21 +157,22 @@
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
                 android:layout_margin="8dp"
-                android:text="HORIZONS"
-                app:icon="@drawable/ic_horizons"
-                app:iconSize="36dp"
-                app:iconTint="@null" android:paddingTop="20dp"
+                android:backgroundTint="@android:color/white"
+                android:paddingTop="20dp"
                 android:paddingBottom="20dp"
+                android:text="HORIZONS"
+                android:textAllCaps="true"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
                 app:cornerRadius="16dp"
+                app:icon="@drawable/ic_horizons"
                 app:iconGravity="textTop"
                 app:iconPadding="8dp"
-                android:textAllCaps="true"
-                android:textStyle="bold"
 
-                android:backgroundTint="@android:color/white"
-                android:textColor="@android:color/black"
-                app:strokeColor="#5E7BFF"
-                app:strokeWidth="1.5dp"/>
+                app:iconSize="36dp"
+                app:iconTint="@null"
+                app:strokeColor="@color/saffron_dark"
+                app:strokeWidth="1.5dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnEvents"
@@ -176,20 +180,21 @@
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
                 android:layout_margin="8dp"
-                android:text="EVENTS"
-                app:icon="@drawable/ic_events"
-                app:iconSize="36dp"
-                app:iconTint="@null" android:paddingTop="20dp"
+                android:backgroundTint="@android:color/white"
+                android:paddingTop="20dp"
                 android:paddingBottom="20dp"
+                android:text="EVENTS"
+                android:textAllCaps="true"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
                 app:cornerRadius="16dp"
+                app:icon="@drawable/ic_events"
                 app:iconGravity="textTop"
                 app:iconPadding="8dp"
-                android:textAllCaps="true"
-                android:textStyle="bold"
 
-                android:backgroundTint="@android:color/white"
-                android:textColor="@android:color/black"
-                app:strokeColor="#5E7BFF"
+                app:iconSize="36dp"
+                app:iconTint="@null"
+                app:strokeColor="@color/saffron_dark"
                 app:strokeWidth="1.5dp" />
 
             <com.google.android.material.button.MaterialButton
@@ -198,20 +203,21 @@
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
                 android:layout_margin="8dp"
-                android:text="MONKS"
-                app:icon="@drawable/ic_monks"
-                app:iconSize="36dp"
-                app:iconTint="@null" android:paddingTop="20dp"
+                android:backgroundTint="@android:color/white"
+                android:paddingTop="20dp"
                 android:paddingBottom="20dp"
+                android:text="MONKS"
+                android:textAllCaps="true"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
                 app:cornerRadius="16dp"
+                app:icon="@drawable/ic_monks"
                 app:iconGravity="textTop"
                 app:iconPadding="8dp"
-                android:textAllCaps="true"
-                android:textStyle="bold"
 
-                android:backgroundTint="@android:color/white"
-                android:textColor="@android:color/black"
-                app:strokeColor="#5E7BFF"
+                app:iconSize="36dp"
+                app:iconTint="@null"
+                app:strokeColor="@color/saffron_dark"
                 app:strokeWidth="1.5dp" />
 
             <com.google.android.material.button.MaterialButton
@@ -220,20 +226,21 @@
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
                 android:layout_margin="8dp"
-                android:text="ME"
-                app:icon="@drawable/ic_me"
-                app:iconSize="36dp"
-                app:iconTint="@null" android:paddingTop="20dp"
+                android:backgroundTint="@android:color/white"
+                android:paddingTop="20dp"
                 android:paddingBottom="20dp"
+                android:text="ME"
+                android:textAllCaps="true"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
                 app:cornerRadius="16dp"
+                app:icon="@drawable/ic_me"
                 app:iconGravity="textTop"
                 app:iconPadding="8dp"
-                android:textAllCaps="true"
-                android:textStyle="bold"
 
-                android:backgroundTint="@android:color/white"
-                android:textColor="@android:color/black"
-                app:strokeColor="#5E7BFF"
+                app:iconSize="36dp"
+                app:iconTint="@null"
+                app:strokeColor="@color/saffron_dark"
                 app:strokeWidth="1.5dp" />
 
             <com.google.android.material.button.MaterialButton
@@ -242,20 +249,21 @@
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
                 android:layout_margin="8dp"
-                android:text="CONTACT"
-                app:icon="@drawable/ic_contact"
-                app:iconSize="36dp"
-                app:iconTint="@null" android:paddingTop="20dp"
+                android:backgroundTint="@android:color/white"
+                android:paddingTop="20dp"
                 android:paddingBottom="20dp"
+                android:text="CONTACT"
+                android:textAllCaps="true"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
                 app:cornerRadius="16dp"
+                app:icon="@drawable/ic_contact"
                 app:iconGravity="textTop"
                 app:iconPadding="8dp"
-                android:textAllCaps="true"
-                android:textStyle="bold"
 
-                android:backgroundTint="@android:color/white"
-                android:textColor="@android:color/black"
-                app:strokeColor="#5E7BFF"
+                app:iconSize="36dp"
+                app:iconTint="@null"
+                app:strokeColor="@color/saffron_dark"
                 app:strokeWidth="1.5dp" />
         </GridLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

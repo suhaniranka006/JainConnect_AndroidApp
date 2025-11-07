@@ -11,7 +11,7 @@
     app:cardBackgroundColor="@android:color/white"
     app:cardCornerRadius="16dp"
     app:cardElevation="0dp"
-    app:strokeColor="#5E7BFF"
+    app:strokeColor="@color/saffron_dark"
     app:strokeWidth="1.5dp">
 
     <LinearLayout
@@ -36,6 +36,7 @@
             android:layout_height="wrap_content"
             android:textSize="14sp"
             tools:text="Date"
+            android:textColor="@color/black"
             android:layout_marginTop="4dp"/>
 
         <TextView
@@ -44,6 +45,7 @@
             android:layout_height="wrap_content"
             android:textSize="14sp"
             tools:text="Tithi Description or Details"
+            android:textColor="@color/black"
             android:layout_marginTop="4dp" />
 
     </LinearLayout>
