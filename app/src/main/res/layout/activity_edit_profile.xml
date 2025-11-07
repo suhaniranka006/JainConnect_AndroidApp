@@ -215,11 +215,12 @@
             app:layout_constraintTop_toBottomOf="@id/labelGender"
             tools:text="Female" />
 
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSaveChanges"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="32dp"
+            android:layout_marginStart="32dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="32dp"
             android:paddingVertical="12dp"
@@ -228,9 +229,28 @@
             app:backgroundTint="@color/saffron_dark"
             app:cornerRadius="30dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/etEditGender" />
+            app:layout_constraintTop_toBottomOf="@id/etEditGender"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLogout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="32dp"
+            android:paddingVertical="12dp"
+            android:text="Logout"
+            android:textColor="@color/text_on_saffron"
+            app:backgroundTint="@color/design_default_color_error"
+            app:cornerRadius="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/btnSaveChanges" />
+
+
+
+
+
+
 
         <ProgressBar
             android:id="@+id/editProfileProgress"

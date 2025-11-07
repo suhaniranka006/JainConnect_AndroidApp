@@ -51,6 +51,9 @@ class LoginActivity : AppCompatActivity() {
     private fun setClickListeners() {
         btnLogin.setOnClickListener {
             handleLogin()
+
+
+
         }
 
         tvGoToSignUp.setOnClickListener {
@@ -79,36 +82,42 @@ class LoginActivity : AppCompatActivity() {
         viewModel.performLogin(email, password)
     }
 
+    // LoginActivity.kt
+// ...
     private fun observeLoginResult() {
         viewModel.loginResult.observe(this) { response ->
             loginProgressBar.visibility = View.GONE
 
-            if (response == null) {
-                Toast.makeText(this, "Network error. Please try again.", Toast.LENGTH_LONG).show()
-                return@observe
-            }
+            // ... (Network error handling) ...
 
-            if (response.isSuccessful && response.body()?.success == true) {
+            if (response!!.isSuccessful && response.body()?.success == true) {
                 // Login successful hua
                 Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
 
                 // Token save karein
-                response.body()?.token?.let { saveAuthToken(it) }
+                response?.body()?.token?.let { saveAuthToken(it) }
+
+
+
+                //shared prefernce
+                // --- YAHAN PAR SESSION SAVE KAREIN ---
+                val session = SessionManager(this)
+                session.saveLoginStatus(true)
+                // ------------------------------------
 
                 // MainActivity par jaayein
                 val intent = Intent(this, MainActivity::class.java)
-                // Back stack clear karein taaki user back button se login screen par na aa sake
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
-                finish() // LoginActivity ko band kar dein
+                finish()
 
             } else {
-                // Login fail hua (galat password ya email)
-                val errorMessage = response.body()?.message ?: "Invalid email or password"
-                Toast.makeText(this, "Login Failed: $errorMessage", Toast.LENGTH_LONG).show()
+                // Login fail hua
+                // ...
             }
         }
     }
+// ...
 
     private fun saveAuthToken(token: String) {
         val sharedPref = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE) ?: return

@@ -18,16 +18,11 @@ import java.util.Calendar
 class SignUpActivity : AppCompatActivity() {
 
     // --- UI Views ---
-    // FIX 1: Yeh ImageButton hai, ImageView nahi
     private lateinit var ivProfileImage: ImageButton
-
-    // FIX 2: Yeh TextView hai, Button nahi
     private lateinit var btnSelectImage: TextView
-
     private lateinit var etName: EditText
     private lateinit var etEmail: EditText
     private lateinit var etPassword: EditText
-    // private lateinit var etConfirmPassword: EditText // REMOVED
     private lateinit var etPhone: EditText
     private lateinit var etLocation: EditText
     private lateinit var etDob: EditText
@@ -62,14 +57,11 @@ class SignUpActivity : AppCompatActivity() {
      * Saare UI elements ko unki ID se find karta hai.
      */
     private fun initializeViews() {
-        // Yeh lines ab aapke XML se match karti hain
         ivProfileImage = findViewById(R.id.ivProfileImage)
         btnSelectImage = findViewById(R.id.btnSelectImage)
-
         etName = findViewById(R.id.etName)
         etEmail = findViewById(R.id.etEmail)
         etPassword = findViewById(R.id.etPassword)
-        // etConfirmPassword = findViewById(R.id.etConfirmPassword) // REMOVED
         etPhone = findViewById(R.id.etPhone)
         etLocation = findViewById(R.id.etLocation)
         etDob = findViewById(R.id.etDob)
@@ -82,8 +74,6 @@ class SignUpActivity : AppCompatActivity() {
      * Saare buttons ke click events ko handle karta hai.
      */
     private fun setClickListeners() {
-
-        // FIX 3: Camera icon par bhi click listener add kar diya
         ivProfileImage.setOnClickListener {
             imagePickerLauncher.launch("image/*") // Gallery kholta hai
         }
@@ -114,16 +104,37 @@ class SignUpActivity : AppCompatActivity() {
             }
 
             if (response.isSuccessful && response.body()?.success == true) {
+                // Signup successful hua
                 val token = response.body()?.token
                 if (token != null) {
                     saveAuthToken(token) // Token save kar lete hain
                 }
+
+
+
+
+                //shared prefernce
+
+                // --- CHANGES HERE ---
+                // 1. Session ko 'logged in' set karein
+                val session = SessionManager(this)
+                session.saveLoginStatus(true)
+                // ---------------------
+
                 Toast.makeText(this, "Account Created Successfully!", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this, MainActivity::class.java) // Ab user login kar sakta hai
+
+                // MainActivity par jaayein
+                val intent = Intent(this, MainActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
 
+                // --- CHANGES HERE ---
+                // 2. Iss activity ko finish karein
+                finish()
+                // ---------------------
+
             } else {
+                // Signup fail hua
                 val errorMsg = response.errorBody()?.string() ?: "Signup Failed"
                 Log.e("SignUpActivity", "API Error: $errorMsg")
                 Toast.makeText(this, "Error: $errorMsg", Toast.LENGTH_LONG).show()
@@ -136,57 +147,34 @@ class SignUpActivity : AppCompatActivity() {
      * "Sign Up" button dabane par yeh function chalta hai.
      */
     private fun handleSignUp() {
-        // We'll use this TAG to easily find our logs in Logcat
         val TAG = "SignUpDebug"
-
         Log.d(TAG, "===== handleSignUp function started =====")
 
-        // 1. Get all data from UI and log it
+        // 1. Get all data from UI
         val name = etName.text.toString().trim()
-        Log.d(TAG, "Name from UI: '$name'")
-
         val email = etEmail.text.toString().trim()
-        Log.d(TAG, "Email from UI: '$email'")
-
         val password = etPassword.text.toString().trim()
-        // For security, we don't log the password itself, just whether it was entered.
-        Log.d(TAG, "Password entered: ${password.isNotEmpty()}")
-
         val phone = etPhone.text.toString().trim()
-        Log.d(TAG, "Phone from UI: '$phone'")
-
         val location = etLocation.text.toString().trim()
-        Log.d(TAG, "Location from UI: '$location'")
-
         val dob = etDob.text.toString().trim()
-        Log.d(TAG, "DOB from UI: '$dob'")
-
         val selectedGenderId = rgGender.checkedRadioButtonId
         val gender = if (selectedGenderId != -1) findViewById<RadioButton>(selectedGenderId).text.toString() else ""
-        Log.d(TAG, "Gender from UI: '$gender'")
-
-        Log.d(TAG, "Image URI from selection: $selectedImageUri")
 
         // 2. Validation
         Log.d(TAG, "--- Starting validation ---")
         if (name.isEmpty()) {
-            Log.e(TAG, "Validation FAILED: Name is required.")
             etName.error = "Name is required"; return
         }
         if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Log.e(TAG, "Validation FAILED: Email is invalid.")
             etEmail.error = "Enter a valid email"; return
         }
         if (password.length < 6) {
-            Log.e(TAG, "Validation FAILED: Password is too short.")
             etPassword.error = "Password must be at least 6 characters"; return
         }
         if (gender.isEmpty()) {
-            Log.e(TAG, "Validation FAILED: Gender is not selected.")
             Toast.makeText(this, "Please select a gender", Toast.LENGTH_SHORT).show(); return
         }
         if (selectedImageUri == null) {
-            Log.e(TAG, "Validation FAILED: Profile image is not selected.")
             Toast.makeText(this, "Please select a profile image", Toast.LENGTH_SHORT).show(); return
         }
         Log.d(TAG, "✅ Validation PASSED.")
@@ -194,7 +182,6 @@ class SignUpActivity : AppCompatActivity() {
         progressBar.visibility = View.VISIBLE
 
         // 3. Image URI ko File object me convert karein
-        Log.d(TAG, "--- Converting image URI to File ---")
         val imageFile = getFileFromUri(selectedImageUri!!)
         if (imageFile == null) {
             Log.e(TAG, "ERROR: Could not create a File from the image URI.")
@@ -202,8 +189,6 @@ class SignUpActivity : AppCompatActivity() {
             Toast.makeText(this, "Failed to process image", Toast.LENGTH_SHORT).show()
             return
         }
-        Log.d(TAG, "✅ Image file created successfully: ${imageFile.path}")
-
 
         // 4. ViewModel ko call karein (saare data ke saath)
         Log.d(TAG, "--- Calling viewModel.performSignup() with all data ---")
