@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@color/saffron_light"
     android:fillViewport="true"
     tools:context=".EditProfileActivity">
 
@@ -20,6 +20,8 @@
             android:layout_marginTop="32dp"
             app:cardCornerRadius="60dp"
             app:cardElevation="0dp"
+            app:strokeColor="@color/saffron_dark"
+            app:strokeWidth="4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -55,7 +57,7 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="24dp"
             android:text="Email"
-            android:textColor="@android:color/white"
+            android:textColor="@color/text_on_saffron"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btnChangeImage" />
 
@@ -83,7 +85,7 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="16dp"
             android:text="Name"
-            android:textColor="@android:color/white"
+            android:textColor="@color/text_on_saffron"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/etEditEmail" />
 
@@ -110,7 +112,7 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="16dp"
             android:text="Phone"
-            android:textColor="@android:color/white"
+            android:textColor="@color/text_on_saffron"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/etEditName" />
 
@@ -137,7 +139,7 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="16dp"
             android:text="Location"
-            android:textColor="@android:color/white"
+            android:textColor="@color/text_on_saffron"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/etEditPhone" />
 
@@ -164,7 +166,7 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="16dp"
             android:text="Date of birth"
-            android:textColor="@android:color/white"
+            android:textColor="@color/text_on_saffron"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/etEditLocation" />
 
@@ -193,7 +195,7 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="16dp"
             android:text="Gender"
-            android:textColor="@android:color/white"
+            android:textColor="@color/text_on_saffron"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/etEditDob" />
 
@@ -215,15 +217,15 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSaveChanges"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="32dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             android:layout_marginBottom="32dp"
             android:paddingVertical="12dp"
             android:text="Save Changes"
-            android:textColor="@android:color/white"
-            app:backgroundTint="#A0C4FF"
+            android:textColor="@color/text_on_saffron"
+            app:backgroundTint="@color/saffron_dark"
             app:cornerRadius="30dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/saffron_light"
     tools:context=".TithiActivity">
 
     <TextView
@@ -13,12 +13,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TITHIS CHART"
-        android:textSize="28sp"
+        android:textSize="30sp"
         android:textStyle="bold"
-        android:textColor="@android:color/black"
+        android:textColor="@color/saffron_dark"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="80dp"
+        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="20dp"/>
 
 
@@ -26,7 +26,7 @@
         android:id="@+id/searchViewTithi"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:queryHint="Search Tithi, date or description"
+        android:hint="Search Tithi, date or description"
         android:iconifiedByDefault="false"
         android:focusable="true"
         android:focusableInTouchMode="true"
@@ -47,9 +47,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="20dp"
         app:layout_constraintTop_toBottomOf="@id/searchViewTithi"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -65,9 +65,9 @@
 
             app:cornerRadius="16dp"
             android:textStyle="bold"
-            android:backgroundTint="@color/blue"
-            android:textColor="@color/black"
-            app:strokeColor="@color/blue"
+            android:backgroundTint="@color/saffron_dark"
+            android:textColor="@color/text_on_saffron"
+            app:strokeColor="@color/saffron"
             app:strokeWidth="1.5dp"/>
 
         <com.google.android.material.button.MaterialButton
@@ -81,9 +81,9 @@
 
             app:cornerRadius="16dp"
             android:textStyle="bold"
-            android:backgroundTint="@color/blue"
-            android:textColor="@color/black"
-            app:strokeColor="@color/blue"
+            android:backgroundTint="@color/saffron_dark"
+            android:textColor="@color/text_on_saffron"
+            app:strokeColor="@color/saffron"
             app:strokeWidth="1.5dp"/>
 
         <com.google.android.material.button.MaterialButton
@@ -96,9 +96,9 @@
 
             app:cornerRadius="16dp"
             android:textStyle="bold"
-            android:backgroundTint="@color/blue"
-            android:textColor="@color/black"
-            app:strokeColor="@color/blue"
+            android:backgroundTint="@color/saffron_dark"
+            android:textColor="@color/text_on_saffron"
+            app:strokeColor="@color/saffron"
             app:strokeWidth="1.5dp"/>
     </LinearLayout>
 
@@ -108,7 +108,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        android:paddingTop="12dp"
+        android:paddingTop="20dp"
         android:paddingBottom="16dp"
         android:paddingHorizontal="12dp"
         app:layout_constraintTop_toBottomOf="@id/linearLayoutFilterButtons"

@@ -3,8 +3,8 @@
     android:shape="oval">
 
     <solid android:color="@android:color/transparent" /> <stroke
-    android:width="1.5dp"
-    android:color="@android:color/darker_gray" /> <padding
+    android:width="4dp"
+    android:color="@color/saffron_dark" /> <padding
     android:left="1dp"
     android:top="1dp"
     android:right="1dp"
