@@ -130,7 +130,7 @@ class JainViewModel : ViewModel() {
                 val response = repository.updateUserProfile(token, name, phone, location, dob, gender, imageFile)  //token for auth
                 _updateResult.postValue(response)
             } catch (e: Exception) {
-                Log.e("JainViewModel", "Update Profile Exception", e)
+                Log.e("JJainViewModel", "Update Profile Exception", e)
                 _updateResult.postValue(null)
             }
         }
@@ -288,6 +288,12 @@ class JainViewModel : ViewModel() {
     val eventList: LiveData<List<Event>> = _eventList
     private val _allEvents = mutableListOf<Event>()
 
+    // === NAYA RSVP LIVEDATA ===
+    // Yeh Activity ko batayega ki API call successful hua (true) ya fail (false)
+    private val _rsvpResult = MutableLiveData<Boolean>()
+    val rsvpResult: LiveData<Boolean> = _rsvpResult
+    // ==========================
+
 
     //fetch events
     fun fetchEvents() {
@@ -331,10 +337,42 @@ class JainViewModel : ViewModel() {
             event.name.lowercase().contains(lowerQuery) ||
                     event.location.lowercase().contains(lowerQuery) ||
                     event.date.lowercase().contains(lowerQuery) ||
-                    event.description?.lowercase()?.contains(lowerQuery) == true
+                    event.description!!.lowercase().contains(lowerQuery) == true
         }
         _eventList.value = filtered
     }
+
+
+    // === NAYA RSVP FUNCTION ===
+    /**
+     * "I'm Going" (RSVP) button ke click ko handle karta hai.
+     * Yeh Repository ko API call karne ke liye bolta hai.
+     * @param eventId Jiss event par click hua, uski ID.
+     */
+    fun toggleEventRsvp(token: String,eventId: String) {
+        viewModelScope.launch {
+            try {
+                // Repository token ko SharedPreferences se khud manage karega
+                val response = repository.toggleEventRsvp(token,eventId)
+
+                if (response.isSuccessful) {
+                    // Activity ko batayein ki success hua
+                    _rsvpResult.postValue(true)
+                    // Note: Activity response milne par 'fetchEvents()' ko
+                    // khud call karegi taaki count update ho.
+                } else {
+                    // Error hua
+                    Log.w("JainViewModel", "toggleEventRsvp failed: ${response.message()}")
+                    _rsvpResult.postValue(false)
+                }
+            } catch (e: Exception) {
+                // Network ya koi aur exception
+                Log.e("JainViewModel", "RSVP Toggle Exception", e)
+                _rsvpResult.postValue(false)
+            }
+        }
+    }
+    // ==========================
 
 
     // =====================================================================================

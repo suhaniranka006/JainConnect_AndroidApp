@@ -88,4 +88,12 @@ interface ApiService {
         @PartMap parts: Map<String, @JvmSuppressWildcards RequestBody>,
         @Part profileImage: MultipartBody.Part?
     ): Response<AuthResponse>
+
+
+    // === YEH NAYA FUNCTION ADD KAREIN ===
+    @PUT("api/events/{id}/rsvp") // Backend route se match karein
+    suspend fun toggleEventRsvp(
+        @Header("Authorization") token: String, // "Bearer <token>"
+        @Path("id") eventId: String             // Event ki ID
+    ): Response<RsvpResponse>
 }

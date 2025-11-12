@@ -1,5 +1,6 @@
 package com.example.jainconnect
 
+import com.google.gson.annotations.SerializedName // <-- Naya Import
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -19,7 +20,17 @@ class JainRepository {
     suspend fun getEvents(): List<Event> = RetrofitInstance.api.getEvents()
     suspend fun getMaharaj(): List<Maharaj> = RetrofitInstance.api.getMaharaj()
 
-
+    // === YEH NAYA FUNCTION HAI ===
+    /**
+     * "I'm Going" (RSVP) button ke click ko handle karta hai.
+     * @param token User ka authentication token (e.g., "Bearer <token>")
+     * @param eventId Jiss event par click hua, uski ID.
+     */
+    suspend fun toggleEventRsvp(token: String, eventId: String): Response<RsvpResponse> {
+        // API call ke liye token ko "Bearer " prefix ke saath bhejein
+        return RetrofitInstance.api.toggleEventRsvp("Bearer $token", eventId)
+    }
+    // =============================
 
 
     // --- User Authentication Functions ---
@@ -100,3 +111,13 @@ class JainRepository {
         return RetrofitInstance.api.updateUserProfile("Bearer $token", partsMap, imagePart)
     }
 }
+
+// === YEH NAYI DATA CLASS HAI ===
+// API se aane waale response ko handle karne ke liye
+// (e.g., { "message": "RSVP added", "rsvpCount": 16 })
+data class RsvpResponse(
+    @SerializedName("message")
+    val message: String,
+    @SerializedName("rsvpCount")
+    val rsvpCount: Int
+)

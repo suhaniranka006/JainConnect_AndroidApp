@@ -1,11 +1,13 @@
 package com.example.jainconnect
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
-// import android.widget.SearchView  <-- OLD, INCORRECT IMPORT
-import androidx.appcompat.widget.SearchView // <-- NEW, CORRECT IMPORT
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,45 +15,48 @@ import androidx.recyclerview.widget.RecyclerView
 /**
  * EventActivity displays a list of events in a RecyclerView.
  * Supports search, state-based filtering, upcoming events, and reset all filters.
+ * Implements OnRsvpButtonClickListener to handle "I'm Going" clicks.
  */
-class EventActivity : AppCompatActivity() {
+class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
 
-    private lateinit var viewModel: JainViewModel         // ViewModel instance
-    private lateinit var eventAdapter: EventAdapter      // RecyclerView adapter
-    private lateinit var recyclerViewEvents: RecyclerView // RecyclerView UI component
+    private lateinit var viewModel: JainViewModel
+    private lateinit var eventAdapter: EventAdapter
+    private lateinit var recyclerViewEvents: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // This layout file ID must match your XML file name
         setContentView(R.layout.activity_events)
 
-
-
-        // -------------------- ViewModel Setup --------------------
+        // ViewModel Setup
         viewModel = ViewModelProvider(this)[JainViewModel::class.java]
 
-
-
-
-        // -------------------- RecyclerView Setup --------------------
+        // RecyclerView Setup
         recyclerViewEvents = findViewById(R.id.recyclerViewEvents)
-        recyclerViewEvents.layoutManager = LinearLayoutManager(this) // Vertical list - infalte the items from top to bottom
+        recyclerViewEvents.layoutManager = LinearLayoutManager(this)
 
-        eventAdapter = EventAdapter(emptyList())      //initially empty list                // Initially empty
-        recyclerViewEvents.adapter = eventAdapter //assigns adaptter to recylcerview items
+        // Adapter with RSVP click listener
+        eventAdapter = EventAdapter(emptyList(), this)
+        recyclerViewEvents.adapter = eventAdapter
 
-
-
-        // -------------------- Observe LiveData --------------------
-        //observes evetnlist(livedata) inside viewmodel
+        // Observe event list
         viewModel.eventList.observe(this) { events ->
-            eventAdapter.updateData(events) // Update RecyclerView when data changes
+            eventAdapter.updateData(events)
         }
 
-        // -------------------- Fetch Initial Data --------------------
-        viewModel.fetchEvents() // Fetch events from backend via ViewModel
+        // RSVP result observer
+        viewModel.rsvpResult.observe(this) { success ->
+            if (success) {
+                Toast.makeText(this, "RSVP updated!", Toast.LENGTH_SHORT).show()
+                viewModel.fetchEvents() // Refresh data to show updated count
+            } else {
+                Toast.makeText(this, "Failed to update RSVP. Try again.", Toast.LENGTH_SHORT).show()
+            }
+        }
 
-        // -------------------- State Filter --------------------
+        // Fetch initial data
+        viewModel.fetchEvents()
+
+        // State filter
         val indianStates = listOf(
             "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
             "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand",
@@ -65,7 +70,7 @@ class EventActivity : AppCompatActivity() {
         )
 
         val stateButton = findViewById<Button>(R.id.buttonStateFilter)
-        stateButton.text = "All States" // Default
+        stateButton.text = "All States"
 
         stateButton.setOnClickListener {
             val builder = AlertDialog.Builder(this)
@@ -74,36 +79,61 @@ class EventActivity : AppCompatActivity() {
             builder.setItems(options.toTypedArray()) { _, which ->
                 val choice = options[which]
                 if (choice == "All") {
-                    viewModel.filterEvents("")   // Show all events
+                    viewModel.filterEvents("")
                     stateButton.text = "All"
                 } else {
-                    viewModel.filterEventsByState(choice) // Filter by selected state
+                    viewModel.filterEventsByState(choice)
                     stateButton.text = choice
                 }
             }
             builder.show()
         }
 
-        // -------------------- All / Upcoming Filters --------------------
+        // All / Upcoming filters
         findViewById<Button>(R.id.buttonAll).setOnClickListener {
-            viewModel.filterEvents("") // Reset all filters
+            viewModel.filterEvents("")
             stateButton.text = "All"
         }
 
         findViewById<Button>(R.id.buttonUpcoming).setOnClickListener {
-            viewModel.filterUpcomingEvents() // Filter only upcoming events
+            viewModel.filterUpcomingEvents()
             stateButton.text = "All"
         }
 
-        // -------------------- SearchView Filter --------------------
-        // This line (88) will now work correctly with the new import
+        // SearchView filter
         findViewById<SearchView>(R.id.searchView).setOnQueryTextListener(object :
             SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?) = true
             override fun onQueryTextChange(newText: String?): Boolean {
-                viewModel.filterEvents(newText ?: "") // Filter events dynamically
+                viewModel.filterEvents(newText ?: "")
                 return true
             }
         })
+    }
+
+    // === UPDATED RSVP button click callback ===
+    override fun onRsvpClick(event: Event) {
+        Log.d("EventActivity", "RSVP button clicked for event: ${event.name} (ID: ${event._id})")
+
+        // 1. Fetch token from SharedPreferences
+        val token = getToken()
+
+        // 2. If no token, show error and optionally redirect to login
+        if (token == null) {
+            Toast.makeText(this, "You must be logged in to RSVP", Toast.LENGTH_SHORT).show()
+            // Optional: Redirect to login screen
+            // startActivity(Intent(this, LoginActivity::class.java))
+            return
+        }
+
+        // 3. Token is available, call ViewModel function (implement this in your ViewModel)
+        viewModel.toggleEventRsvp(token, event._id)
+    }
+
+    /** SharedPreferences se saved JWT token nikaalta hai. */
+    private fun getToken(): String? {
+        // "auth_prefs" and "jwt_token" must match your LoginActivity saving logic
+        val sharedPref = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+        return sharedPref.getString("jwt_token", null)
     }
 }

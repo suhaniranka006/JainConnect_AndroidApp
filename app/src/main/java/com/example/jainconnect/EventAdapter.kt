@@ -5,51 +5,41 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 
-/**
- * Adapter class for displaying Event items in a RecyclerView.
- * Each item displays name, date/time, location, and optional description.
- */
+// === STEP 1: Click Listener Interface ===
+// Activity/Fragment will implement this to respond to RSVP clicks
+interface OnRsvpButtonClickListener {
+    fun onRsvpClick(event: Event)
+}
 
-
-//factory worker that connects data to recyclerview
-//extends recyclerview.adpater
 class EventAdapter(
-    private var eventList: List<Event> // List of events to display
+    private var eventList: List<Event>,
+    // === STEP 2: Pass the listener to the adapter's constructor ===
+    private val rsvpClickListener: OnRsvpButtonClickListener
 ) : RecyclerView.Adapter<EventAdapter.EventViewHolder>() {
 
-    /**
-     * ViewHolder class for Event items.
-     * Holds references to the views for each item in the RecyclerView.
-     */
-
-
-    //cache holds references to textviews from item_event.xml
+    // === STEP 3: ViewHolder for Event items ===
     class EventViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvEventName: TextView = itemView.findViewById(R.id.tvEventName)
         val tvEventDateTime: TextView = itemView.findViewById(R.id.tvEventDateTime)
         val tvEventTime: TextView = itemView.findViewById(R.id.tvEventTime)
         val tvEventLocation: TextView = itemView.findViewById(R.id.tvEventLocation)
-
         val tvEventDescription: TextView = itemView.findViewById(R.id.tvEventDescription)
+        val tvRsvpCount: TextView = itemView.findViewById(R.id.tvRsvpCount)
+        val btnRsvp: MaterialButton = itemView.findViewById(R.id.btnRsvp)
     }
 
-    /**
-     * Called when RecyclerView needs a new ViewHolder of the given type.
-     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_event, parent, false) // Inflate item_event.xml
+            .inflate(R.layout.item_event, parent, false) // Match your item_event.xml
         return EventViewHolder(view)
     }
 
-    /**
-     * Called by RecyclerView to display the data at the specified position.
-     */
     override fun onBindViewHolder(holder: EventViewHolder, position: Int) {
-        val event = eventList[position] // Get the data for this position
+        val event = eventList[position]
 
-        // Bind event data to views
+        // === STEP 4: Bind event data ===
         holder.tvEventName.text = event.name
         holder.tvEventDateTime.text = event.date
         holder.tvEventTime.text = event.time ?: "Time not available"
@@ -58,23 +48,26 @@ class EventAdapter(
         // Handle optional description
         if (!event.description.isNullOrEmpty()) {
             holder.tvEventDescription.text = event.description
-            holder.tvEventDescription.visibility = View.VISIBLE //only visible when its not null
+            holder.tvEventDescription.visibility = View.VISIBLE
         } else {
             holder.tvEventDescription.visibility = View.GONE
         }
+
+        // RSVP count: assumes Event.kt has rsvpCount property
+        holder.tvRsvpCount.text = "${event.rsvpCount} people are going"
+
+        // RSVP button
+        holder.btnRsvp.setOnClickListener {
+            rsvpClickListener.onRsvpClick(event)
+        }
     }
 
-    /**
-     * Returns the total number of items in the adapter.
-     */
     override fun getItemCount(): Int = eventList.size
 
-    /**
-     * Updates the list of events in the adapter and notifies RecyclerView to refresh.
-     * @param newEventList The new list of events to display.
-     */
+    // === STEP 5: Update the adapter data ===
     fun updateData(newEventList: List<Event>) {
         this.eventList = newEventList
-        notifyDataSetChanged() // Consider DiffUtil for better performance
+        notifyDataSetChanged()
+        // For smoother updates, consider using DiffUtil
     }
 }
