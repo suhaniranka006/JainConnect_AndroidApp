@@ -2,12 +2,15 @@ package com.example.jainconnect
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable // <-- NAYA IMPORT
+import android.text.TextWatcher // <-- NAYA IMPORT
 import android.util.Log
 import android.widget.Button
+import android.widget.EditText // <-- NAYA IMPORT (SearchView ki jagah)
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
+// import androidx.appcompat.widget.SearchView // <-- Puraana import (ab zaroorat nahi)
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,8 +26,15 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
     private lateinit var eventAdapter: EventAdapter
     private lateinit var recyclerViewEvents: RecyclerView
 
+    // === YEH CHANGE HUA HAI: SearchView ki jagah EditText ===
+    private lateinit var etSearchEvents: EditText
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Default (duplicate) action bar ko hide karein
+        supportActionBar?.hide()
+
         setContentView(R.layout.activity_events)
 
         // ViewModel Setup
@@ -56,17 +66,15 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
         // Fetch initial data
         viewModel.fetchEvents()
 
-        // State filter
+        // State filter (Pehle jaisa hi hai)
         val indianStates = listOf(
-            "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
-            "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand",
-            "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur",
-            "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab",
-            "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura",
+            "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa",
+            "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala",
+            "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland",
+            "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura",
             "Uttar Pradesh", "Uttarakhand", "West Bengal",
-            "Andaman and Nicobar Islands", "Chandigarh",
-            "Dadra and Nagar Haveli and Daman and Diu", "Delhi",
-            "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
+            "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu",
+            "Delhi", "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
         )
 
         val stateButton = findViewById<Button>(R.id.buttonStateFilter)
@@ -89,29 +97,41 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
             builder.show()
         }
 
-        // All / Upcoming filters
+        // All / Upcoming filters (Pehle jaisa hi hai)
         findViewById<Button>(R.id.buttonAll).setOnClickListener {
             viewModel.filterEvents("")
             stateButton.text = "All"
         }
-
         findViewById<Button>(R.id.buttonUpcoming).setOnClickListener {
             viewModel.filterUpcomingEvents()
             stateButton.text = "All"
         }
 
-        // SearchView filter
-        findViewById<SearchView>(R.id.searchView).setOnQueryTextListener(object :
-            SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?) = true
-            override fun onQueryTextChange(newText: String?): Boolean {
-                viewModel.filterEvents(newText ?: "")
-                return true
+
+        // === YEH POORA SECTION UPDATE HUA HAI ===
+        // Humne 'findViewById<SearchView>' ko 'findViewById<EditText>' se badal diya hai
+        // Aur ID ko 'searchView' se 'etSearchEvents' kar diya hai
+        etSearchEvents = findViewById(R.id.etSearchEvents)
+
+        // Humne 'setOnQueryTextListener' ko 'addTextChangedListener' se badal diya hai
+        etSearchEvents.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // Kuch nahi karna
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // Jaise hi user type karega, filterEvents call ho jaayega
+                viewModel.filterEvents(s.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                // Kuch nahi karna
             }
         })
+        // ===========================================
     }
 
-    // === UPDATED RSVP button click callback ===
+    // RSVP button click callback (Pehle jaisa hi hai, bilkul sahi)
     override fun onRsvpClick(event: Event) {
         Log.d("EventActivity", "RSVP button clicked for event: ${event.name} (ID: ${event._id})")
 
@@ -126,7 +146,7 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
             return
         }
 
-        // 3. Token is available, call ViewModel function (implement this in your ViewModel)
+        // 3. Token is available, call ViewModel function
         viewModel.toggleEventRsvp(token, event._id)
     }
 

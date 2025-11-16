@@ -330,14 +330,21 @@ class JainViewModel : ViewModel() {
 
 
     //filter by query
+    //filter by query
     fun filterEvents(query: String) {
         val lowerQuery = query.trim().lowercase()
         val filtered = _allEvents.filter { event ->
+            // --- YEH RAHA FIX ---
+            // Humne har field par safe call (?.) laga diya hai.
+            // ?.let { ... } ka matlab hai, "Agar yeh null nahi hai, toh hi aage ka code chalao."
 
-            event.name.lowercase().contains(lowerQuery) ||
-                    event.location.lowercase().contains(lowerQuery) ||
-                    event.date.lowercase().contains(lowerQuery) ||
-                    event.description!!.lowercase().contains(lowerQuery) == true
+            val nameMatches = event.name?.lowercase()?.contains(lowerQuery) == true
+            val locationMatches = event.location?.lowercase()?.contains(lowerQuery) == true
+            val dateMatches = event.date?.lowercase()?.contains(lowerQuery) == true
+            val descriptionMatches = event.description?.lowercase()?.contains(lowerQuery) == true
+
+            // Agar inme se koi bhi match hota hai, toh event ko list mein rakho
+            nameMatches || locationMatches || dateMatches || descriptionMatches
         }
         _eventList.value = filtered
     }
