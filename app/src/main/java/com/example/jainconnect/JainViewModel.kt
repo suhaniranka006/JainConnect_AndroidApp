@@ -311,13 +311,20 @@ class JainViewModel : ViewModel() {
     }
 
 
-    //fetch events by state
-    fun filterEventsByState(state: String) {
-        val filtered = _allEvents.filter {
-            it.location.contains(state, ignoreCase = true)
+
+    //filter events by states
+
+    fun filterEventsByState(state: String, stateToCities: Map<String, List<String>>) {
+        val cityList = stateToCities[state] ?: emptyList()
+        val filtered = _allEvents.filter { event ->
+            val loc = event.location?.trim() ?: ""
+            cityList.any { city -> loc.equals(city, ignoreCase = true) } ||
+                    loc.contains(state, ignoreCase = true)
         }
         _eventList.value = filtered
     }
+
+
 
 
     //filter by date
