@@ -1,5 +1,6 @@
 package com.example.jainconnect
 
+import com.example.jainconnect.RetrofitInstance.api
 import com.google.gson.annotations.SerializedName // <-- Naya Import
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -110,7 +111,20 @@ class JainRepository {
 
         return RetrofitInstance.api.updateUserProfile("Bearer $token", partsMap, imagePart)
     }
+
+
+    // Inside JainRepository class
+
+    // Since we used the Full URL in the Interface, we can use the same api instance!
+    suspend fun getSunTimings(lat: Double, lng: Double): Response<SunResponse> {
+        return RetrofitInstance.api.getSunTimes(lat, lng)
+    }
+
 }
+
+
+
+
 
 // === YEH NAYI DATA CLASS HAI ===
 // API se aane waale response ko handle karne ke liye

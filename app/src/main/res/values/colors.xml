@@ -34,5 +34,8 @@
 
     <!-- ADDED: A medium gray color specifically for hint text -->
     <color name="text_on_dark_secondary">#9E9E9E</color>
+
+    <color name="jain_orange">#FF9800</color>
+
 </resources>
 

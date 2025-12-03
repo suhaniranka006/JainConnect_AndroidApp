@@ -96,4 +96,15 @@ interface ApiService {
         @Header("Authorization") token: String, // "Bearer <token>"
         @Path("id") eventId: String             // Event ki ID
     ): Response<RsvpResponse>
+
+
+    // ✅ FIX: Use the FULL URL here so Retrofit ignores your Node.js Base URL
+    @GET("https://api.open-meteo.com/v1/forecast")
+    suspend fun getSunTimes(
+        @Query("latitude") lat: Double,
+        @Query("longitude") lng: Double,
+        @Query("daily") daily: String = "sunrise,sunset",
+        @Query("timezone") timezone: String = "auto",
+        @Query("forecast_days") days: Int = 14
+    ): Response<SunResponse>
 }

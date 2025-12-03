@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import kotlin.jvm.java
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,7 +36,7 @@ class MainActivity : AppCompatActivity() {
 
 
         btnHorizon.setOnClickListener {
-            Toast.makeText(this, "COMING SOON", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, HorizonsActivity::class.java))
         }
 
         btnContact.setOnClickListener {

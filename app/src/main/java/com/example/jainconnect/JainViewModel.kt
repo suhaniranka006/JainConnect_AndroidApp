@@ -1,15 +1,38 @@
 package com.example.jainconnect
 
+// 1. Android & Lifecycle Components
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+
+// 2. Coroutines (Background tasks)
 import kotlinx.coroutines.launch
+
+// 3. Retrofit (API Responses)
 import retrofit2.Response
+
+// 4. Java Utilities (Dates, Files, Lists)
 import java.io.File
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.ArrayList
+import java.util.Calendar
+import java.util.Locale
+
+// 5. Your Data Models
+// (Ensure these classes exist in your 'models' package or root package)
+import com.example.jainconnect.HorizonItem
+import com.example.jainconnect.SunResponse // Might be needed if referenced explicitly
+// If your other models (User, Tithi, etc.) are in the root package, you don't need to import them.
+// But if they are in the 'models' folder, UNCOMMENT these lines:
+/*
+import com.example.jainconnect.models.User
+import com.example.jainconnect.models.AuthResponse
+import com.example.jainconnect.models.Tithi
+import com.example.jainconnect.models.Event
+import com.example.jainconnect.models.Maharaj
+*/
 
 
 
@@ -48,6 +71,74 @@ class JainViewModel : ViewModel() {
 
 
 
+
+
+
+
+    // =====================================================================================
+    //                                      HORIZONS (Sunrise/Sunset)
+    // =====================================================================================
+
+    private val _horizonList = MutableLiveData<List<HorizonItem>>()
+    val horizonList: LiveData<List<HorizonItem>> = _horizonList
+
+    // Default values are set to Jaipur (26.9124, 75.7873). You can pass other values when calling.
+    // Inside JainViewModel.kt
+
+    fun fetchSunData(lat: Double = 26.9124, lng: Double = 75.7873) {
+        viewModelScope.launch {
+            try {
+                val response = repository.getSunTimings(lat, lng)
+
+                if (response.isSuccessful && response.body() != null) {
+                    val dailyData = response.body()!!.daily
+                    val mappedList = ArrayList<HorizonItem>()
+
+                    val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                    val outputFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
+
+                    // We use a standard C-style loop to avoid iterator ambiguity
+                    val size = dailyData.dates.size
+                    for (i in 0 until size) {
+                        val rawDate = dailyData.dates[i]
+
+                        // 1. Format Date
+                        var formattedDate = rawDate
+                        try {
+                            val dateObj = inputFormat.parse(rawDate)
+                            if (dateObj != null) {
+                                formattedDate = outputFormat.format(dateObj)
+                            }
+                        } catch (e: Exception) {
+                            formattedDate = rawDate
+                        }
+
+                        // 2. Extract Time (Simple String manipulation to avoid Type Mismatch)
+                        // API sends "2025-12-04T07:05". We split by 'T'.
+                        val rawSunrise = dailyData.sunrise[i] // e.g., "2025-12-04T07:05"
+                        val rawSunset = dailyData.sunset[i]
+
+                        // Split returns a List<String>, so [1] is definitely a String.
+                        val sunriseParts = rawSunrise.split("T")
+                        val sunriseTime = if (sunriseParts.size > 1) sunriseParts[1] else rawSunrise
+
+                        val sunsetParts = rawSunset.split("T")
+                        val sunsetTime = if (sunsetParts.size > 1) sunsetParts[1] else rawSunset
+
+                        mappedList.add(HorizonItem(formattedDate, sunriseTime, sunsetTime))
+                    }
+
+                    _horizonList.value = mappedList
+                } else {
+                    Log.e("JainViewModel", "Horizons Error: ${response.code()}")
+                    _horizonList.value = emptyList()
+                }
+            } catch (e: Exception) {
+                Log.e("JainViewModel", "Horizons Exception", e)
+                _horizonList.value = emptyList()
+            }
+        }
+    }
 
     //used to peroform signup task ,taking all credentials and calling registeruser fun in repo in coroutine scope by .postvalue
 
