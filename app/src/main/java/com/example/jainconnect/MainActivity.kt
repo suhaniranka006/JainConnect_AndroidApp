@@ -1,57 +1,123 @@
 package com.example.jainconnect
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
-import android.widget.Toast
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import kotlin.jvm.java
+import androidx.lifecycle.ViewModelProvider
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var viewModel: JainViewModel
+    private lateinit var sharedPreferences: SharedPreferences
+
+    // UI Components
+    private lateinit var tvGreeting: TextView
+    private lateinit var tvCurrentTithi: TextView
+    private lateinit var tvSunriseTime: TextView
+    private lateinit var tvSunsetTime: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState) //used to restore activity,s state after is has beed destroyed and recreated
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // ------------------- Button Bindings -------------------
-        val btnTithis: Button = findViewById(R.id.btnTithi)
-        val btnEvents: Button = findViewById(R.id.btnEvents)
-        val btnMaharaj: Button = findViewById(R.id.btnMonks)
-        val btnProfile: Button = findViewById(R.id.btnMe) // Profile button
-        val btnHorizon: Button = findViewById(R.id.btnHorizons)
-        val btnContact: Button = findViewById(R.id.btnContact)
+        viewModel = ViewModelProvider(this)[JainViewModel::class.java]
 
-        // ------------------- Button Click Listeners -------------------
-        btnTithis.setOnClickListener {
+        // ✅ FIX IS HERE: Use "auth_prefs" to match LoginActivity
+        sharedPreferences = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+
+        tvGreeting = findViewById(R.id.tvGreeting)
+        tvCurrentTithi = findViewById(R.id.tvCurrentTithi)
+        tvSunriseTime = findViewById(R.id.tvSunriseTime)
+        tvSunsetTime = findViewById(R.id.tvSunsetTime)
+
+        setupNavigationButtons()
+        observeData()
+        loadDashboardData()
+    }
+
+    private fun setupNavigationButtons() {
+        findViewById<Button>(R.id.btnTithi).setOnClickListener {
             startActivity(Intent(this, TithiActivity::class.java))
         }
-
-        btnEvents.setOnClickListener {
+        findViewById<Button>(R.id.btnEvents).setOnClickListener {
             startActivity(Intent(this, EventActivity::class.java))
         }
-
-        btnMaharaj.setOnClickListener {
+        findViewById<Button>(R.id.btnMonks).setOnClickListener {
             startActivity(Intent(this, MaharajLocationActivity::class.java))
         }
-
-
-        btnHorizon.setOnClickListener {
+        findViewById<Button>(R.id.btnHorizons).setOnClickListener {
             startActivity(Intent(this, HorizonsActivity::class.java))
         }
-
-        btnContact.setOnClickListener {
+        findViewById<Button>(R.id.btnContact).setOnClickListener {
             startActivity(Intent(this, ContactActivity::class.java))
         }
+        findViewById<Button>(R.id.btnMe).setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
+        }
+    }
 
+    private fun loadDashboardData() {
+        // ✅ The key "jwt_token" is correct, and now the file "auth_prefs" matches
+        val token = sharedPreferences.getString("jwt_token", null)
 
+        if (token != null) {
+            // Token found, fetch profile
+            viewModel.fetchUserProfile(token)
+        } else {
+            // Token not found (maybe not logged in)
+            tvGreeting.text = "JAI JINENDRA!"
+        }
 
-        // MainActivity.kt
+        viewModel.fetchTithis()
+        viewModel.fetchSunData(26.9124, 75.7873)
+    }
 
-// For example, in a button's click listener:
-        val profileButton: Button = findViewById(R.id.btnMe)
-        profileButton.setOnClickListener {
-            val intent = Intent(this, ProfileActivity::class.java)
-            startActivity(intent)
+    private fun observeData() {
+        // --- 1. Update Greeting Name ---
+        viewModel.userProfile.observe(this) { user ->
+            if (user != null) {
+                // Should now show: "JAI JINENDRA SUHANI!"
+                tvGreeting.text = "JAI JINENDRA ${user.name.uppercase()}!"
+            }
+        }
+
+        // --- 2. Update Tithi ---
+        viewModel.tithiList.observe(this) { tithiList ->
+            if (tithiList.isNotEmpty()) {
+                val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                val todayDate = sdf.format(Calendar.getInstance().time)
+                val todayTithi = tithiList.find { it.date == todayDate }
+
+                if (todayTithi != null) {
+                    tvCurrentTithi.text = "Today is ${todayTithi.name.uppercase()}"
+                } else {
+                    tvCurrentTithi.text = "No Tithi Data for Today"
+                }
+            }
+        }
+
+        // --- 3. Update Sunrise/Sunset ---
+        viewModel.horizonList.observe(this) { horizonList ->
+            if (horizonList.isNotEmpty()) {
+                val sdf = SimpleDateFormat("dd MMM", Locale.getDefault())
+                val todayDate = sdf.format(Calendar.getInstance().time)
+                val todayHorizon = horizonList.find { it.date == todayDate }
+
+                if (todayHorizon != null) {
+                    tvSunriseTime.text = todayHorizon.sunrise
+                    tvSunsetTime.text = todayHorizon.sunset
+                } else {
+                    tvSunriseTime.text = horizonList[0].sunrise
+                    tvSunsetTime.text = horizonList[0].sunset
+                }
+            }
         }
     }
 }
