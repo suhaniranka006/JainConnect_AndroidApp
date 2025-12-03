@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnContact.setOnClickListener {
-            Toast.makeText(this, "COMING SOON", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, ContactActivity::class.java))
         }
 
 
