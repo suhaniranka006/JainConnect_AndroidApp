@@ -115,4 +115,12 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body eventData: EventSubmissionRequest
     ): Response<ApiResponse>
+
+
+    // Add this function to Interface
+    @POST("api/maharajs") // Check your exact route path
+    suspend fun submitMaharaj(
+        @Header("Authorization") token: String,
+        @Body data: MaharajSubmissionRequest
+    ): Response<ApiResponse>
 }

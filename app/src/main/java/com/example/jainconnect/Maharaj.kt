@@ -28,3 +28,12 @@ data class Maharaj(
     val relevantDate: String? // Add this if the date from JSON is important
     // and give it a meaningful name
 )
+
+// Update this Data Class at the bottom
+data class MaharajSubmissionRequest(
+    val name: String,
+    val title: String,       // ✅ Added
+    val city: String,    // This maps to 'city' or 'location' in backend
+    val date: String,        // ✅ Added
+    val contactInfo: String
+)

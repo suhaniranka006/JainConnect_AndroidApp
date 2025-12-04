@@ -135,6 +135,28 @@ class JainRepository {
         val request = EventSubmissionRequest(title, city, date, time, desc)
         return RetrofitInstance.api.submitEvent("Bearer $token", request)
     }
+
+
+    suspend fun submitMaharaj(
+        token: String,
+        name: String,
+        title: String,
+        city: String,
+        date: String,
+        contact: String,
+
+    ): Response<ApiResponse> {
+
+        val request = MaharajSubmissionRequest(
+            name,
+            title,
+            city,
+            date,
+            contact
+
+        )
+        return RetrofitInstance.api.submitMaharaj("Bearer $token", request)
+    }
 }
 
 

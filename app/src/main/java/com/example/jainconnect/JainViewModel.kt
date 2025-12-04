@@ -72,6 +72,35 @@ class JainViewModel : ViewModel() {
 
 
 
+    // Add logic for Monk Submission
+    private val _addMaharajResult = MutableLiveData<String>()
+    val addMaharajResult: LiveData<String> = _addMaharajResult
+
+    // ... inside JainViewModel class
+
+    fun submitNewMaharaj(
+        token: String,
+        name: String,
+        title: String,
+        city: String,
+        date: String,
+        contact: String
+
+    ) {
+        viewModelScope.launch {
+            try {
+                val response = repository.submitMaharaj(token, name, title, city, date, contact)
+                if (response.isSuccessful && response.body()?.success == true) {
+                    _addMaharajResult.value = "Success"
+                } else {
+                    _addMaharajResult.value = "Failed: ${response.message()}"
+                }
+            } catch (e: Exception) {
+                _addMaharajResult.value = "Error: ${e.message}"
+            }
+        }
+    }
+
 // Inside JainViewModel class
 
     // --- Add Event Submission Logic ---

@@ -1,20 +1,15 @@
 package com.example.jainconnect
 
-import android.app.DatePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
-import android.widget.EditText
-// import android.widget.SearchView // <-- OLD, INCORRECT IMPORT
-import androidx.appcompat.widget.SearchView // <-- NEW, CORRECT IMPORT
-import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 /**
  * Activity to display Maharaj locations in a RecyclerView.
@@ -22,29 +17,27 @@ import java.util.Locale
  */
 class MaharajLocationActivity : AppCompatActivity() {
 
-
     private lateinit var viewModel: JainViewModel
     private lateinit var maharajAdapter: MaharajAdapter
     private lateinit var recyclerViewMaharaj: RecyclerView
     private lateinit var buttonSelectCity: Button
-    // private lateinit var buttonSelectDate: Button // This was commented out, which is fine
 
     private var selectedCity: String? = null
-    private var selectedDate: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Make sure this layout name matches your XML file
         setContentView(R.layout.activity_maharaj_location)
 
+        // 1. Initialize Views
         recyclerViewMaharaj = findViewById(R.id.recyclerViewMaharaj)
         buttonSelectCity = findViewById(R.id.buttonSelectCity)
-        // buttonSelectDate = findViewById(R.id.buttonSelectDate)
 
+        // 2. Setup RecyclerView
         recyclerViewMaharaj.layoutManager = LinearLayoutManager(this)
         maharajAdapter = MaharajAdapter(emptyList())
         recyclerViewMaharaj.adapter = maharajAdapter
 
+        // 3. Initialize ViewModel
         viewModel = ViewModelProvider(this)[JainViewModel::class.java]
 
         viewModel.filteredMaharaj.observe(this) {
@@ -53,8 +46,7 @@ class MaharajLocationActivity : AppCompatActivity() {
 
         viewModel.fetchMaharaj()
 
-        // Search functionality
-        // This line will now work correctly with the new import
+        // 4. Setup Search functionality
         val searchView: SearchView = findViewById(R.id.searchViewMaharaj)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?) = true
@@ -65,32 +57,27 @@ class MaharajLocationActivity : AppCompatActivity() {
             }
         })
 
-
+        // 5. Setup City Filter Button
         buttonSelectCity.setOnClickListener {
             val cities = arrayOf(
-                "Mumbai",
-                "Delhi",
-                "Bangalore",
-                "Pune",
-                "Chennai",
-                "Hyderabad",
-                "Kolkata",
-                "Jaipur",
-                "Lucknow",
-                "Ahmedabad"
+                "Mumbai", "Delhi", "Bangalore", "Pune", "Chennai",
+                "Hyderabad", "Kolkata", "Jaipur", "Lucknow", "Ahmedabad"
             )
             AlertDialog.Builder(this)
                 .setTitle("Select City")
                 .setItems(cities) { _, index ->
                     selectedCity = cities[index]
                     buttonSelectCity.text = "🏙️ $selectedCity"
-                    applyFilters() // <-- filter applied here
+                    applyFilters()
                 }
                 .show()
         }
 
-
-
+        // 6. ✅ FIXED: Floating Action Button logic moved INSIDE onCreate
+        val fabAdd = findViewById<FloatingActionButton>(R.id.fabAddMaharaj)
+        fabAdd.setOnClickListener {
+            startActivity(Intent(this, AddMaharajActivity::class.java))
+        }
     }
 
     private fun applyFilters() {
@@ -100,5 +87,4 @@ class MaharajLocationActivity : AppCompatActivity() {
             viewModel.resetFilters()
         }
     }
-
 }
