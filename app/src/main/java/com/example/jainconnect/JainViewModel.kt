@@ -72,7 +72,35 @@ class JainViewModel : ViewModel() {
 
 
 
+// Inside JainViewModel class
 
+    // --- Add Event Submission Logic ---
+    private val _addEventResult = MutableLiveData<String>()
+    val addEventResult: LiveData<String> = _addEventResult
+
+    // Inside JainViewModel.kt
+
+    fun submitNewEvent(
+        token: String,
+        title: String,
+        city: String,
+        date: String,
+        time: String,
+        desc: String
+    ) {
+        viewModelScope.launch {
+            try {
+                val response = repository.submitEvent(token, title, city, date, time, desc)
+                if (response.isSuccessful && response.body()?.success == true) {
+                    _addEventResult.value = "Success"
+                } else {
+                    _addEventResult.value = "Failed: ${response.message()}"
+                }
+            } catch (e: Exception) {
+                _addEventResult.value = "Error: ${e.message}"
+            }
+        }
+    }
 
 
     // =====================================================================================

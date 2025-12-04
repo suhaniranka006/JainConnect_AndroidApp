@@ -1,6 +1,7 @@
 package com.example.jainconnect
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,12 +14,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton // Import added
 
-/**
- * EventActivity displays a list of events in a RecyclerView.
- * Supports search, state-based filtering, upcoming events, and reset all filters.
- * Implements OnRsvpButtonClickListener to handle "I'm Going" clicks.
- */
 class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
 
     private lateinit var viewModel: JainViewModel
@@ -37,6 +34,14 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
         recyclerViewEvents.layoutManager = LinearLayoutManager(this)
         eventAdapter = EventAdapter(emptyList(), this)
         recyclerViewEvents.adapter = eventAdapter
+
+        // --- ADDED: Floating Action Button Logic ---
+        val fabAddEvent = findViewById<FloatingActionButton>(R.id.fabAddEvent)
+        fabAddEvent.setOnClickListener {
+            val intent = Intent(this, AddEventActivity::class.java)
+            startActivity(intent)
+        }
+        // -------------------------------------------
 
         viewModel.eventList.observe(this) { events ->
             eventAdapter.updateData(events)
@@ -74,7 +79,6 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
             "Kerala" to listOf("Kochi", "Thiruvananthapuram", "Kozhikode"),
             "Punjab" to listOf("Amritsar", "Ludhiana", "Jalandhar", "Patiala"),
             "Bihar" to listOf("Patna", "Gaya", "Muzaffarpur")
-            // ... add more states/cities as needed.
         )
 
         val stateButton = findViewById<Button>(R.id.buttonStateFilter)

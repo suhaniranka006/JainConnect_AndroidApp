@@ -34,3 +34,20 @@ data class Event(
     @SerializedName("rsvps")
     val rsvps: List<String>
 )
+
+
+// --- Helper Classes (Add at bottom of file) ---
+// Inside ApiService.kt (at the bottom)
+
+data class EventSubmissionRequest(
+    val title: String, // Was 'name'
+    val city: String,  // Was 'location'
+    val date: String,
+    val time: String,  // ✅ Added
+    val description: String
+)
+
+data class ApiResponse(
+    val success: Boolean,
+    val message: String
+)

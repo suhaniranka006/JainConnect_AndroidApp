@@ -107,4 +107,12 @@ interface ApiService {
         @Query("timezone") timezone: String = "auto",
         @Query("forecast_days") days: Int = 14
     ): Response<SunResponse>
+
+
+
+    @POST("api/events")
+    suspend fun submitEvent(
+        @Header("Authorization") token: String,
+        @Body eventData: EventSubmissionRequest
+    ): Response<ApiResponse>
 }

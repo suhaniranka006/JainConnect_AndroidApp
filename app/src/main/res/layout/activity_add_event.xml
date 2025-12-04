@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@color/white">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add New Event"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/jain_orange"
+        android:layout_marginBottom="20dp"/>
+
+    <EditText
+        android:id="@+id/etEventTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Event Title (e.g., Mahavir Jayanti)"
+        android:layout_marginBottom="12dp"/>
+
+    <EditText
+        android:id="@+id/etEventCity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="City (e.g., Jaipur)"
+        android:layout_marginBottom="12dp"/>
+
+    <EditText
+        android:id="@+id/etEventDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Date (YYYY-MM-DD)"
+        android:inputType="date"
+        android:layout_marginBottom="12dp"/>
+
+    <EditText
+        android:id="@+id/etEventTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Time (e.g., 10:00 AM)"
+        android:inputType="time"
+        android:layout_marginBottom="12dp"/>
+
+    <EditText
+        android:id="@+id/etEventDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Description"
+        android:minLines="3"
+        android:layout_marginBottom="24dp"/>
+
+    <Button
+        android:id="@+id/btnSubmitEvent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Submit for Approval"
+        android:backgroundTint="@color/jain_orange"/>
+
+</LinearLayout>

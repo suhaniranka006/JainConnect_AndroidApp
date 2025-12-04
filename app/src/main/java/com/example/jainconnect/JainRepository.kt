@@ -120,7 +120,24 @@ class JainRepository {
         return RetrofitInstance.api.getSunTimes(lat, lng)
     }
 
+
+// Inside JainRepository.kt
+
+    suspend fun submitEvent(
+        token: String,
+        title: String,
+        city: String,
+        date: String,
+        time: String,
+        desc: String
+    ): Response<ApiResponse> {
+        // Map the function args to the Data Class
+        val request = EventSubmissionRequest(title, city, date, time, desc)
+        return RetrofitInstance.api.submitEvent("Bearer $token", request)
+    }
 }
+
+
 
 
 
