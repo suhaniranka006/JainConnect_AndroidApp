@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.jainconnect"
+    namespace = "com.mycompany.jainconnect"
     compileSdk = 35
 
     packagingOptions {
@@ -21,7 +21,7 @@ android {
 
 
     defaultConfig {
-        applicationId = "com.example.jainconnect"
+        applicationId = "com.mycompany.jainconnect"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
