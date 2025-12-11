@@ -42,7 +42,7 @@ class MaharajLocationActivity : AppCompatActivity() {
         recyclerViewMaharaj.adapter = maharajAdapter
 
         // 3. Initialize ViewModel
-        // viewModel = ViewModelProvider(this)[JainViewModel::class.java]
+
 
         viewModel.filteredMaharaj.observe(this) {
             maharajAdapter.updateData(it ?: emptyList())

@@ -41,12 +41,12 @@ class ProfileActivity : AppCompatActivity() {
 
     private var currentUser: User? = null
 
-    // EditProfileActivity se result handle karne ke liye
+    // Launcher for handling results from EditProfileActivity
     private val editProfileLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == RESULT_OK) {
-            // Agar profile update hua hai, toh data dobara fetch karein
+            // If profile was updated, refresh the data
             Toast.makeText(this, "Profile updated successfully!", Toast.LENGTH_SHORT).show()
             fetchData()
         }
@@ -63,7 +63,7 @@ class ProfileActivity : AppCompatActivity() {
         btnGoToEditProfile.setOnClickListener {
             currentUser?.let {
                 val intent = Intent(this, EditProfileActivity::class.java)
-                intent.putExtra("USER_DATA", it) // User object ko agli screen par bhejein
+                intent.putExtra("USER_DATA", it) // Pass User object to the next screen
                 editProfileLauncher.launch(intent)
             }
         }
@@ -122,7 +122,7 @@ class ProfileActivity : AppCompatActivity() {
         tvProfileEmail.text = "Email: ${user.email}"
         tvProfilePhone.text = "Phone: ${user.phone ?: "Not Provided"}"
         tvProfileLocation.text = "Location: ${user.location ?: "Not Provided"}"
-        tvProfileDob.text = "DOB: ${user.dob?.split("T")?.get(0) ?: "Not Provided"}" // Date format theek karein
+        tvProfileDob.text = "DOB: ${user.dob?.split("T")?.get(0) ?: "Not Provided"}" // Format the date
         tvProfileGender.text = "Gender: ${user.gender ?: "Not Provided"}"
 
         Glide.with(this)

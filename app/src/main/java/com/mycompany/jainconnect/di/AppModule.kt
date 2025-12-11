@@ -12,8 +12,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
+/**
+ * Hilt Module to provide dependencies that we cannot annotate with @Inject constructor.
+ * (e.g., Third-party libraries like Retrofit, OkHttp, or interfaces).
+ */
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(SingletonComponent::class) // These dependencies live as long as the Application
 object AppModule {
 
     private const val BASE_URL = "https://jainconnect-backened-2.onrender.com/"
@@ -38,7 +42,7 @@ object AppModule {
     }
 
     @Provides
-    @Singleton
+    @Singleton // Ensures only ONE instance of Retrofit is created for the entire app
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)

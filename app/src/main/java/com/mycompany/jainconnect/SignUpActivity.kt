@@ -52,13 +52,13 @@ class SignUpActivity : AppCompatActivity() {
         setContentView(R.layout.activity_sign_up)
 
         initializeViews()
-        // viewModel = ViewModelProvider(this)[JainViewModel::class.java] // Removed for Hilt
+
         setClickListeners()
         observeSignupResult()
     }
 
     /**
-     * Saare UI elements ko unki ID se find karta hai.
+     * Initializes UI elements by finding them by ID.
      */
     private fun initializeViews() {
         ivProfileImage = findViewById(R.id.ivProfileImage)
@@ -75,15 +75,15 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     /**
-     * Saare buttons ke click events ko handle karta hai.
+     * Sets onClickListeners for buttons.
      */
     private fun setClickListeners() {
         ivProfileImage.setOnClickListener {
-            imagePickerLauncher.launch("image/*") // Gallery kholta hai
+            imagePickerLauncher.launch("image/*") // Opens Gallery
         }
 
         btnSelectImage.setOnClickListener {
-            imagePickerLauncher.launch("image/*") // Gallery kholta hai
+            imagePickerLauncher.launch("image/*") // Opens Gallery
         }
 
         etDob.setOnClickListener {
@@ -96,7 +96,7 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     /**
-     * ViewModel se aane waale signup ke result ko observe (sunta) karta hai.
+     * Observes the signup result from the ViewModel.
      */
     private fun observeSignupResult() {
         viewModel.signupResult.observe(this) { response ->
@@ -108,10 +108,10 @@ class SignUpActivity : AppCompatActivity() {
             }
 
             if (response.isSuccessful && response.body()?.success == true) {
-                // Signup successful hua
+                // Signup Successful
                 val token = response.body()?.token
                 if (token != null) {
-                    saveAuthToken(token) // Token save kar lete hain
+                    saveAuthToken(token) // Save Token
                 }
 
 
@@ -119,25 +119,25 @@ class SignUpActivity : AppCompatActivity() {
 
                 //shared prefernce
 
-                // 1. Session ko 'logged in' set karein
+                // 1. Set session to "logged in"
                 val session = SessionManager(this)
                 session.saveLoginStatus(true)
                 // ---------------------
 
                 Toast.makeText(this, "Account Created Successfully!", Toast.LENGTH_SHORT).show()
 
-                // MainActivity par jaayein
+                // Navigate to MainActivity
                 val intent = Intent(this, MainActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
 
                 // --- CHANGES HERE ---
-                // 2. Iss activity ko finish karein
+                // 2. Finish this activity
                 finish()
                 // ---------------------
 
             } else {
-                // Signup fail hua
+                // Signup Failed
                 val errorMsg = response.errorBody()?.string() ?: "Signup Failed"
                 Log.e("SignUpActivity", "API Error: $errorMsg")
                 Toast.makeText(this, "Error: $errorMsg", Toast.LENGTH_LONG).show()
@@ -147,7 +147,7 @@ class SignUpActivity : AppCompatActivity() {
 
 
     /**
-     * "Sign Up" button dabane par yeh function chalta hai.
+     * Triggered when "Sign Up" button is clicked.
      */
     private fun handleSignUp() {
         val TAG = "SignUpDebug"
@@ -184,7 +184,7 @@ class SignUpActivity : AppCompatActivity() {
 
         progressBar.visibility = View.VISIBLE
 
-        // 3. Image URI ko File object me convert karein
+        // 3. Convert Image URI to File object
         val imageFile = getFileFromUri(selectedImageUri!!)
         if (imageFile == null) {
             Log.e(TAG, "ERROR: Could not create a File from the image URI.")
@@ -193,14 +193,14 @@ class SignUpActivity : AppCompatActivity() {
             return
         }
 
-        // 4. ViewModel ko call karein (saare data ke saath)
+        // 4. Call ViewModel (with all data)
         Log.d(TAG, "--- Calling viewModel.performSignup() with all data ---")
         viewModel.performSignup(name, email, password, phone, location, dob, gender, imageFile)
     }
 
 
     /**
-     * Date picker dialog dikhata hai.
+     * Displays a date picker dialog.
      */
     private fun showDatePickerDialog() {
         val calendar = Calendar.getInstance()
@@ -218,8 +218,8 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     /**
-     * Yeh ek helper function hai jo gallery se select ki gayi image ke URI ko
-     * ek temporary File object me convert karta hai, taaki hum use API par bhej sakein.
+     * Helper function to convert the URI of the selected image from the gallery
+     * into a temporary File object for API upload.
      */
     private fun getFileFromUri(uri: Uri): File? {
         return try {
@@ -239,7 +239,7 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     /**
-     * Login/Signup ke baad mile token ko SharedPreferences me save karta hai.
+     * Saves the token received specifically after Login/Signup into SharedPreferences.
      */
     private fun saveAuthToken(token: String) {
         val sharedPref = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE) ?: return

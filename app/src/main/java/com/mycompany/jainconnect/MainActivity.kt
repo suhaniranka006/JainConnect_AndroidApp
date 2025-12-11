@@ -15,6 +15,10 @@ import java.util.Locale
 import androidx.activity.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * The main screen of the app.
+ * Annotated with @AndroidEntryPoint to allow Hilt to inject dependencies.
+ */
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 

@@ -20,7 +20,7 @@ class AddMaharajActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_maharaj)
 
-        // viewModel = ViewModelProvider(this)[JainViewModel::class.java]
+
 
         // 1. Bind Views (Matches IDs in activity_add_maharaj.xml)
         val etName = findViewById<EditText>(R.id.etMaharajName)

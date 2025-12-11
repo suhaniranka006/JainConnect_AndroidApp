@@ -9,15 +9,15 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Response
 import java.io.File
-
-
-
-//repo is used to abstract data resource , used as mediator bw rest of the app and data resource
-//useful for decoupling,single source of truth, testability
 import javax.inject.Inject
 
-//repo is used to abstract data resource , used as mediator bw rest of the app and data resource
-//useful for decoupling,single source of truth, testability
+
+
+/**
+ * Repository module for handling data operations.
+ * It abstracts the data sources (API, Database) from the rest of the application.
+ * @Inject constructor allows Hilt to pass the [ApiService] instance automatically.
+ */
 class JainRepository @Inject constructor(
     private val api: ApiService
 ) {
@@ -27,14 +27,14 @@ class JainRepository @Inject constructor(
     suspend fun getEvents(): List<Event> = api.getEvents()
     suspend fun getMaharaj(): List<Maharaj> = api.getMaharaj()
 
-    // === YEH NAYA FUNCTION HAI ===
+    // === RSVP FUNCTION ===
     /**
-     * "I'm Going" (RSVP) button ke click ko handle karta hai.
-     * @param token User ka authentication token (e.g., "Bearer <token>")
-     * @param eventId Jiss event par click hua, uski ID.
+     * Handles the "I'm Going" (RSVP) button click.
+     * @param token User authentication token (e.g., "Bearer <token>")
+     * @param eventId The ID of the event.
      */
     suspend fun toggleEventRsvp(token: String, eventId: String): Response<RsvpResponse> {
-        // API call ke liye token ko "Bearer " prefix ke saath bhejein
+        // Send token with "Bearer " prefix for API call
         return api.toggleEventRsvp("Bearer $token", eventId)
     }
     // =============================
@@ -46,8 +46,8 @@ class JainRepository @Inject constructor(
         name: String, email: String, password: String, phone: String,
         location: String, dob: String, gender: String, imageFile: File?
     ): Response<AuthResponse> {
-        val partsMap = mutableMapOf<String, RequestBody>()  //mutable map to hold everything that i need to send in multipart request
-        partsMap["name"] = name.toRequestBody("text/plain".toMediaTypeOrNull())   //convert string into request body object which retrofit needs
+        val partsMap = mutableMapOf<String, RequestBody>()  // Stores multipart request data
+        partsMap["name"] = name.toRequestBody("text/plain".toMediaTypeOrNull()) // Convert string to request body
         partsMap["email"] = email.toRequestBody("text/plain".toMediaTypeOrNull())
         partsMap["password"] = password.toRequestBody("text/plain".toMediaTypeOrNull())
         partsMap["gender"] = gender.toRequestBody("text/plain".toMediaTypeOrNull())
@@ -63,14 +63,14 @@ class JainRepository @Inject constructor(
         }
 
 
-        //handles image part
+        // Handles image part for upload
         val imagePart: MultipartBody.Part? = imageFile?.let {
             val requestFile = it.asRequestBody("image/*".toMediaTypeOrNull())
             MultipartBody.Part.createFormData("profileImage", it.name, requestFile)
         }
 
 
-        //calls api and pass parts and imagepart
+        // Call API passing parts and the image
         return api.registerUser(
             parts = partsMap,
             profileImage = imagePart
@@ -81,14 +81,14 @@ class JainRepository @Inject constructor(
 
 
 
-    //ask for login credentials and do api calls
+    // Authenticate user with credentials
     suspend fun loginUser(email: String, password: String): Response<AuthResponse> {
         val loginRequest = LoginRequest(email = email, password = password)
         return api.loginUser(loginRequest)
     }
 
 
-    //it asks for bearer token from api and then authneticate and gives realted profile
+    // Validate the token and fetch the user profile
     suspend fun getUserProfile(token: String): Response<AuthResponse> {
         return api.getUserProfile("Bearer $token")
     }
@@ -96,14 +96,15 @@ class JainRepository @Inject constructor(
 
 
 
-    //works similar with register user but it also passes bearer token for auth
+    // Updates user profile. Passes Bearer token for authentication.
     suspend fun updateUserProfile(
         token: String, name: String, phone: String, location: String,
         dob: String, gender: String, imageFile: File?
     ): Response<AuthResponse> {
         val partsMap = mutableMapOf<String, RequestBody>()
 
-        //we are using nonempty so that only the part we are updating will go to backened, helpe to avoid override existing data to empty string
+        // Use 'isNotEmpty' to ensure we only send updated fields.
+        // This prevents overwriting existing data with empty strings.
         if (name.isNotEmpty()) partsMap["name"] = name.toRequestBody("text/plain".toMediaTypeOrNull())
         if (phone.isNotEmpty()) partsMap["phone"] = phone.toRequestBody("text/plain".toMediaTypeOrNull())
         if (location.isNotEmpty()) partsMap["location"] = location.toRequestBody("text/plain".toMediaTypeOrNull())
@@ -171,8 +172,8 @@ class JainRepository @Inject constructor(
 
 
 
-// === YEH NAYI DATA CLASS HAI ===
-// API se aane waale response ko handle karne ke liye
+// === NEW DATA CLASS ===
+// Handles API response for RSVP
 // (e.g., { "message": "RSVP added", "rsvpCount": 16 })
 data class RsvpResponse(
     @SerializedName("message")

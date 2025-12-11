@@ -40,7 +40,7 @@ class TithiActivity : AppCompatActivity() {
         Log.d(TAG, "RecyclerView + Adapter set")
 
         // -------------------- ViewModel Setup --------------------
-        // viewModel = ViewModelProvider(this)[JainViewModel::class.java]
+
         Log.d(TAG, "ViewModel initialized")
 
         // Observe FULL tithiList for logging/debugging

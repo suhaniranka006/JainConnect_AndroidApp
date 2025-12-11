@@ -39,8 +39,11 @@ import com.mycompany.jainconnect.models.Maharaj
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-//viemodel survives config changes ,
-//viewmodelscope - builtin coroutine scope that is automactically tied to its lifecycle
+/**
+ * HiltViewModel for managing UI-related data in a lifecycle-conscious way.
+ * @Inject constructor tells Hilt how to create instances of this ViewModel.
+ * Hilt automatically provides the [JainRepository] dependency.
+ */
 @HiltViewModel
 class JainViewModel @Inject constructor(
     private val repository: JainRepository
@@ -52,8 +55,9 @@ class JainViewModel @Inject constructor(
 
 
 
-    //livedata -special data hlolder whose value can be obseerved , lifecycle aware
     // --- LiveData for Signup ---
+    // MutableLiveData stores the data, while publicly exposed LiveData is immutable
+    // to prevent external classes from modifying it directly.
     private val _signupResult = MutableLiveData<Response<AuthResponse>?>()
     val signupResult: LiveData<Response<AuthResponse>?> = _signupResult
 
@@ -200,16 +204,19 @@ class JainViewModel @Inject constructor(
         }
     }
 
-    //used to peroform signup task ,taking all credentials and calling registeruser fun in repo in coroutine scope by .postvalue
-
+    /**
+     * Performs user registration.
+     * Takes all user details and calls the repository to register the user.
+     * Updates [signupResult] with the API response.
+     */
     fun performSignup(
         name: String, email: String, password: String, phone: String,
         location: String, dob: String, gender: String, imageFile: File?
     ) {
 
-        //coroutine scope provided by viewmodel class
-        //launch - coroutine builder , launches new coroutien in background without blocking main thread
-        //coroutines autmatically cancelded if viewmodel is destroyed , prevents memory leaks
+        // viewModelScope is a built-in CoroutineScope tied to the ViewModel's lifecycle.
+        // It automatically cancels operations when the ViewModel is cleared (e.g., Activity destroyed),
+        // preventing memory leaks.
         viewModelScope.launch {
             try {
                 val response = repository.registerUser(name, email, password, phone, location, dob, gender, imageFile)  //calls repo fun
@@ -224,12 +231,14 @@ class JainViewModel @Inject constructor(
 
 
 
-    //used to perofrm login fun
-
+    /**
+     * Performs user login.
+     * Updates [loginResult] with the API response.
+     */
     fun performLogin(email: String, password: String) {
         viewModelScope.launch {
             try {
-                //call repo to do actual work
+                // Call repository to perform login operation
                 val response = repository.loginUser(email, password)
 
                 //update live data with the result
@@ -302,12 +311,13 @@ class JainViewModel @Inject constructor(
 
 
 
-    //to fetch tithis
+    // Fetches tithi data from the repository
     fun fetchTithis() {
         viewModelScope.launch {
             try {
-                val tithisFromRepo = repository.getTithis()   //to get tithis
-                val upcomingTithis = filterUpcomingTithis(tithisFromRepo)  //after fetching it calls filter fun , advantage - reduced network call , disadvantage - unnecessary memory use for users to fetch all
+                val tithisFromRepo = repository.getTithis()
+                // Filter locally reduces network calls but consumes more memory
+                val upcomingTithis = filterUpcomingTithis(tithisFromRepo)
                 _tithiList.value = upcomingTithis
                 _filteredTithis.value = upcomingTithis
             } catch (e: Exception) {
@@ -320,7 +330,7 @@ class JainViewModel @Inject constructor(
 
 
 
-    //filter tihtis by query
+    // Filters tithis based on a search query
     fun filterTithisByQuery(query: String) {
 
         val q = query.trim().lowercase()
@@ -344,15 +354,13 @@ class JainViewModel @Inject constructor(
 
 
 
-    //filters upcoming tithis
-    private fun filterUpcomingTithis(allTithis: List<Tithi>): List<Tithi> {  //take list of all tithis
+    // Filters the list to show only upcoming tithis (including today)
+    private fun filterUpcomingTithis(allTithis: List<Tithi>): List<Tithi> {
 
-        // Date format which is coming from the server (e.g., "2025-10-14")
+        // Date format from the server (e.g., "2025-10-14")
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
-
-        //take today,s date, set time to midnight(00:00:00)
-        //so that today,s tithi can also be included
+        // Set time to midnight (00:00:00) so that today's tithi is included
 
         val todayCalendar = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, 0)
@@ -387,8 +395,7 @@ class JainViewModel @Inject constructor(
      */
     fun filterTithisByDays(days: Int) {
 
-        //if user selects all tithis(days==0) , show all tithis
-
+        // If days is 0, show all tithis
         if (days == 0) {
             _filteredTithis.postValue(_tithiList.value ?: emptyList())
             return
@@ -396,7 +403,7 @@ class JainViewModel @Inject constructor(
 
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
-        // Start date (aaj, midnight se)
+        // Start date (Today from midnight)
         val startCalendar = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, 0)
             set(Calendar.MINUTE, 0)
@@ -405,10 +412,11 @@ class JainViewModel @Inject constructor(
         }
         val today = startCalendar.time
 
-        // End date (aaj se 'days' din baad)
+        // End date (Today + 'days')
         val endCalendar = Calendar.getInstance().apply {
             add(Calendar.DAY_OF_YEAR, days)
-            set(Calendar.HOUR_OF_DAY, 23) // Din ke aakhir tak ka time set karein
+            set(Calendar.HOUR_OF_DAY, 23) // Set to end of the day
+
             set(Calendar.MINUTE, 59)
             set(Calendar.SECOND, 59)
         }
@@ -439,8 +447,8 @@ class JainViewModel @Inject constructor(
     val eventList: LiveData<List<Event>> = _eventList
     private val _allEvents = mutableListOf<Event>()
 
-    // === NAYA RSVP LIVEDATA ===
-    // Yeh Activity ko batayega ki API call successful hua (true) ya fail (false)
+    // === RSVP LiveData ===
+    // Notifies the Activity if the API call was successful (true) or failed (false)
     private val _rsvpResult = MutableLiveData<Boolean>()
     val rsvpResult: LiveData<Boolean> = _rsvpResult
     // ==========================
@@ -487,51 +495,49 @@ class JainViewModel @Inject constructor(
     }
 
 
-    //filter by query
-    //filter by query
+    // Filter events based on search query
     fun filterEvents(query: String) {
         val lowerQuery = query.trim().lowercase()
         val filtered = _allEvents.filter { event ->
-            // --- YEH RAHA FIX ---
-            // Humne har field par safe call (?.) laga diya hai.
-            // ?.let { ... } ka matlab hai, "Agar yeh null nahi hai, toh hi aage ka code chalao."
+            // Use safe calls (?.) to handle potential null values
+            // ?.let { ... } runs the code block only if the value is not null
 
             val nameMatches = event.name?.lowercase()?.contains(lowerQuery) == true
             val locationMatches = event.location?.lowercase()?.contains(lowerQuery) == true
             val dateMatches = event.date?.lowercase()?.contains(lowerQuery) == true
             val descriptionMatches = event.description?.lowercase()?.contains(lowerQuery) == true
 
-            // Agar inme se koi bhi match hota hai, toh event ko list mein rakho
+            // Keep the event if any field matches the query
             nameMatches || locationMatches || dateMatches || descriptionMatches
         }
         _eventList.value = filtered
     }
 
 
-    // === NAYA RSVP FUNCTION ===
+    // === RSVP Function ===
     /**
-     * "I'm Going" (RSVP) button ke click ko handle karta hai.
-     * Yeh Repository ko API call karne ke liye bolta hai.
-     * @param eventId Jiss event par click hua, uski ID.
+     * Handles the "I'm Going" (RSVP) button click.
+     * Triggers the API call via the Repository.
+     * @param eventId The ID of the event clicked.
      */
-    fun toggleEventRsvp(token: String,eventId: String) {
+    fun toggleEventRsvp(token: String, eventId: String) {
         viewModelScope.launch {
             try {
-                // Repository token ko SharedPreferences se khud manage karega
-                val response = repository.toggleEventRsvp(token,eventId)
+                // Repository manages the token
+                val response = repository.toggleEventRsvp(token, eventId)
 
                 if (response.isSuccessful) {
-                    // Activity ko batayein ki success hua
+                    // Notify Activity of success
                     _rsvpResult.postValue(true)
-                    // Note: Activity response milne par 'fetchEvents()' ko
-                    // khud call karegi taaki count update ho.
+                    // Note: Activity calls 'fetchEvents()' on response
+                    // to update the count.
                 } else {
-                    // Error hua
+                    // Error occurred
                     Log.w("JainViewModel", "toggleEventRsvp failed: ${response.message()}")
                     _rsvpResult.postValue(false)
                 }
             } catch (e: Exception) {
-                // Network ya koi aur exception
+                // Network or other exception
                 Log.e("JainViewModel", "RSVP Toggle Exception", e)
                 _rsvpResult.postValue(false)
             }

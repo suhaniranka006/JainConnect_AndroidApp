@@ -19,6 +19,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.activity.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * The login screen for the application.
+ * Annotated with @AndroidEntryPoint so Hilt can inject dependencies (like ViewModel) into it.
+ */
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
@@ -30,14 +34,17 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var tvGoToSignUp: TextView
 
     // --- ViewModel ---
+    // 'by viewModels()' is a property delegate that:
+    // 1. Asks Hilt to provide an instance of JainViewModel.
+    // 2. Scopes the ViewModel to this Activity (it survives configuration changes).
     private val viewModel: JainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        // ViewModel ko initialize karein
-        // Hilt handles this now
+        // Note: No manual ViewModelProvider instantiation needed anymore.
+        // Hilt and the 'by viewModels()' delegate handle initialization automatically.
 
         initializeViews()
         setClickListeners()
@@ -61,7 +68,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         tvGoToSignUp.setOnClickListener {
-            // Agar user ke paas account nahi hai, toh SignUpActivity par bhejein
+            // Navigate to SignUpActivity if user doesn't have an account
             val intent = Intent(this, SignUpActivity::class.java)
             startActivity(intent)
         }
@@ -81,7 +88,7 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        // Loading indicator dikhayein aur API call karein
+        // Show loading indicator and initiate API call
         loginProgressBar.visibility = View.VISIBLE
         viewModel.performLogin(email, password)
     }
@@ -97,28 +104,28 @@ class LoginActivity : AppCompatActivity() {
             // ... (Network error handling) ...
 
             if (response!!.isSuccessful && response.body()?.success == true) {
-                // Login successful hua
+                // Login Successful
                 Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
 
-                // Token save karein
+                // Save Token
                 response?.body()?.token?.let { saveAuthToken(it) }
 
 
 
                 //shared prefernce
-                // --- YAHAN PAR SESSION SAVE KAREIN ---
+                // --- SAVE SESSION HERE ---
                 val session = SessionManager(this)
                 session.saveLoginStatus(true)
                 // ------------------------------------
 
-                // MainActivity par jaayein
+                // Navigate to MainActivity
                 val intent = Intent(this, MainActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
                 finish()
 
             } else {
-                // Login fail hua
+                // Login Failed
                 // ...
             }
         }
@@ -126,7 +133,8 @@ class LoginActivity : AppCompatActivity() {
 // ...
 
 
-    //on success , it saves the received token to shredprefrernces , this is how app will remeber the user is logged in
+    // On success, save the received token to SharedPreferences.
+    // This allows the app to remember the user's logged-in state.
     private fun saveAuthToken(token: String) {
         val sharedPref = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE) ?: return
         with(sharedPref.edit()) {

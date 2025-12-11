@@ -6,7 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Button // Yeh import zaroori hai
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -56,14 +56,14 @@ class EditProfileActivity : AppCompatActivity() {
 
         // viewModel = ViewModelProvider(this)[JainViewModel::class.java]
 
-        // 1. Saare views ko initialize karein
+        // 1. Initialize all views
         initializeViews()
 
-        // 2. Data populate karein
+        // 2. Populate data
         val user = intent.getSerializableExtra("USER_DATA") as? User
         user?.let { populateInitialData(it) }
 
-        // 3. Click Listeners set karein
+        // 3. Set Click Listeners
         btnChangeImage.setOnClickListener { imagePickerLauncher.launch("image/*") }
         btnSaveChanges.setOnClickListener { handleSaveChanges() }
 
@@ -73,7 +73,7 @@ class EditProfileActivity : AppCompatActivity() {
         }
         // ---------------------------------
 
-        // 4. ViewModel ko observe karein
+        // 4. Observe ViewModel
         observeViewModel()
     }
 
@@ -89,12 +89,12 @@ class EditProfileActivity : AppCompatActivity() {
         btnSaveChanges = findViewById(R.id.btnSaveChanges)
         editProfileProgress = findViewById(R.id.editProfileProgress)
 
-        // --- LOGOUT BUTTON KO INITIALIZE KAREIN ---
+        // --- INITIALIZE LOGOUT BUTTON ---
         btnLogout = findViewById(R.id.btnLogout)
     }
 
     private fun populateInitialData(user: User) {
-        // ... (Aapka pehle ka code, bilkul sahi hai)
+        // Set initial values from user object
         etEditEmail.setText(user.email)
         etEditName.setText(user.name)
         etEditPhone.setText(user.phone ?: "")
@@ -124,20 +124,19 @@ class EditProfileActivity : AppCompatActivity() {
         viewModel.updateProfile(token, name, phone, location, dob, gender, imageFile)
     }
 
-    // --- NEW LOGOUT FUNCTION ---
-    private fun handleLogout() {
-        // 1. SessionManager se session clear karein
-        val session = SessionManager(this) // 'this' context use karein
-        session.clearSession() // Yeh 'isLoggedIn' ko false kar dega
+     private fun handleLogout() {
+        // 1. Clear session from SessionManager
+        val session = SessionManager(this) // Use 'this' context
+        session.clearSession() // This sets 'isLoggedIn' to false
 
-        // 2. User ko waapis LoginActivity bhej dein
+        // 2. Redirect user back to LoginActivity
         val intent = Intent(this, LoginActivity::class.java)
 
-        // Saari pichli activities ko clear karein
+        // Clear all previous activities from the stack
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
 
-        // Iss EditProfileActivity ko band kar dein
+        // Close this EditProfileActivity
         finish()
     }
     // -------------------------

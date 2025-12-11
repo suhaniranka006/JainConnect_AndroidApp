@@ -32,7 +32,7 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
         supportActionBar?.hide()
         setContentView(R.layout.activity_events)
 
-        // viewModel = ViewModelProvider(this)[JainViewModel::class.java]
+
 
         recyclerViewEvents = findViewById(R.id.recyclerViewEvents)
         recyclerViewEvents.layoutManager = LinearLayoutManager(this)
