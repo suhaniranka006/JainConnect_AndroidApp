@@ -12,9 +12,13 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+import androidx.activity.viewModels
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: JainViewModel
+    private val viewModel: JainViewModel by viewModels()
     private lateinit var sharedPreferences: SharedPreferences
 
     // UI Components
@@ -27,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        viewModel = ViewModelProvider(this)[JainViewModel::class.java]
+        // viewModel = ViewModelProvider(this)[JainViewModel::class.java] // Removed for Hilt
 
         // ✅ FIX IS HERE: Use "auth_prefs" to match LoginActivity
         sharedPreferences = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)

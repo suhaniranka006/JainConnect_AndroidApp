@@ -14,12 +14,18 @@ import java.io.File
 
 //repo is used to abstract data resource , used as mediator bw rest of the app and data resource
 //useful for decoupling,single source of truth, testability
-class JainRepository {
+import javax.inject.Inject
+
+//repo is used to abstract data resource , used as mediator bw rest of the app and data resource
+//useful for decoupling,single source of truth, testability
+class JainRepository @Inject constructor(
+    private val api: ApiService
+) {
 
     // --- Tithi, Event, Maharaj Functions ---
-    suspend fun getTithis(): List<Tithi> = RetrofitInstance.api.getTithis()
-    suspend fun getEvents(): List<Event> = RetrofitInstance.api.getEvents()
-    suspend fun getMaharaj(): List<Maharaj> = RetrofitInstance.api.getMaharaj()
+    suspend fun getTithis(): List<Tithi> = api.getTithis()
+    suspend fun getEvents(): List<Event> = api.getEvents()
+    suspend fun getMaharaj(): List<Maharaj> = api.getMaharaj()
 
     // === YEH NAYA FUNCTION HAI ===
     /**
@@ -29,7 +35,7 @@ class JainRepository {
      */
     suspend fun toggleEventRsvp(token: String, eventId: String): Response<RsvpResponse> {
         // API call ke liye token ko "Bearer " prefix ke saath bhejein
-        return RetrofitInstance.api.toggleEventRsvp("Bearer $token", eventId)
+        return api.toggleEventRsvp("Bearer $token", eventId)
     }
     // =============================
 
@@ -65,7 +71,7 @@ class JainRepository {
 
 
         //calls api and pass parts and imagepart
-        return RetrofitInstance.api.registerUser(
+        return api.registerUser(
             parts = partsMap,
             profileImage = imagePart
         )
@@ -78,13 +84,13 @@ class JainRepository {
     //ask for login credentials and do api calls
     suspend fun loginUser(email: String, password: String): Response<AuthResponse> {
         val loginRequest = LoginRequest(email = email, password = password)
-        return RetrofitInstance.api.loginUser(loginRequest)
+        return api.loginUser(loginRequest)
     }
 
 
     //it asks for bearer token from api and then authneticate and gives realted profile
     suspend fun getUserProfile(token: String): Response<AuthResponse> {
-        return RetrofitInstance.api.getUserProfile("Bearer $token")
+        return api.getUserProfile("Bearer $token")
     }
 
 
@@ -109,7 +115,7 @@ class JainRepository {
             MultipartBody.Part.createFormData("profileImage", it.name, requestFile)
         }
 
-        return RetrofitInstance.api.updateUserProfile("Bearer $token", partsMap, imagePart)
+        return api.updateUserProfile("Bearer $token", partsMap, imagePart)
     }
 
 
@@ -117,7 +123,7 @@ class JainRepository {
 
     // Since we used the Full URL in the Interface, we can use the same api instance!
     suspend fun getSunTimings(lat: Double, lng: Double): Response<SunResponse> {
-        return RetrofitInstance.api.getSunTimes(lat, lng)
+        return api.getSunTimes(lat, lng)
     }
 
 
@@ -133,7 +139,7 @@ class JainRepository {
     ): Response<ApiResponse> {
         // Map the function args to the Data Class
         val request = EventSubmissionRequest(title, city, date, time, desc)
-        return RetrofitInstance.api.submitEvent("Bearer $token", request)
+        return api.submitEvent("Bearer $token", request)
     }
 
 
@@ -155,7 +161,7 @@ class JainRepository {
             contact
 
         )
-        return RetrofitInstance.api.submitMaharaj("Bearer $token", request)
+        return api.submitMaharaj("Bearer $token", request)
     }
 }
 

@@ -8,4 +8,5 @@ plugins {
 
     // Google services plugin
     id("com.google.gms.google-services") version "4.4.3" apply false
+    id("com.google.dagger.hilt.android") version "2.51.1" apply false
 }

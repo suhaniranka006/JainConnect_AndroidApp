@@ -15,6 +15,10 @@ import androidx.lifecycle.ViewModelProvider
 import java.io.File
 import java.util.Calendar
 
+import androidx.activity.viewModels
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
 class SignUpActivity : AppCompatActivity() {
 
     // --- UI Views ---
@@ -31,7 +35,7 @@ class SignUpActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
 
     // --- ViewModel and Data ---
-    private lateinit var viewModel: JainViewModel
+    private val viewModel: JainViewModel by viewModels()
     private var selectedImageUri: Uri? = null
 
     // --- Activity Result Launcher for Image Picking ---
@@ -48,7 +52,7 @@ class SignUpActivity : AppCompatActivity() {
         setContentView(R.layout.activity_sign_up)
 
         initializeViews()
-        viewModel = ViewModelProvider(this)[JainViewModel::class.java]
+        // viewModel = ViewModelProvider(this)[JainViewModel::class.java] // Removed for Hilt
         setClickListeners()
         observeSignupResult()
     }

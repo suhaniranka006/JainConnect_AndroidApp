@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("com.google.devtools.ksp")
     id("com.google.gms.google-services") // 👈 Firebase plugin added
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -98,5 +99,9 @@ dependencies {
     implementation("com.google.android.material:material:1.12.0")
 
     implementation("com.github.bumptech.glide:glide:4.16.0")
+
+    // Hilt
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    ksp("com.google.dagger:hilt-compiler:2.51.1")
 
 }

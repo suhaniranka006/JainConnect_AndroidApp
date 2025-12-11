@@ -7,17 +7,21 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
+import androidx.activity.viewModels
+import dagger.hilt.android.AndroidEntryPoint
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
+
 
 /**
  * TithiActivity displays a list of Tithis in a RecyclerView.
  * It provides search and filter functionality and observes the JainViewModel for data updates.
  */
+@AndroidEntryPoint
 class TithiActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: JainViewModel         // ViewModel instance
+    private val viewModel: JainViewModel by viewModels()         // ViewModel instance
     private lateinit var tithiAdapter: TithiAdapter      // Adapter for RecyclerView
     private lateinit var recyclerViewTithi: RecyclerView // RecyclerView UI component
 
@@ -36,7 +40,7 @@ class TithiActivity : AppCompatActivity() {
         Log.d(TAG, "RecyclerView + Adapter set")
 
         // -------------------- ViewModel Setup --------------------
-        viewModel = ViewModelProvider(this)[JainViewModel::class.java]
+        // viewModel = ViewModelProvider(this)[JainViewModel::class.java]
         Log.d(TAG, "ViewModel initialized")
 
         // Observe FULL tithiList for logging/debugging

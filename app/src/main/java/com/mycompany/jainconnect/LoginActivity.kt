@@ -16,6 +16,10 @@ import androidx.lifecycle.ViewModelProvider
 
 
 
+import androidx.activity.viewModels
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
     // --- UI Views ---
@@ -26,14 +30,14 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var tvGoToSignUp: TextView
 
     // --- ViewModel ---
-    private lateinit var viewModel: JainViewModel
+    private val viewModel: JainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
         // ViewModel ko initialize karein
-        viewModel = ViewModelProvider(this)[JainViewModel::class.java]
+        // Hilt handles this now
 
         initializeViews()
         setClickListeners()

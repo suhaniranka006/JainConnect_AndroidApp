@@ -12,10 +12,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
+import androidx.activity.viewModels
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
 class HorizonsActivity : AppCompatActivity() {
 
     // Define ViewModel and Adapter
-    private lateinit var viewModel: JainViewModel
+    private val viewModel: JainViewModel by viewModels()
     private lateinit var adapter: HorizonsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +57,7 @@ class HorizonsActivity : AppCompatActivity() {
 
         // 4. Initialize ViewModel
         // We use JainViewModel which already has the Repository logic inside it
-        viewModel = ViewModelProvider(this)[JainViewModel::class.java]
+        // viewModel = ViewModelProvider(this)[JainViewModel::class.java]
 
         // 5. Observe Data
         // Show loader initially

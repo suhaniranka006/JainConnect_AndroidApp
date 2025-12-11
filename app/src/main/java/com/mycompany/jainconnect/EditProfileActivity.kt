@@ -15,13 +15,17 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.activity.viewModels
+import dagger.hilt.android.AndroidEntryPoint
 import com.bumptech.glide.Glide
 import java.io.File
 import kotlin.jvm.java
 
+
+@AndroidEntryPoint
 class EditProfileActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: JainViewModel
+    private val viewModel: JainViewModel by viewModels()
     private var selectedImageUri: Uri? = null
 
     // UI Elements
@@ -50,7 +54,7 @@ class EditProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_profile)
 
-        viewModel = ViewModelProvider(this)[JainViewModel::class.java]
+        // viewModel = ViewModelProvider(this)[JainViewModel::class.java]
 
         // 1. Saare views ko initialize karein
         initializeViews()

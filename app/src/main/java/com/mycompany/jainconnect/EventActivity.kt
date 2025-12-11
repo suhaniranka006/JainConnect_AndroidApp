@@ -16,9 +16,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton // Import added
 
+import androidx.activity.viewModels
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
 class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
 
-    private lateinit var viewModel: JainViewModel
+    private val viewModel: JainViewModel by viewModels()
     private lateinit var eventAdapter: EventAdapter
     private lateinit var recyclerViewEvents: RecyclerView
     private lateinit var etSearchEvents: EditText
@@ -28,7 +32,7 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
         supportActionBar?.hide()
         setContentView(R.layout.activity_events)
 
-        viewModel = ViewModelProvider(this)[JainViewModel::class.java]
+        // viewModel = ViewModelProvider(this)[JainViewModel::class.java]
 
         recyclerViewEvents = findViewById(R.id.recyclerViewEvents)
         recyclerViewEvents.layoutManager = LinearLayoutManager(this)

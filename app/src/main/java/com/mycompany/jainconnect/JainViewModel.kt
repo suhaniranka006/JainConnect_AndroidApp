@@ -36,12 +36,15 @@ import com.mycompany.jainconnect.models.Maharaj
 
 
 
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+
 //viemodel survives config changes ,
 //viewmodelscope - builtin coroutine scope that is automactically tied to its lifecycle
-class JainViewModel : ViewModel() {
-
-
-    private val repository = JainRepository()
+@HiltViewModel
+class JainViewModel @Inject constructor(
+    private val repository: JainRepository
+) : ViewModel() {
 
     //
     //                                  USER AUTHENTICATION

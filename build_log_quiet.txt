@@ -1,0 +1,16 @@
+e: file:///C:/Users/suhani/AndroidStudioProjects/JainConnect/app/src/main/java/com/mycompany/jainconnect/ProfileActivity.kt:20:19 imports are only allowed in the beginning of file
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:kspDebugKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 7s

@@ -8,15 +8,19 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 
+import androidx.activity.viewModels
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
 class AddMaharajActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: JainViewModel
+    private val viewModel: JainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_maharaj)
 
-        viewModel = ViewModelProvider(this)[JainViewModel::class.java]
+        // viewModel = ViewModelProvider(this)[JainViewModel::class.java]
 
         // 1. Bind Views (Matches IDs in activity_add_maharaj.xml)
         val etName = findViewById<EditText>(R.id.etMaharajName)

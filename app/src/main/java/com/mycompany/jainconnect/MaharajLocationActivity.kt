@@ -11,13 +11,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
+import androidx.activity.viewModels
+import dagger.hilt.android.AndroidEntryPoint
+
 /**
  * Activity to display Maharaj locations in a RecyclerView.
  * Supports searching by name, city, currentSthan, and filtering.
  */
+@AndroidEntryPoint
 class MaharajLocationActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: JainViewModel
+    private val viewModel: JainViewModel by viewModels()
     private lateinit var maharajAdapter: MaharajAdapter
     private lateinit var recyclerViewMaharaj: RecyclerView
     private lateinit var buttonSelectCity: Button
@@ -38,7 +42,7 @@ class MaharajLocationActivity : AppCompatActivity() {
         recyclerViewMaharaj.adapter = maharajAdapter
 
         // 3. Initialize ViewModel
-        viewModel = ViewModelProvider(this)[JainViewModel::class.java]
+        // viewModel = ViewModelProvider(this)[JainViewModel::class.java]
 
         viewModel.filteredMaharaj.observe(this) {
             maharajAdapter.updateData(it ?: emptyList())

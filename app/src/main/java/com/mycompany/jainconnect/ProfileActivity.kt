@@ -17,9 +17,14 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 // import com.mycompany.jainconnect.databinding.ActivityProfileBinding // This line was in your file but not used, so it's safe to keep or remove
 
+import androidx.activity.viewModels
+import dagger.hilt.android.AndroidEntryPoint
+
+
+@AndroidEntryPoint
 class ProfileActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: JainViewModel
+    private val viewModel: JainViewModel by viewModels()
     private lateinit var progressBar: ProgressBar
 
     // FIX: Changed from LinearLayout to ConstraintLayout
@@ -51,7 +56,7 @@ class ProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
-        viewModel = ViewModelProvider(this)[JainViewModel::class.java]
+        // viewModel = ViewModelProvider(this)[JainViewModel::class.java]
         initializeViews()
         observeViewModel()
 
