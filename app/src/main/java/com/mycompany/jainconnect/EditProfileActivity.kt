@@ -60,7 +60,14 @@ class EditProfileActivity : AppCompatActivity() {
         initializeViews()
 
         // 2. Populate data
-        val user = intent.getSerializableExtra("USER_DATA") as? User
+        // 2. Populate data
+        val user = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            intent.getSerializableExtra("USER_DATA", User::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getSerializableExtra("USER_DATA") as? User
+        }
+        
         user?.let { populateInitialData(it) }
 
         // 3. Set Click Listeners
