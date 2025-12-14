@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="6dp"
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Name Shim -->
+        <View
+            android:layout_width="180dp"
+            android:layout_height="22dp"
+            android:background="#E0E0E0" />
+
+        <!-- Title/Sampraday Shim -->
+        <View
+            android:layout_width="120dp"
+            android:layout_height="16dp"
+            android:layout_marginTop="8dp"
+            android:background="#E0E0E0" />
+
+        <!-- City/Location Shim -->
+        <View
+            android:layout_width="140dp"
+            android:layout_height="16dp"
+            android:layout_marginTop="6dp"
+            android:background="#E0E0E0" />
+
+        <!-- Date Shim -->
+        <View
+            android:layout_width="100dp"
+            android:layout_height="14dp"
+            android:layout_marginTop="6dp"
+            android:background="#E0E0E0" />
+
+        <!-- Contact Shim -->
+        <View
+            android:layout_width="160dp"
+            android:layout_height="14dp"
+            android:layout_marginTop="6dp"
+            android:background="#E0E0E0" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

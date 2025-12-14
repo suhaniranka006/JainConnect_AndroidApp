@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="6dp"
+    android:layout_marginHorizontal="4dp"
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <!-- Name Shim -->
+            <View
+                android:layout_width="140dp"
+                android:layout_height="20dp"
+                android:background="#E0E0E0" />
+
+            <!-- Spacer -->
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <!-- Date Shim -->
+            <View
+                android:layout_width="80dp"
+                android:layout_height="16dp"
+                android:background="#E0E0E0" />
+        </LinearLayout>
+
+        <!-- Desc Shim -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="14dp"
+            android:layout_marginTop="12dp"
+            android:background="#E0E0E0" />
+        
+        <View
+            android:layout_width="200dp"
+            android:layout_height="14dp"
+            android:layout_marginTop="4dp"
+            android:background="#E0E0E0" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

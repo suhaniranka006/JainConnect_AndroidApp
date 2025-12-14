@@ -103,6 +103,33 @@
     </LinearLayout>
 
 
+    <!-- Shimmer View Container -->
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmerViewContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingHorizontal="12dp"
+        android:paddingTop="20dp"
+        app:layout_constraintTop_toBottomOf="@id/linearLayoutFilterButtons"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <include layout="@layout/item_tithi_shimmer" />
+            <include layout="@layout/item_tithi_shimmer" />
+            <include layout="@layout/item_tithi_shimmer" />
+            <include layout="@layout/item_tithi_shimmer" />
+            <include layout="@layout/item_tithi_shimmer" />
+            <include layout="@layout/item_tithi_shimmer" />
+            <include layout="@layout/item_tithi_shimmer" />
+        </LinearLayout>
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewTithi"
         android:layout_width="0dp"
@@ -111,6 +138,7 @@
         android:paddingTop="20dp"
         android:paddingBottom="16dp"
         android:paddingHorizontal="12dp"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/linearLayoutFilterButtons"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -16,16 +16,16 @@ scroll view is used to ensure it content is too tall for small phone screen , th
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp">
+        android:padding="@dimen/_20sdp">
 
         <TextView
             android:id="@+id/tvTitle"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/_20sdp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="JAINCONNECT"
             android:textColor="@color/saffron_dark"
-            android:textSize="35dp"
+            android:textSize="@dimen/_35ssp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -36,20 +36,34 @@ scroll view is used to ensure it content is too tall for small phone screen , th
         <View
             android:id="@+id/titleUnderline"
             android:layout_width="0dp"
-            android:layout_height="2dp"
+            android:layout_height="@dimen/_2sdp"
             android:background="@color/saffron_dark"
             app:layout_constraintEnd_toEndOf="@id/tvTitle"
             app:layout_constraintStart_toStartOf="@id/tvTitle"
             app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
+        <!-- Shimmer Container -->
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmerDashboard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/titleUnderline"
+            android:visibility="visible"
+            tools:visibility="visible">
+            <include layout="@layout/layout_dashboard_shimmer" />
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardGreeting"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="@dimen/_40sdp"
             app:cardBackgroundColor="@color/lightest_saffron"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="4dp"
+            app:cardCornerRadius="@dimen/_16sdp"
+            app:cardElevation="@dimen/_4sdp"
+            android:visibility="invisible"
 
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -58,8 +72,8 @@ scroll view is used to ensure it content is too tall for small phone screen , th
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="128dp"
-                android:padding="16dp">
+                android:layout_height="wrap_content"
+                android:padding="@dimen/_16sdp">
 
                 <TextView
                     android:id="@+id/tvGreeting"
@@ -67,7 +81,7 @@ scroll view is used to ensure it content is too tall for small phone screen , th
                     android:layout_height="wrap_content"
                     android:text="JAI JINENDRA SUHANI!"
                     android:textColor="@android:color/black"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/_18ssp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -78,15 +92,15 @@ scroll view is used to ensure it content is too tall for small phone screen , th
                     android:layout_height="wrap_content"
                     android:text="Today is ASHTAMI"
                     android:textColor="@android:color/black"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/_16ssp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tvGreeting" />
 
                 <ImageView
                     android:id="@+id/ivSunrise"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_marginTop="@dimen/_16sdp"
                     android:src="@drawable/ic_sunrise"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tvCurrentTithi"
@@ -96,19 +110,19 @@ scroll view is used to ensure it content is too tall for small phone screen , th
                     android:id="@+id/tvSunriseTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="@dimen/_8sdp"
                     android:text="6:00 AM"
                     android:textColor="@android:color/black"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/_16ssp"
                     app:layout_constraintBottom_toBottomOf="@id/ivSunrise"
                     app:layout_constraintStart_toEndOf="@id/ivSunrise"
                     app:layout_constraintTop_toTopOf="@id/ivSunrise" />
 
                 <ImageView
                     android:id="@+id/ivSunset"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginEnd="8dp"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_marginEnd="@dimen/_8sdp"
                     android:src="@drawable/ic_sunset"
                     app:layout_constraintEnd_toStartOf="@id/tvSunsetTime"
                     app:layout_constraintTop_toTopOf="@id/ivSunrise"
@@ -120,7 +134,7 @@ scroll view is used to ensure it content is too tall for small phone screen , th
                     android:layout_height="wrap_content"
                     android:text="6:00 PM"
                     android:textColor="@android:color/black"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/_16ssp"
                     app:layout_constraintBottom_toBottomOf="@id/ivSunset"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/ivSunset" />
@@ -129,9 +143,9 @@ scroll view is used to ensure it content is too tall for small phone screen , th
         </com.google.android.material.card.MaterialCardView>
 
         <GridLayout
-            android:layout_width="368dp"
-            android:layout_height="433dp"
-            android:layout_marginTop="35dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_35sdp"
             android:columnCount="2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -143,138 +157,138 @@ scroll view is used to ensure it content is too tall for small phone screen , th
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:layout_margin="8dp"
+                android:layout_margin="@dimen/_8sdp"
                 android:backgroundTint="@android:color/white"
-                android:paddingTop="20dp"
-                android:paddingBottom="20dp"
+                android:paddingTop="@dimen/_20sdp"
+                android:paddingBottom="@dimen/_20sdp"
                 android:text="TITHI"
                 android:textAllCaps="true"
                 android:textColor="@android:color/black"
                 android:textStyle="bold"
-                app:cornerRadius="16dp"
+                app:cornerRadius="@dimen/_16sdp"
                 app:icon="@drawable/ic_tithi"
                 app:iconGravity="textTop"
-                app:iconPadding="8dp"
+                app:iconPadding="@dimen/_8sdp"
 
-                app:iconSize="36dp"
+                app:iconSize="@dimen/_36sdp"
                 app:iconTint="@null"
                 app:strokeColor="@color/saffron_dark"
-                app:strokeWidth="1.5dp" />
+                app:strokeWidth="@dimen/_1sdp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnHorizons"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:layout_margin="8dp"
+                android:layout_margin="@dimen/_8sdp"
                 android:backgroundTint="@android:color/white"
-                android:paddingTop="20dp"
-                android:paddingBottom="20dp"
+                android:paddingTop="@dimen/_20sdp"
+                android:paddingBottom="@dimen/_20sdp"
                 android:text="HORIZONS"
                 android:textAllCaps="true"
                 android:textColor="@android:color/black"
                 android:textStyle="bold"
-                app:cornerRadius="16dp"
+                app:cornerRadius="@dimen/_16sdp"
                 app:icon="@drawable/ic_horizons"
                 app:iconGravity="textTop"
-                app:iconPadding="8dp"
+                app:iconPadding="@dimen/_8sdp"
 
-                app:iconSize="36dp"
+                app:iconSize="@dimen/_36sdp"
                 app:iconTint="@null"
                 app:strokeColor="@color/saffron_dark"
-                app:strokeWidth="1.5dp" />
+                app:strokeWidth="@dimen/_1sdp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnEvents"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:layout_margin="8dp"
+                android:layout_margin="@dimen/_8sdp"
                 android:backgroundTint="@android:color/white"
-                android:paddingTop="20dp"
-                android:paddingBottom="20dp"
+                android:paddingTop="@dimen/_20sdp"
+                android:paddingBottom="@dimen/_20sdp"
                 android:text="EVENTS"
                 android:textAllCaps="true"
                 android:textColor="@android:color/black"
                 android:textStyle="bold"
-                app:cornerRadius="16dp"
+                app:cornerRadius="@dimen/_16sdp"
                 app:icon="@drawable/ic_events"
                 app:iconGravity="textTop"
-                app:iconPadding="8dp"
+                app:iconPadding="@dimen/_8sdp"
 
-                app:iconSize="36dp"
+                app:iconSize="@dimen/_36sdp"
                 app:iconTint="@null"
                 app:strokeColor="@color/saffron_dark"
-                app:strokeWidth="1.5dp" />
+                app:strokeWidth="@dimen/_1sdp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnMonks"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:layout_margin="8dp"
+                android:layout_margin="@dimen/_8sdp"
                 android:backgroundTint="@android:color/white"
-                android:paddingTop="20dp"
-                android:paddingBottom="20dp"
+                android:paddingTop="@dimen/_20sdp"
+                android:paddingBottom="@dimen/_20sdp"
                 android:text="MONKS"
                 android:textAllCaps="true"
                 android:textColor="@android:color/black"
                 android:textStyle="bold"
-                app:cornerRadius="16dp"
+                app:cornerRadius="@dimen/_16sdp"
                 app:icon="@drawable/ic_monks"
                 app:iconGravity="textTop"
-                app:iconPadding="8dp"
+                app:iconPadding="@dimen/_8sdp"
 
-                app:iconSize="36dp"
+                app:iconSize="@dimen/_36sdp"
                 app:iconTint="@null"
                 app:strokeColor="@color/saffron_dark"
-                app:strokeWidth="1.5dp" />
+                app:strokeWidth="@dimen/_1sdp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnMe"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:layout_margin="8dp"
+                android:layout_margin="@dimen/_8sdp"
                 android:backgroundTint="@android:color/white"
-                android:paddingTop="20dp"
-                android:paddingBottom="20dp"
+                android:paddingTop="@dimen/_20sdp"
+                android:paddingBottom="@dimen/_20sdp"
                 android:text="ME"
                 android:textAllCaps="true"
                 android:textColor="@android:color/black"
                 android:textStyle="bold"
-                app:cornerRadius="16dp"
+                app:cornerRadius="@dimen/_16sdp"
                 app:icon="@drawable/ic_me"
                 app:iconGravity="textTop"
-                app:iconPadding="8dp"
+                app:iconPadding="@dimen/_8sdp"
 
-                app:iconSize="36dp"
+                app:iconSize="@dimen/_36sdp"
                 app:iconTint="@null"
                 app:strokeColor="@color/saffron_dark"
-                app:strokeWidth="1.5dp" />
+                app:strokeWidth="@dimen/_1sdp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnContact"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:layout_margin="8dp"
+                android:layout_margin="@dimen/_8sdp"
                 android:backgroundTint="@android:color/white"
-                android:paddingTop="20dp"
-                android:paddingBottom="20dp"
+                android:paddingTop="@dimen/_20sdp"
+                android:paddingBottom="@dimen/_20sdp"
                 android:text="CONTACT"
                 android:textAllCaps="true"
                 android:textColor="@android:color/black"
                 android:textStyle="bold"
-                app:cornerRadius="16dp"
+                app:cornerRadius="@dimen/_16sdp"
                 app:icon="@drawable/ic_contact"
                 app:iconGravity="textTop"
-                app:iconPadding="8dp"
+                app:iconPadding="@dimen/_8sdp"
 
-                app:iconSize="36dp"
+                app:iconSize="@dimen/_36sdp"
                 app:iconTint="@null"
                 app:strokeColor="@color/saffron_dark"
-                app:strokeWidth="1.5dp" />
+                app:strokeWidth="@dimen/_1sdp" />
         </GridLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

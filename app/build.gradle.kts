@@ -105,4 +105,11 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.51.1")
     ksp("com.google.dagger:hilt-compiler:2.51.1")
 
+    // Responsive UI (SDP & SSP)
+    implementation("com.intuit.sdp:sdp-android:1.1.1")
+    implementation("com.intuit.ssp:ssp-android:1.1.1")
+
+    // Shimmer Effect
+    implementation("com.facebook.shimmer:shimmer:0.5.0")
+
 }

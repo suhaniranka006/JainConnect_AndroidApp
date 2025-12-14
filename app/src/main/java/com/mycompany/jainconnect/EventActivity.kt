@@ -27,12 +27,15 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
     private lateinit var recyclerViewEvents: RecyclerView
     private lateinit var etSearchEvents: EditText
 
+    private lateinit var shimmerViewContainer: com.facebook.shimmer.ShimmerFrameLayout
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         setContentView(R.layout.activity_events)
 
-
+        shimmerViewContainer = findViewById(R.id.shimmerViewContainer)
+        shimmerViewContainer.startShimmer() // Start animation
 
         recyclerViewEvents = findViewById(R.id.recyclerViewEvents)
         recyclerViewEvents.layoutManager = LinearLayoutManager(this)
@@ -48,6 +51,11 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
         // -------------------------------------------
 
         viewModel.eventList.observe(this) { events ->
+            // Stop and Hide Shimmer
+            shimmerViewContainer.stopShimmer()
+            shimmerViewContainer.visibility = android.view.View.GONE
+            recyclerViewEvents.visibility = android.view.View.VISIBLE
+
             eventAdapter.updateData(events)
         }
 

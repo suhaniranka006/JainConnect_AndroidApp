@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/_40sdp"
+    app:cardBackgroundColor="@color/lightest_saffron"
+    app:cardCornerRadius="@dimen/_16sdp"
+    app:cardElevation="0dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_16sdp">
+
+        <!-- Greeting Shim -->
+        <View
+            android:id="@+id/shimGreeting"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:background="#E0E0E0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Tithi Shim -->
+        <View
+            android:id="@+id/shimTithi"
+            android:layout_width="@dimen/_150sdp"
+            android:layout_height="@dimen/_18sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:background="#E0E0E0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/shimGreeting" />
+
+        <!-- Sunrise Shim -->
+        <View
+            android:id="@+id/shimSunriseIcon"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:background="#E0E0E0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/shimTithi" />
+
+        <View
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_18sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:background="#E0E0E0"
+            app:layout_constraintBottom_toBottomOf="@id/shimSunriseIcon"
+            app:layout_constraintStart_toEndOf="@id/shimSunriseIcon"
+            app:layout_constraintTop_toTopOf="@id/shimSunriseIcon" />
+
+        <!-- Sunset Shim -->
+        <View
+            android:id="@+id/shimSunsetIcon"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:background="#E0E0E0"
+            app:layout_constraintEnd_toStartOf="@id/shimSunsetTime"
+            app:layout_constraintTop_toTopOf="@id/shimSunriseIcon" />
+
+        <View
+            android:id="@+id/shimSunsetTime"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_18sdp"
+            android:background="#E0E0E0"
+            app:layout_constraintBottom_toBottomOf="@id/shimSunsetIcon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/shimSunsetIcon" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

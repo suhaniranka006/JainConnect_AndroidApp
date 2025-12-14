@@ -43,6 +43,9 @@ class TithiActivity : AppCompatActivity() {
 
         Log.d(TAG, "ViewModel initialized")
 
+        val shimmerViewContainer = findViewById<com.facebook.shimmer.ShimmerFrameLayout>(R.id.shimmerViewContainer)
+        shimmerViewContainer.startShimmer()
+
         // Observe FULL tithiList for logging/debugging
         viewModel.tithiList.observe(this) { tithis ->
             if (tithis != null) {
@@ -52,6 +55,10 @@ class TithiActivity : AppCompatActivity() {
 
         // Observe FILTERED tithis for updating RecyclerView UI
         viewModel.filteredTithis.observe(this) { filteredList ->
+            shimmerViewContainer.stopShimmer()
+            shimmerViewContainer.visibility = android.view.View.GONE
+            recyclerViewTithi.visibility = android.view.View.VISIBLE
+
             tithiAdapter.updateData(filteredList)                // Update adapter
             Log.d(TAG, "Filtered list observed, count = ${filteredList.size}")
         }

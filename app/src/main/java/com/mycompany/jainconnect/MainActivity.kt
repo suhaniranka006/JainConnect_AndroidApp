@@ -31,14 +31,24 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvSunriseTime: TextView
     private lateinit var tvSunsetTime: TextView
 
+    // Data Loading Status Flags
+    private var isUserLoaded = false
+    private var isTithiLoaded = false
+    private var isSunLoaded = false
+
+    private lateinit var shimmerDashboard: com.facebook.shimmer.ShimmerFrameLayout
+    private lateinit var cardGreeting: com.google.android.material.card.MaterialCardView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // viewModel = ViewModelProvider(this)[JainViewModel::class.java] // Removed for Hilt
-
         // ✅ FIX IS HERE: Use "auth_prefs" to match LoginActivity
         sharedPreferences = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+
+        shimmerDashboard = findViewById(R.id.shimmerDashboard)
+        cardGreeting = findViewById(R.id.cardGreeting)
+        shimmerDashboard.startShimmer()
 
         tvGreeting = findViewById(R.id.tvGreeting)
         tvCurrentTithi = findViewById(R.id.tvCurrentTithi)
@@ -81,15 +91,27 @@ class MainActivity : AppCompatActivity() {
         } else {
             // Token not found (maybe not logged in)
             tvGreeting.text = "JAI JINENDRA!"
+            isUserLoaded = true // Mark as loaded since we don't need to wait
+            checkDataLoaded()
         }
 
         viewModel.fetchTithis()
         viewModel.fetchSunData(26.9124, 75.7873)
     }
 
+    private fun checkDataLoaded() {
+        if (isUserLoaded && isTithiLoaded && isSunLoaded) {
+            shimmerDashboard.stopShimmer()
+            shimmerDashboard.visibility = android.view.View.GONE
+            cardGreeting.visibility = android.view.View.VISIBLE
+        }
+    }
+
     private fun observeData() {
         // --- 1. Update Greeting Name ---
         viewModel.userProfile.observe(this) { user ->
+            isUserLoaded = true
+            checkDataLoaded()
             if (user != null) {
                 // Should now show: "JAI JINENDRA SUHANI!"
                 tvGreeting.text = "JAI JINENDRA ${user.name.uppercase()}!"
@@ -98,6 +120,8 @@ class MainActivity : AppCompatActivity() {
 
         // --- 2. Update Tithi ---
         viewModel.tithiList.observe(this) { tithiList ->
+            isTithiLoaded = true
+            checkDataLoaded()
             if (tithiList.isNotEmpty()) {
                 val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                 val todayDate = sdf.format(Calendar.getInstance().time)
@@ -113,6 +137,8 @@ class MainActivity : AppCompatActivity() {
 
         // --- 3. Update Sunrise/Sunset ---
         viewModel.horizonList.observe(this) { horizonList ->
+            isSunLoaded = true
+            checkDataLoaded()
             if (horizonList.isNotEmpty()) {
                 val sdf = SimpleDateFormat("dd MMM", Locale.getDefault())
                 val todayDate = sdf.format(Calendar.getInstance().time)

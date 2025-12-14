@@ -43,8 +43,14 @@ class MaharajLocationActivity : AppCompatActivity() {
 
         // 3. Initialize ViewModel
 
+        val shimmerViewContainer = findViewById<com.facebook.shimmer.ShimmerFrameLayout>(R.id.shimmerViewContainer)
+        shimmerViewContainer.startShimmer()
 
         viewModel.filteredMaharaj.observe(this) {
+            shimmerViewContainer.stopShimmer()
+            shimmerViewContainer.visibility = android.view.View.GONE
+            recyclerViewMaharaj.visibility = android.view.View.VISIBLE
+
             maharajAdapter.updateData(it ?: emptyList())
         }
 
