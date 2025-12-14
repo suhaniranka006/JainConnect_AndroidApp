@@ -98,35 +98,37 @@ class LoginActivity : AppCompatActivity() {
 
     //checks if response if successful
     private fun observeLoginResult() {
-        viewModel.loginResult.observe(this) { response ->
-            loginProgressBar.visibility = View.GONE
+        viewModel.loginResult.observe(this) { result ->
+            when (result) {
+                is com.mycompany.jainconnect.utils.NetworkResult.Loading -> {
+                    loginProgressBar.visibility = View.VISIBLE
+                    btnLogin.isEnabled = false // Prevent double clicks
+                }
+                is com.mycompany.jainconnect.utils.NetworkResult.Success -> {
+                    loginProgressBar.visibility = View.GONE
+                    btnLogin.isEnabled = true
+                    
+                    val response = result.data
+                    if (response?.success == true) {
+                        Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
+                        response.token?.let { saveAuthToken(it) }
 
-            // ... (Network error handling) ...
+                        val session = SessionManager(this)
+                        session.saveLoginStatus(true)
 
-            if (response!!.isSuccessful && response.body()?.success == true) {
-                // Login Successful
-                Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
-
-                // Save Token
-                response?.body()?.token?.let { saveAuthToken(it) }
-
-
-
-                //shared prefernce
-                // --- SAVE SESSION HERE ---
-                val session = SessionManager(this)
-                session.saveLoginStatus(true)
-                // ------------------------------------
-
-                // Navigate to MainActivity
-                val intent = Intent(this, MainActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
-                finish()
-
-            } else {
-                // Login Failed
-                // ...
+                        val intent = Intent(this, MainActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        Toast.makeText(this, "Login Failed: ${response?.message}", Toast.LENGTH_LONG).show()
+                    }
+                }
+                is com.mycompany.jainconnect.utils.NetworkResult.Error -> {
+                    loginProgressBar.visibility = View.GONE
+                    btnLogin.isEnabled = true
+                    Toast.makeText(this, result.message, Toast.LENGTH_LONG).show()
+                }
             }
         }
     }

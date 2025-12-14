@@ -24,6 +24,8 @@ import java.util.Locale
 // (Ensure these classes exist in your 'models' package or root package)
 import com.mycompany.jainconnect.HorizonItem
 import com.mycompany.jainconnect.SunResponse // Might be needed if referenced explicitly
+import com.mycompany.jainconnect.utils.NetworkResult // Import NetworkResult
+
 // If your other models (User, Tithi, etc.) are in the root package, you don't need to import them.
 // But if they are in the 'models' folder, UNCOMMENT these lines:
 /*
@@ -63,9 +65,8 @@ class JainViewModel @Inject constructor(
 
 
     // --- LiveData for Login ---
-    private val _loginResult = MutableLiveData<Response<AuthResponse>?>()
-    val loginResult: LiveData<Response<AuthResponse>?> = _loginResult
-
+    private val _loginResult = MutableLiveData<NetworkResult<AuthResponse>>() // Updated type
+    val loginResult: LiveData<NetworkResult<AuthResponse>> = _loginResult
 
     // --- LiveData for User Profile ---
     private val _userProfile = MutableLiveData<User?>()
@@ -76,14 +77,66 @@ class JainViewModel @Inject constructor(
     private val _updateResult = MutableLiveData<Response<AuthResponse>?>()
     val updateResult: LiveData<Response<AuthResponse>?> = _updateResult
 
-
-
-
     // Add logic for Monk Submission
     private val _addMaharajResult = MutableLiveData<String>()
     val addMaharajResult: LiveData<String> = _addMaharajResult
 
-    // ... inside JainViewModel class
+    // --- Add Event Submission Logic ---
+    private val _addEventResult = MutableLiveData<String>()
+    val addEventResult: LiveData<String> = _addEventResult
+
+
+    /**
+     * Performs user login.
+     * Updates [loginResult] with the API response wrapped in NetworkResult.
+     */
+    fun performLogin(email: String, password: String) {
+        viewModelScope.launch {
+            _loginResult.value = NetworkResult.Loading() // Emit Loading State
+            try {
+                // Call repository to perform login operation
+                val response = repository.loginUser(email, password)
+
+                if (response.isSuccessful && response.body() != null) {
+                    // Success
+                    _loginResult.value = NetworkResult.Success(response.body()!!)
+                } else {
+                    // API Error (e.g., 401 Unauthorized)
+                    val errorMsg = response.errorBody()?.string() ?: response.message()
+                    _loginResult.value = NetworkResult.Error("Login Failed: $errorMsg")
+                }
+            } catch (e: Exception) {
+                // Network/Exception Error
+                Log.e("JainViewModel", "Login Exception", e)
+                _loginResult.value = NetworkResult.Error("Network Error: ${e.message}")
+            }
+        }
+    }
+
+    /**
+     * Performs user registration.
+     * Takes all user details and calls the repository to register the user.
+     * Updates [signupResult] with the API response.
+     */
+    fun performSignup(
+        name: String, email: String, password: String, phone: String,
+        location: String, dob: String, gender: String, imageFile: File?
+    ) {
+
+        // viewModelScope is a built-in CoroutineScope tied to the ViewModel's lifecycle.
+        // It automatically cancels operations when the ViewModel is cleared (e.g., Activity destroyed),
+        // preventing memory leaks.
+        viewModelScope.launch {
+            try {
+                val response = repository.registerUser(name, email, password, phone, location, dob, gender, imageFile)  //calls repo fun
+                _signupResult.postValue(response)
+            } catch (e: Exception) {
+                Log.e("JainViewModel", "Signup Exception", e)  //for debugging
+                _signupResult.postValue(null)  // launch in background thread
+            }
+        }
+    }
+
 
     fun submitNewMaharaj(
         token: String,
@@ -108,13 +161,6 @@ class JainViewModel @Inject constructor(
         }
     }
 
-// Inside JainViewModel class
-
-    // --- Add Event Submission Logic ---
-    private val _addEventResult = MutableLiveData<String>()
-    val addEventResult: LiveData<String> = _addEventResult
-
-    // Inside JainViewModel.kt
 
     fun submitNewEvent(
         token: String,
@@ -137,7 +183,6 @@ class JainViewModel @Inject constructor(
             }
         }
     }
-
 
     // =====================================================================================
     //                                      HORIZONS (Sunrise/Sunset)
@@ -200,55 +245,6 @@ class JainViewModel @Inject constructor(
             } catch (e: Exception) {
                 Log.e("JainViewModel", "Horizons Exception", e)
                 _horizonList.value = emptyList()
-            }
-        }
-    }
-
-    /**
-     * Performs user registration.
-     * Takes all user details and calls the repository to register the user.
-     * Updates [signupResult] with the API response.
-     */
-    fun performSignup(
-        name: String, email: String, password: String, phone: String,
-        location: String, dob: String, gender: String, imageFile: File?
-    ) {
-
-        // viewModelScope is a built-in CoroutineScope tied to the ViewModel's lifecycle.
-        // It automatically cancels operations when the ViewModel is cleared (e.g., Activity destroyed),
-        // preventing memory leaks.
-        viewModelScope.launch {
-            try {
-                val response = repository.registerUser(name, email, password, phone, location, dob, gender, imageFile)  //calls repo fun
-                _signupResult.postValue(response)
-            } catch (e: Exception) {
-                Log.e("JainViewModel", "Signup Exception", e)  //for debugging
-                _signupResult.postValue(null)  // launch in background thread
-            }
-        }
-    }
-
-
-
-
-    /**
-     * Performs user login.
-     * Updates [loginResult] with the API response.
-     */
-    fun performLogin(email: String, password: String) {
-        viewModelScope.launch {
-            try {
-                // Call repository to perform login operation
-                val response = repository.loginUser(email, password)
-
-                //update live data with the result
-                //.postvalue is used to safely update livedata from a backgorund thread
-                _loginResult.postValue(response)
-            } catch (e: Exception) {
-
-                //handle any error
-                Log.e("JainViewModel", "Login Exception", e)
-                _loginResult.postValue(null)  //notify ui of failure
             }
         }
     }
