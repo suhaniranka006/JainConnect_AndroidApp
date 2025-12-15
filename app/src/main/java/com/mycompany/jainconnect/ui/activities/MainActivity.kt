@@ -75,23 +75,46 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupNavigationButtons() {
-        findViewById<Button>(R.id.btnTithi).setOnClickListener {
-            startActivity(Intent(this, TithiActivity::class.java))
+        // --- Header Buttons ---
+        findViewById<android.view.View>(R.id.btnProfile).setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
         }
-        findViewById<Button>(R.id.btnEvents).setOnClickListener {
-            startActivity(Intent(this, EventActivity::class.java))
-        }
-        findViewById<Button>(R.id.btnMonks).setOnClickListener {
-            startActivity(Intent(this, MaharajLocationActivity::class.java))
-        }
-        findViewById<Button>(R.id.btnHorizons).setOnClickListener {
-            startActivity(Intent(this, HorizonsActivity::class.java))
-        }
-        findViewById<Button>(R.id.btnContact).setOnClickListener {
+        findViewById<android.view.View>(R.id.btnHelp).setOnClickListener {
+            // Reusing ContactActivity for Help/Support for now
             startActivity(Intent(this, ContactActivity::class.java))
         }
-        findViewById<Button>(R.id.btnMe).setOnClickListener {
-            startActivity(Intent(this, ProfileActivity::class.java))
+        findViewById<android.view.View>(R.id.btnDonate).setOnClickListener {
+            android.widget.Toast.makeText(this, "Donation Feature Coming Soon", android.widget.Toast.LENGTH_SHORT).show()
+        }
+        
+        // --- Explore Grid Buttons ---
+        findViewById<android.view.View>(R.id.btnTithi).setOnClickListener {
+            startActivity(Intent(this, TithiActivity::class.java))
+        }
+        findViewById<android.view.View>(R.id.btnEvents).setOnClickListener {
+            startActivity(Intent(this, EventActivity::class.java))
+        }
+        findViewById<android.view.View>(R.id.btnMonks).setOnClickListener {
+            startActivity(Intent(this, MaharajLocationActivity::class.java))
+        }
+        findViewById<android.view.View>(R.id.btnHorizons).setOnClickListener {
+            startActivity(Intent(this, HorizonsActivity::class.java))
+        }
+
+        // --- New Features (Placeholders) ---
+        val newFeatures = mapOf(
+            R.id.btnTemples to "Temples",
+            R.id.btnBhojanshalas to "Bhojanshalas",
+            R.id.btnBusiness to "Business Directory",
+            R.id.btnCarpooling to "Carpooling",
+            R.id.btnTirthyatra to "Tirthyatra Planner",
+            R.id.btnNews to "News Portal"
+        )
+
+        newFeatures.forEach { (id, name) ->
+            findViewById<android.view.View>(id)?.setOnClickListener {
+                android.widget.Toast.makeText(this, "$name Coming Soon!", android.widget.Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
