@@ -96,7 +96,10 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
     private fun setupNavigationButtons(view: View) {
         // --- Header Buttons ---
         view.findViewById<View>(R.id.btnProfile).setOnClickListener {
-            startActivity(Intent(requireContext(), ProfileActivity::class.java))
+            // Updated to Open Drawer
+            if (activity is MainActivity) {
+                (activity as MainActivity).openDrawer()
+            }
         }
         view.findViewById<View>(R.id.btnHelp).setOnClickListener {
             startActivity(Intent(requireContext(), ContactActivity::class.java))
