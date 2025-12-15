@@ -30,7 +30,9 @@ class MainActivity : AppCompatActivity() {
 
     // UI Components
     private lateinit var tvGreeting: TextView
-    private lateinit var tvCurrentTithi: TextView
+    private lateinit var tvTithiName: TextView
+    private lateinit var tvDate: TextView
+    private lateinit var tvLocationName: TextView
     private lateinit var tvSunriseTime: TextView
     private lateinit var tvSunsetTime: TextView
 
@@ -54,9 +56,18 @@ class MainActivity : AppCompatActivity() {
         shimmerDashboard.startShimmer()
 
         tvGreeting = findViewById(R.id.tvGreeting)
-        tvCurrentTithi = findViewById(R.id.tvCurrentTithi)
+        tvTithiName = findViewById(R.id.tvTithiName)
+        tvDate = findViewById(R.id.tvDate)
+        tvLocationName = findViewById(R.id.tvLocationName)
         tvSunriseTime = findViewById(R.id.tvSunriseTime)
         tvSunsetTime = findViewById(R.id.tvSunsetTime)
+
+        // Set Date immediately
+        val sdfDate = SimpleDateFormat("EEEE, dd-MM-yy", Locale.getDefault())
+        tvDate.text = sdfDate.format(Calendar.getInstance().time)
+
+        // Set Location (Placeholder for now, matching coords)
+        tvLocationName.text = "Jaipur"
 
         setupNavigationButtons()
         observeData()
@@ -93,7 +104,7 @@ class MainActivity : AppCompatActivity() {
             viewModel.fetchUserProfile(token)
         } else {
             // Token not found (maybe not logged in)
-            tvGreeting.text = "JAI JINENDRA!"
+            tvGreeting.text = "Jai Jinendra!"
             isUserLoaded = true // Mark as loaded since we don't need to wait
             checkDataLoaded()
         }
@@ -116,8 +127,9 @@ class MainActivity : AppCompatActivity() {
             isUserLoaded = true
             checkDataLoaded()
             if (user != null) {
-                // Should now show: "JAI JINENDRA SUHANI!"
-                tvGreeting.text = "JAI JINENDRA ${user.name.uppercase()}!"
+                // Should now show: "Jai Jinendra Suhani"
+                // Using capitalize for First Letter Capitalization to match sketch style roughly
+                tvGreeting.text = "Jai Jinendra ${user.name}!" 
             }
         }
 
@@ -131,9 +143,9 @@ class MainActivity : AppCompatActivity() {
                 val todayTithi = tithiList.find { it.date == todayDate }
 
                 if (todayTithi != null) {
-                    tvCurrentTithi.text = "Today is ${todayTithi.name.uppercase()}"
+                    tvTithiName.text = todayTithi.name
                 } else {
-                    tvCurrentTithi.text = "No Tithi Data for Today"
+                    tvTithiName.text = "No Data"
                 }
             }
         }

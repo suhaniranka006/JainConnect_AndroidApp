@@ -146,81 +146,148 @@
             android:id="@+id/cardGreeting"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_40sdp"
+            android:layout_marginTop="24dp"
             app:cardBackgroundColor="@color/lightest_saffron"
-            app:cardCornerRadius="@dimen/_16sdp"
-            app:cardElevation="@dimen/_4sdp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
             android:visibility="invisible"
             tools:visibility="visible">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/_16sdp">
+                android:padding="16dp">
 
+                <!-- Row 1: Today (Left) | Greeting (Right) -->
                 <TextView
-                    android:id="@+id/tvGreeting"
+                    android:id="@+id/tvLabelToday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="JAI JINENDRA SUHANI!"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/_18ssp"
+                    android:text="Today"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/tvCurrentTithi"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tvGreeting"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Today is ASHTAMI"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/_16ssp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tvGreeting" />
-
-                <ImageView
-                    android:id="@+id/ivSunrise"
-                    android:layout_width="@dimen/_24sdp"
-                    android:layout_height="@dimen/_24sdp"
-                    android:layout_marginTop="@dimen/_16sdp"
-                    android:src="@drawable/ic_sunrise"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tvCurrentTithi"
-                    app:tint="@null" />
-
-                <TextView
-                    android:id="@+id/tvSunriseTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_8sdp"
-                    android:text="6:00 AM"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/_16ssp"
-                    app:layout_constraintBottom_toBottomOf="@id/ivSunrise"
-                    app:layout_constraintStart_toEndOf="@id/ivSunrise"
-                    app:layout_constraintTop_toTopOf="@id/ivSunrise" />
-
-                <ImageView
-                    android:id="@+id/ivSunset"
-                    android:layout_width="@dimen/_24sdp"
-                    android:layout_height="@dimen/_24sdp"
-                    android:layout_marginEnd="@dimen/_8sdp"
-                    android:src="@drawable/ic_sunset"
-                    app:layout_constraintEnd_toStartOf="@id/tvSunsetTime"
-                    app:layout_constraintTop_toTopOf="@id/ivSunrise"
-                    app:tint="@null" />
-
-                <TextView
-                    android:id="@+id/tvSunsetTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="6:00 PM"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/_16ssp"
-                    app:layout_constraintBottom_toBottomOf="@id/ivSunset"
+                    android:text="Jai Jinendra Suhani"
+                    android:textColor="@color/saffron_dark"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:gravity="end"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintStart_toEndOf="@id/tvLabelToday"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/ivSunset" />
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- Row 2: Date -->
+                <TextView
+                    android:id="@+id/tvDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Monday, 15-12-25"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvLabelToday" />
+
+                <!-- Row 3: Tithi (Left) | Location (Right) -->
+                <TextView
+                    android:id="@+id/tvTithiName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Ekadashi"
+                    android:textColor="@color/saffron_dark"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvDate" />
+
+                <LinearLayout
+                    android:id="@+id/layoutLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@id/tvTithiName"
+                    app:layout_constraintTop_toTopOf="@id/tvTithiName">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_location"
+                        app:tint="@color/black" />
+
+                    <TextView
+                        android:id="@+id/tvLocationName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:text="Location"
+                        android:textColor="@android:color/black"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <!-- Row 4: Sunrise (Left) | Sunset (Right) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="24dp"
+                    app:layout_constraintTop_toBottomOf="@id/tvTithiName"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <!-- Sunrise -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical|start">
+                        <ImageView
+                            android:id="@+id/ivSunrise"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_sunrise" />
+                        <TextView
+                            android:id="@+id/tvSunriseTime"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="Sunrise"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <!-- Sunset -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical|end">
+                        <ImageView
+                            android:id="@+id/ivSunset"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_sunset" />
+                        <TextView
+                            android:id="@+id/tvSunsetTime"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="Sunset"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+                </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
