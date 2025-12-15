@@ -72,6 +72,13 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
         }
     }
 
+    // Live Date Receiver
+    private val timeReceiver = object : android.content.BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            updateDateDisplay()
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -82,22 +89,49 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        // ... (existing code remains same, handled by caller logic usually, but here we just need to ensure super call matches)
+        
         sharedPreferences = requireActivity().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
-
-        // Initialize Razorpay (Required for use in fragments)
         Checkout.preload(requireContext())
 
         initializeViews(view)
         setupNavigationButtons(view)
-        
-        setupLocationToggle(view) // Initialize Location Logic
-
-        // Ensure shimmer starts
+        setupLocationToggle(view) 
         shimmerDashboard.startShimmer()
-
         observeData()
         loadDashboardData()
+    }
+    
+    override fun onResume() {
+        super.onResume()
+        // Register receiver for time updates
+        val filter = android.content.IntentFilter().apply {
+            addAction(Intent.ACTION_TIME_TICK) // Updates every minute
+            addAction(Intent.ACTION_TIME_CHANGED)
+            addAction(Intent.ACTION_TIMEZONE_CHANGED)
+            addAction(Intent.ACTION_DATE_CHANGED)
+        }
+        requireContext().registerReceiver(timeReceiver, filter)
+        // Also update immediately
+        updateDateDisplay()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        try {
+            requireContext().unregisterReceiver(timeReceiver)
+        } catch (e: IllegalArgumentException) {
+            // Receiver not registered
+        }
+    }
+
+    private fun updateDateDisplay() {
+        if (::tvDate.isInitialized) {
+            val sdfDate = SimpleDateFormat("EEEE, dd-MM-yy", Locale.getDefault())
+            tvDate.text = sdfDate.format(Calendar.getInstance().time)
+        }
+        
+        // Also refresh greeting based on time of day (Good Morning/Evening etc if we implemented that later)
     }
 
     private fun initializeViews(view: View) {
@@ -112,8 +146,7 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
         tvSunsetTime = view.findViewById(R.id.tvSunsetTime)
 
         // Set Date immediately
-        val sdfDate = SimpleDateFormat("EEEE, dd-MM-yy", Locale.getDefault())
-        tvDate.text = sdfDate.format(Calendar.getInstance().time)
+        updateDateDisplay()
 
         // Default: No Data (Location Logic will decide)
         tvLocationName.text = "Location Off"
