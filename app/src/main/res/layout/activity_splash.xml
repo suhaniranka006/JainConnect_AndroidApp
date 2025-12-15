@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/saffron_light"
-    tools:context=".SplashActivity">
+    tools:context=".ui.activities.SplashActivity">
 
     <!--
       Aap iss TextView ko baad mein ek ImageView se

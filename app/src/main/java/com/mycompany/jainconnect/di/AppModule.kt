@@ -1,6 +1,5 @@
 package com.mycompany.jainconnect.di
 
-import com.mycompany.jainconnect.ApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,6 +10,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
+import com.mycompany.jainconnect.R
+import com.mycompany.jainconnect.data.network.ApiService
 
 /**
  * Hilt Module to provide dependencies that we cannot annotate with @Inject constructor.

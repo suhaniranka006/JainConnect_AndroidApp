@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:id="@+id/main"
     android:background="#F5F5F5"
-    tools:context=".HorizonsActivity">
+    tools:context=".ui.activities.HorizonsActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"

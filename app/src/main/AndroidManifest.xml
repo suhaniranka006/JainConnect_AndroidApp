@@ -22,19 +22,19 @@
         android:usesCleartextTraffic="false"
         tools:targetApi="31">
         <activity
-            android:name=".AddMaharajActivity"
+            android:name=".ui.activities.AddMaharajActivity"
             android:exported="false" />
         <activity
-            android:name=".AddEventActivity"
+            android:name=".ui.activities.AddEventActivity"
             android:exported="false" />
         <activity
-            android:name=".HorizonsActivity"
+            android:name=".ui.activities.HorizonsActivity"
             android:exported="false" />
         <activity
-            android:name=".ContactActivity"
+            android:name=".ui.activities.ContactActivity"
             android:exported="false" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".ui.activities.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
             <intent-filter>
@@ -44,28 +44,28 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SignUpActivity"
+            android:name=".ui.activities.SignUpActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".ui.activities.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".EditProfileActivity"
+            android:name=".ui.activities.EditProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".MaharajLocationActivity"
+            android:name=".ui.activities.MaharajLocationActivity"
             android:exported="false" />
         <activity
-            android:name=".EventActivity"
+            android:name=".ui.activities.EventActivity"
             android:exported="false" />
         <activity
-            android:name=".TithiActivity"
+            android:name=".ui.activities.TithiActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.activities.MainActivity"
             android:exported="false" /> <!-- Yeh 'false' sahi hai, kyunki Splash se open ho rahi hai -->
         <activity
-            android:name=".ProfileActivity"
+            android:name=".ui.activities.ProfileActivity"
             android:exported="false" />
     </application>
 

@@ -7,7 +7,7 @@
     android:id="@+id/main"
     android:layout_height="match_parent"
     android:background="@color/saffron_light"
-    tools:context=".MaharajLocationActivity">
+    tools:context=".ui.activities.MaharajLocationActivity">
 
     <TextView
         android:id="@+id/textViewTitle"

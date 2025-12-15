@@ -34,24 +34,24 @@
 > Task :app:validateSigningDebug UP-TO-DATE
 > Task :app:writeDebugAppMetadata UP-TO-DATE
 > Task :app:writeDebugSigningConfigVersions UP-TO-DATE
+> Task :app:kspDebugKotlin
+> Task :app:compileDebugKotlin
+> Task :app:compileDebugJavaWithJavac
+> Task :app:hiltAggregateDepsDebug
 
-> Task :app:kspDebugKotlin FAILED
-e: [ksp] C:/Users/suhani/AndroidStudioProjects/JainConnect/app/src/main/java/com/mycompany/jainconnect/ui/activities/EventActivity.kt:27: [Hilt] @AndroidEntryPoint base class must extend ComponentActivity, (support) Fragment, View, Service, or BroadcastReceiver.
-[1;31m[Hilt] Processing did not complete. See error above for details.[0m
-e: Error occurred in KSP, check log for detail
+> Task :app:hiltJavaCompileDebug
+Note: C:\Users\suhani\AndroidStudioProjects\JainConnect\app\build\generated\hilt\component_sources\debug\com\mycompany\jainconnect\Hilt_JainConnectApp.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
 
-FAILURE: Build failed with an exception.
+> Task :app:processDebugJavaRes
+> Task :app:transformDebugClassesWithAsm
+> Task :app:mergeDebugJavaResource
+> Task :app:dexBuilderDebug
+> Task :app:mergeProjectDexDebug
+> Task :app:packageDebug
+> Task :app:createDebugApkListingFileRedirect
+> Task :app:assembleDebug
+[Incubating] Problems report is available at: file:///C:/Users/suhani/AndroidStudioProjects/JainConnect/build/reports/problems/problems-report.html
 
-* What went wrong:
-Execution failed for task ':app:kspDebugKotlin'.
-> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
-   > Compilation error. See log for more details
-
-* Try:
-> Run with --stacktrace option to get the stack trace.
-> Run with --info or --debug option to get more log output.
-> Run with --scan to get full insights.
-> Get more help at https://help.gradle.org.
-
-BUILD FAILED in 4s
-29 actionable tasks: 1 executed, 28 up-to-date
+BUILD SUCCESSFUL in 33s
+40 actionable tasks: 12 executed, 28 up-to-date
