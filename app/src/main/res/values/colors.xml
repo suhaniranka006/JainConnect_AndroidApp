@@ -40,5 +40,23 @@
     <!-- Semantic Colors for Theming -->
     <color name="card_background">#FFFFFF</color>
     <color name="screen_background">@color/saffron_light</color>
+
+    <!-- Missing colors needed for build -->
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="text_hint">#BDBDBD</color>
+    <color name="jain_maroon">#800000</color>
+    <!-- Missing colors inferred -->
+    <color name="jain_saffron">#FF9933</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="jain_gold_light">#FFECB3</color>
+    <color name="background_primary">#FAFAFA</color>
+    <color name="surface_variant">#EEEEEE</color>
+    <color name="deep_orange_dark">#BF360C</color>
+    <color name="jain_saffron_dark">#F57C00</color>
+    <color name="deep_orange">#FF5722</color>
+    <color name="card_gradient_end">#FFCC80</color>
+    <color name="card_gradient_start">#FFE0B2</color>
+    <color name="jain_gold">#FFC107</color>
 </resources>
 

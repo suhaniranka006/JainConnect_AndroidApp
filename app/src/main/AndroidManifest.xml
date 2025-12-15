@@ -1,6 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.mycompany.jainconnect">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
@@ -22,48 +21,14 @@
         android:usesCleartextTraffic="false"
         tools:targetApi="31">
         <activity
-            android:name=".AddMaharajActivity"
-            android:exported="false" />
-        <activity
-            android:name=".AddEventActivity"
-            android:exported="false" />
-        <activity
-            android:name=".HorizonsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ContactActivity"
-            android:exported="false" />
-        <activity
-            android:name=".SplashActivity"
+            android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
+            android:theme="@style/Theme.JainConnect">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".SignUpActivity"
-            android:exported="false" />
-        <activity
-            android:name=".LoginActivity"
-            android:exported="false" />
-        <activity
-            android:name=".EditProfileActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MaharajLocationActivity"
-            android:exported="false" />
-        <activity
-            android:name=".EventActivity"
-            android:exported="false" />
-        <activity
-            android:name=".TithiActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
-            android:exported="false" /> <!-- Yeh 'false' sahi hai, kyunki Splash se open ho rahi hai -->
         <activity
             android:name=".ProfileActivity"
             android:exported="false" />

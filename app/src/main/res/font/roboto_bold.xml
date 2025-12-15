@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<font-family xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!-- No actual font file is referenced here. -->
+    <!-- This is a placeholder to resolve the build error. -->
+    <!-- You should add a .ttf font file to your project and reference it here. -->
+</font-family>

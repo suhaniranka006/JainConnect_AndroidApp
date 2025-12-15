@@ -1,4 +1,4 @@
-﻿> Task :app:preBuild UP-TO-DATE
+> Task :app:preBuild UP-TO-DATE
 > Task :app:preDebugBuild UP-TO-DATE
 > Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
 > Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
@@ -30,47 +30,11 @@
 > Task :app:mergeExtDexDebug UP-TO-DATE
 > Task :app:mergeLibDexDebug UP-TO-DATE
 > Task :app:mergeDebugJniLibFolders UP-TO-DATE
-> Task :app:mergeDebugNativeLibs NO-SOURCE
-> Task :app:stripDebugDebugSymbols NO-SOURCE
+> Task :app:mergeDebugNativeLibs UP-TO-DATE
+> Task :app:stripDebugDebugSymbols UP-TO-DATE
 > Task :app:validateSigningDebug UP-TO-DATE
 > Task :app:writeDebugAppMetadata UP-TO-DATE
 > Task :app:writeDebugSigningConfigVersions UP-TO-DATE
 
-./gradlew : e: file:///C:/Users/suhani/AndroidStu
-dioProjects/JainConnect/app/src/main/java/com/myc
-ompany/jainconnect/JainRepository.kt:20:23 
-Unresolved reference 'Inject'.
-At line:1 char:1
-+ ./gradlew assembleDebug > 
-build_log_cleanup_error.txt 2>&1
-+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (e:  
-   file:///C:/U...rence 'Inject'.:String) [], R  
-  emoteException
-    + FullyQualifiedErrorId : NativeCommandError
- 
-> Task :app:compileDebugKotlin
-
 > Task :app:compileDebugKotlin FAILED
-
-FAILURE: Build failed with an exception.
-
-* What went wrong:
-Execution failed for task 
-':app:compileDebugKotlin'.
-> A failure occurred while executing org.jetbrain
-s.kotlin.compilerRunner.GradleCompilerRunnerWithW
-orkers$GradleKotlinCompilerWorkAction
-   > Compilation error. See log for more details
-
-* Try:
-> Run with --stacktrace option to get the stack 
-trace.
-> Run with --info or --debug option to get more 
-log output.
-> Run with --scan to get full insights.
-30 actionable tasks: 1 executed, 29 up-to-date
-> Get more help at https://help.gradle.org.
-
-BUILD FAILED in 5s
+32 actionable tasks: 1 executed, 31 up-to-date

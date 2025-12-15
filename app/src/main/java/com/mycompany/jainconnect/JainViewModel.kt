@@ -51,6 +51,12 @@ class JainViewModel @Inject constructor(
     private val repository: JainRepository
 ) : ViewModel() {
 
+    // =====================================================================================
+    //                                  LOADING STATE
+    // =====================================================================================
+    private val _isLoading = MutableLiveData<Boolean>(false)
+    val isLoading: LiveData<Boolean> = _isLoading
+
     //
     //                                  USER AUTHENTICATION
     //
@@ -196,6 +202,7 @@ class JainViewModel @Inject constructor(
 
     fun fetchSunData(lat: Double = 26.9124, lng: Double = 75.7873) {
         viewModelScope.launch {
+            _isLoading.value = true
             try {
                 val response = repository.getSunTimings(lat, lng)
 
@@ -245,6 +252,8 @@ class JainViewModel @Inject constructor(
             } catch (e: Exception) {
                 Log.e("JainViewModel", "Horizons Exception", e)
                 _horizonList.value = emptyList()
+            } finally {
+                _isLoading.value = false
             }
         }
     }
@@ -310,15 +319,24 @@ class JainViewModel @Inject constructor(
     // Fetches tithi data from the repository
     fun fetchTithis() {
         viewModelScope.launch {
+            _isLoading.value = true
+            Log.d("JainViewModel", "fetchTithis: Starting fetch...")
             try {
                 val tithisFromRepo = repository.getTithis()
-                // Filter locally reduces network calls but consumes more memory
-                val upcomingTithis = filterUpcomingTithis(tithisFromRepo)
-                _tithiList.value = upcomingTithis
-                _filteredTithis.value = upcomingTithis
+                Log.d("JainViewModel", "fetchTithis: Got ${tithisFromRepo.size} tithis from repo")
+                // Show ALL tithis for now (database has past dates)
+                // TODO: Enable filtering once database has future dates
+                // val upcomingTithis = filterUpcomingTithis(tithisFromRepo)
+                _tithiList.value = tithisFromRepo
+                _filteredTithis.value = tithisFromRepo
+                Log.d("JainViewModel", "fetchTithis: Showing all ${tithisFromRepo.size} tithis")
             } catch (e: Exception) {
+                Log.e("JainViewModel", "fetchTithis: ERROR - ${e.message}", e)
                 _tithiList.value = emptyList()
                 _filteredTithis.value = emptyList()
+            } finally {
+                _isLoading.value = false
+                Log.d("JainViewModel", "fetchTithis: Done, isLoading = false")
             }
         }
     }
@@ -351,38 +369,43 @@ class JainViewModel @Inject constructor(
 
 
     // Filters the list to show only upcoming tithis (including today)
-    private fun filterUpcomingTithis(allTithis: List<Tithi>): List<Tithi> {
+private fun filterUpcomingTithis(allTithis: List<Tithi>): List<Tithi> {
+    if (allTithis.isNotEmpty()) {
+        Log.d("JainViewModel", "filterUpcomingTithis: First tithi date = '${allTithis.first().date}'")
+    }
 
-        // Date format from the server (e.g., "2025-10-14")
-        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    // Date format from the server (e.g., "2025-10-14")
+    val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
-        // Set time to midnight (00:00:00) so that today's tithi is included
+    // Set time to midnight (00:00:00) so that today's tithi is included
 
-        val todayCalendar = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
+    val todayCalendar = Calendar.getInstance().apply {
+        set(Calendar.HOUR_OF_DAY, 0)
+        set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+    }
 
-        val today = todayCalendar.time
+    val today = todayCalendar.time
+    Log.d("JainViewModel", "filterUpcomingTithis: Today = $today")
 
+    return allTithis.filter { tithi ->
+        try {
 
-        return allTithis.filter { tithi ->
-            try {
+            //convert date string into date object
 
-                //convert date string into date object
+            val tithiDate = sdf.parse(tithi.date)
+            Log.d("JainViewModel", "filterUpcomingTithis: Parsed '${tithi.date}' -> $tithiDate")
 
-                val tithiDate = sdf.parse(tithi.date)
-
-                //check nullability or it should be after today
-                tithiDate != null && !tithiDate.before(today)
-            } catch (e: Exception) {
-                // if date format is wrong, remove it from list
-                false
-            }
+            //check nullability or it should be after today
+            tithiDate != null && !tithiDate.before(today)
+        } catch (e: Exception) {
+            // if date format is wrong, remove it from list
+            Log.e("JainViewModel", "filterUpcomingTithis: Parse error for '${tithi.date}' - ${e.message}")
+            false
         }
     }
+}
 
     /**
      * Filters the master list of tithis to show only those occurring within the next 'days'.
@@ -453,6 +476,7 @@ class JainViewModel @Inject constructor(
     //fetch events
     fun fetchEvents() {
         viewModelScope.launch {
+            _isLoading.value = true
             //network call on background thread
             try {
                 val result = repository.getEvents()
@@ -461,6 +485,8 @@ class JainViewModel @Inject constructor(
                 _eventList.value = result
             } catch (e: Exception) {
                 _eventList.value = emptyList()
+            } finally {
+                _isLoading.value = false
             }
         }
     }
@@ -555,6 +581,7 @@ class JainViewModel @Inject constructor(
     //fetch monks data on background thread
     fun fetchMaharaj() {
         viewModelScope.launch {
+            _isLoading.value = true
             try {
                 val list = repository.getMaharaj()
                 _maharajList.value = list
@@ -562,6 +589,8 @@ class JainViewModel @Inject constructor(
             } catch (e: Exception) {
                 _maharajList.value = emptyList()
                 _filteredMaharaj.value = emptyList()
+            } finally {
+                _isLoading.value = false
             }
         }
     }
