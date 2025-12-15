@@ -133,7 +133,7 @@ class HomeFragment : Fragment() {
             android.widget.Toast.makeText(requireContext(), "Notifications", android.widget.Toast.LENGTH_SHORT).show()
         }
          view.findViewById<View>(R.id.cardQuickPachkhan)?.setOnClickListener {
-            android.widget.Toast.makeText(requireContext(), "Pachkhan", android.widget.Toast.LENGTH_SHORT).show()
+            startActivity(Intent(requireContext(), PachkhanActivity::class.java))
         }
          view.findViewById<View>(R.id.cardQuickMonks)?.setOnClickListener {
              startActivity(Intent(requireContext(), MaharajLocationActivity::class.java))
