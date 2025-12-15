@@ -60,6 +60,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    // Location
+    implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation(libs.firebase.appdistribution.gradle)
     implementation("androidx.fragment:fragment-ktx:1.8.1")
     testImplementation(libs.junit)

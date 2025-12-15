@@ -78,15 +78,33 @@
                 android:maxLines="1"
                 android:ellipsize="end" />
 
-            <!-- Location Toggle -->
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/switchLocation"
+            <!-- Location Toggle Container -->
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=""
-                android:theme="@style/Theme.MaterialComponents.Light"
-                app:thumbTint="@color/saffron_dark"
-                app:trackTint="#E0E0E0" />
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_marginEnd="8dp">
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:scaleX="1.2"
+                    android:scaleY="1.2"
+                    android:theme="@style/Theme.MaterialComponents.Light"
+                    app:thumbTint="@color/saffron_dark"
+                    app:trackTint="#E0E0E0" />
+
+                <TextView
+                    android:id="@+id/tvToggleLocationLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Location"
+                    android:textSize="10sp"
+                    android:textColor="@color/black"
+                    android:layout_marginTop="2dp"/>
+            </LinearLayout>
 
             <!-- Help (?) -->
             <com.google.android.material.button.MaterialButton

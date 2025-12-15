@@ -25,6 +25,17 @@ import java.util.Locale
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
 
+// Location Imports
+import android.Manifest
+import android.content.pm.PackageManager
+import android.location.Geocoder
+import android.location.Location
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.LocationServices
+import com.mycompany.jainconnect.databinding.FragmentHomeBinding // Ensure binding is imported if used, otherwise direct IDs
+import androidx.appcompat.widget.SwitchCompat // For Switch
+
 // ⭐ CLASS DEFINITION: Implements PaymentResultListener AND the custom AmountDialogListener
 @AndroidEntryPoint
 class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.AmountDialogListener {
@@ -48,6 +59,19 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
     private lateinit var shimmerDashboard: ShimmerFrameLayout
     private lateinit var cardGreeting: MaterialCardView
 
+    // Location Permission Launcher
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            setupLocationListener()
+        } else {
+            // Permission denied
+            view?.findViewById<SwitchCompat>(R.id.switchLocation)?.isChecked = false
+            Toast.makeText(context, "Location permission required.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -66,6 +90,8 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
 
         initializeViews(view)
         setupNavigationButtons(view)
+        
+        setupLocationToggle(view) // Initialize Location Logic
 
         // Ensure shimmer starts
         shimmerDashboard.startShimmer()
@@ -89,8 +115,8 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
         val sdfDate = SimpleDateFormat("EEEE, dd-MM-yy", Locale.getDefault())
         tvDate.text = sdfDate.format(Calendar.getInstance().time)
 
-        // Set Location (Placeholder)
-        tvLocationName.text = "Jaipur"
+        // Default: No Data (Location Logic will decide)
+        tvLocationName.text = "Location Off"
     }
 
     private fun setupNavigationButtons(view: View) {
@@ -208,7 +234,15 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
         }
 
         viewModel.fetchTithis()
-        viewModel.fetchSunData(26.9124, 75.7873)
+        
+        // Only fetch sun data if enabled
+        val isLocationOn = sharedPreferences.getBoolean("is_location_on", false)
+        if (isLocationOn) {
+            // We usually wait for GPS, but if we have saved coords we could use them.
+            // For now, let the toggle setup trigger the fresh fetch.
+            // Or use default just to init if needed, but user asked for "No Data".
+            // So we do nothing here, the setupLocationToggle calls checkAndRequestLocation if ON.
+        }
     }
 
     private fun checkDataLoaded() {
@@ -274,4 +308,164 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
     override fun onPaymentError(code: Int, response: String) {
         Toast.makeText(requireContext(), "Donation Failed. Error Code: $code", Toast.LENGTH_LONG).show()
     }
+
+    // --- Location Logic ---
+
+    private fun setupLocationToggle(view: View) {
+        val switchLocation = view.findViewById<SwitchCompat>(R.id.switchLocation)
+        val tvToggleLabel = view.findViewById<TextView>(R.id.tvToggleLocationLabel)
+
+        // Helper to update colors
+        fun updateSwitchColor(isChecked: Boolean) {
+            if (isChecked) {
+                val green = android.graphics.Color.parseColor("#4CAF50")
+                val lightGreen = android.graphics.Color.parseColor("#A5D6A7")
+                switchLocation.thumbTintList = android.content.res.ColorStateList.valueOf(green)
+                switchLocation.trackTintList = android.content.res.ColorStateList.valueOf(lightGreen)
+            } else {
+                val gray = android.graphics.Color.GRAY
+                val lightGray = android.graphics.Color.LTGRAY
+                switchLocation.thumbTintList = android.content.res.ColorStateList.valueOf(gray)
+                switchLocation.trackTintList = android.content.res.ColorStateList.valueOf(lightGray)
+            }
+        }
+
+        // Load saved state
+        val isLocationOn = sharedPreferences.getBoolean("is_location_on", false)
+        switchLocation.isChecked = isLocationOn
+        updateSwitchColor(isLocationOn)
+
+        if (isLocationOn) {
+            tvToggleLabel.visibility = View.VISIBLE
+            tvToggleLabel.text = "Locating..."
+            tvToggleLabel.setTextColor(android.graphics.Color.BLACK)
+            checkAndRequestLocation()
+        } else {
+            tvToggleLabel.visibility = View.GONE
+            clearLocationData()
+        }
+
+        switchLocation.setOnCheckedChangeListener { _, isChecked ->
+            updateSwitchColor(isChecked)
+            if (isChecked) {
+                // User turned ON
+                tvToggleLabel.visibility = View.VISIBLE
+                tvToggleLabel.text = "Locating..."
+                tvToggleLabel.setTextColor(android.graphics.Color.BLACK)
+                sharedPreferences.edit().putBoolean("is_location_on", true).apply()
+                checkAndRequestLocation()
+            } else {
+                // User turned OFF
+                tvToggleLabel.visibility = View.GONE
+                sharedPreferences.edit().putBoolean("is_location_on", false).apply()
+                clearLocationData()
+            }
+        }
+    }
+    
+    // ... existing permission methods ...
+
+    private fun clearLocationData() {
+        if(::tvLocationName.isInitialized) tvLocationName.text = "Location Off"
+        if(::tvSunriseTime.isInitialized) tvSunriseTime.text = "--:--"
+        if(::tvSunsetTime.isInitialized) tvSunsetTime.text = "--:--"
+    }
+    
+    // ... existing permission methods ...
+
+    private fun checkAndRequestLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        } else {
+            setupLocationListener()
+        }
+    }
+
+    private fun setupLocationListener() {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+            if (location != null) {
+                fetchCityName(location.latitude, location.longitude)
+            } else {
+                Toast.makeText(context, "Unable to fetch location. Using default.", Toast.LENGTH_SHORT).show()
+                updateUIWithLocation("Jaipur", 26.9124, 75.7873)
+            }
+        }
+    }
+
+    private fun fetchCityName(lat: Double, long: Double) {
+        try {
+            val geocoder = Geocoder(requireContext(), Locale.getDefault())
+            // Deprecated in API 33 but still works for now.
+            val addresses = geocoder.getFromLocation(lat, long, 1)
+            if (!addresses.isNullOrEmpty()) {
+                val city = addresses[0].locality ?: addresses[0].subAdminArea ?: "Unknown"
+                updateUIWithLocation(city, lat, long)
+            } else {
+                updateUIWithLocation("Unknown Loc", lat, long)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            updateUIWithLocation("Error", lat, long)
+        }
+    }
+
+    private fun updateUIWithLocation(cityName: String, lat: Double, long: Double) {
+        // Update Main Location Text (Card)
+        if(::tvLocationName.isInitialized) {
+             tvLocationName.text = cityName
+        }
+        
+        // Update Toggle Label (Under Switch)
+        val tvToggleLabel = view?.findViewById<TextView>(R.id.tvToggleLocationLabel)
+        tvToggleLabel?.text = cityName
+
+        // Calculate Sun Times using new Coords
+        val sunTimes = calculateSunTimes(lat, long)
+        if(::tvSunriseTime.isInitialized && ::tvSunsetTime.isInitialized) {
+            tvSunriseTime.text = sunTimes.first
+            tvSunsetTime.text = sunTimes.second
+        }
+        
+        viewModel.fetchSunData(lat, long)
+    }
+
+    // Reuse existing calculation logic but parametrized
+    private fun calculateSunTimes(lat: Double, long: Double): Pair<String, String> {
+        // Simplified logic for demo (Real logic needs SunCalc algo or API)
+        // For now, let's just shift time slightly based on Longitude difference from Jaipur (75.78)
+        // 1 degree diff approx 4 mins.
+        val baseLong = 75.7873
+        val diffDeg = baseLong - long
+        val diffMins = (diffDeg * 4).toInt()
+
+        // Base Jaipur Times (approx default)
+        var sunriseMins = 7 * 60 + 5 // 07:05
+        var sunsetMins = 17 * 60 + 35 // 17:35
+
+        // Adjust
+        sunriseMins += diffMins
+        sunsetMins += diffMins
+
+        return Pair(formatTime(sunriseMins), formatTime(sunsetMins))
+    }
+    
+    private fun formatTime(totalMins: Int): String {
+        val hrs = totalMins / 60
+        val mins = totalMins % 60
+        return String.format("%02d:%02d", hrs, mins)
+    }
+
 }
