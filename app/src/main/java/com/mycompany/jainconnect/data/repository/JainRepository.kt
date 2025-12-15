@@ -26,10 +26,7 @@ import com.mycompany.jainconnect.data.models.SunResponse
 
 
 
-import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import java.io.IOException
 
 /**
@@ -38,23 +35,11 @@ import java.io.IOException
  * @Inject constructor allows Hilt to pass the [ApiService] instance automatically.
  */
 class JainRepository @Inject constructor(
-    private val api: ApiService,
-    @ApplicationContext private val context: Context
+    private val api: ApiService
 ) {
 
     // --- Tithi, Event, Maharaj Functions ---
-    // UPDATED: Reads Tithis from Local JSON (Automated for 10 years)
-    suspend fun getTithis(): List<Tithi> {
-        return try {
-            val jsonString = context.assets.open("tithis_2025.json").bufferedReader().use { it.readText() }
-            val type = object : TypeToken<List<Tithi>>() {}.type
-            Gson().fromJson(jsonString, type)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            emptyList()
-        }
-    }
-
+    suspend fun getTithis(): List<Tithi> = api.getTithis()
     suspend fun getEvents(): List<Event> = api.getEvents()
     suspend fun getMaharaj(): List<Maharaj> = api.getMaharaj()
 
