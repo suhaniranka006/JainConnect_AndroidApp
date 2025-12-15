@@ -7,9 +7,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.facebook.shimmer.ShimmerFrameLayout
@@ -22,8 +21,13 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+// ⭐ Razorpay and Dialog Imports
+import com.razorpay.Checkout
+import com.razorpay.PaymentResultListener
+
+// ⭐ CLASS DEFINITION: Implements PaymentResultListener AND the custom AmountDialogListener
 @AndroidEntryPoint
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.AmountDialogListener {
 
     private val viewModel: JainViewModel by viewModels()
     private lateinit var sharedPreferences: SharedPreferences
@@ -57,12 +61,15 @@ class HomeFragment : Fragment() {
 
         sharedPreferences = requireActivity().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
 
+        // Initialize Razorpay (Required for use in fragments)
+        Checkout.preload(requireContext())
+
         initializeViews(view)
         setupNavigationButtons(view)
-        
+
         // Ensure shimmer starts
         shimmerDashboard.startShimmer()
-        
+
         observeData()
         loadDashboardData()
     }
@@ -70,7 +77,7 @@ class HomeFragment : Fragment() {
     private fun initializeViews(view: View) {
         shimmerDashboard = view.findViewById(R.id.shimmerDashboard)
         cardGreeting = view.findViewById(R.id.cardGreeting)
-        
+
         tvGreeting = view.findViewById(R.id.tvGreeting)
         tvTithiName = view.findViewById(R.id.tvTithiName)
         tvDate = view.findViewById(R.id.tvDate)
@@ -94,10 +101,14 @@ class HomeFragment : Fragment() {
         view.findViewById<View>(R.id.btnHelp).setOnClickListener {
             startActivity(Intent(requireContext(), ContactActivity::class.java))
         }
+
+        // ⭐ DONATE BUTTON: Opens the custom AmountDialogFragment
         view.findViewById<View>(R.id.btnDonate).setOnClickListener {
-            android.widget.Toast.makeText(requireContext(), "Donation Feature Coming Soon", android.widget.Toast.LENGTH_SHORT).show()
+            val dialog = AmountDialogFragment()
+            // Use childFragmentManager to ensure the result listener works correctly
+            dialog.show(childFragmentManager, "AmountDialog")
         }
-        
+
         // --- Explore Grid Buttons ---
         view.findViewById<View>(R.id.btnTithi).setOnClickListener {
             startActivity(Intent(requireContext(), TithiActivity::class.java))
@@ -121,24 +132,66 @@ class HomeFragment : Fragment() {
             R.id.btnTirthyatra to "Tirthyatra Planner",
             R.id.btnNews to "News Portal"
         )
-        
+
         newFeatures.forEach { (id, name) ->
             view.findViewById<View>(id)?.setOnClickListener {
-                android.widget.Toast.makeText(requireContext(), "$name Coming Soon!", android.widget.Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "$name Coming Soon!", Toast.LENGTH_SHORT).show()
             }
         }
-        
+
         // --- Quick Actions ---
-         view.findViewById<View>(R.id.cardQuickNotifications)?.setOnClickListener {
-            android.widget.Toast.makeText(requireContext(), "Notifications", android.widget.Toast.LENGTH_SHORT).show()
+        view.findViewById<View>(R.id.cardQuickNotifications)?.setOnClickListener {
+            Toast.makeText(requireContext(), "Notifications", Toast.LENGTH_SHORT).show()
         }
-         view.findViewById<View>(R.id.cardQuickPachkhan)?.setOnClickListener {
+        view.findViewById<View>(R.id.cardQuickPachkhan)?.setOnClickListener {
             startActivity(Intent(requireContext(), PachkhanActivity::class.java))
         }
-         view.findViewById<View>(R.id.cardQuickMonks)?.setOnClickListener {
-             startActivity(Intent(requireContext(), MaharajLocationActivity::class.java))
-         }
+        view.findViewById<View>(R.id.cardQuickMonks)?.setOnClickListener {
+            startActivity(Intent(requireContext(), MaharajLocationActivity::class.java))
+        }
     }
+
+
+    // ⭐ AMOUNT DIALOG LISTENER: Receives the custom amount from the DialogFragment
+    override fun onAmountEntered(amountInPaise: Int) {
+        // This function is called by AmountDialogFragment when the user hits 'Proceed to Donate'
+        if (amountInPaise > 0) {
+            startPayment(amountInPaise)
+        } else {
+            Toast.makeText(requireContext(), "Donation amount cannot be zero.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+    // ⭐ PAYMENT LAUNCHER
+    private fun startPayment(amount: Int) {
+        val checkout = Checkout()
+        // Using your TEST key as requested for development purposes
+        checkout.setKeyID("rzp_test_RrvWpop5fJ1utF")
+
+        try {
+            val options = org.json.JSONObject()
+            options.put("name", "JainConnect App Donation")
+            options.put("description", "Support the App Development")
+            options.put("currency", "INR")
+            options.put("amount", amount) // Amount is in smallest currency unit (paise)
+            options.put("theme.color", "#FF9800")
+
+            val prefill = org.json.JSONObject()
+            // Using placeholder prefill data for better test detection
+            prefill.put("email", "test@razorpay.com")
+            prefill.put("contact", "9999999999")
+            options.put("prefill", prefill)
+
+            // Launch the Razorpay checkout interface
+            checkout.open(requireActivity(), options)
+
+        } catch (e: Exception) {
+            Toast.makeText(requireContext(), "Error in Payment: ${e.message}", Toast.LENGTH_LONG).show()
+            e.printStackTrace()
+        }
+    }
+
 
     private fun loadDashboardData() {
         val token = sharedPreferences.getString("jwt_token", null)
@@ -169,7 +222,7 @@ class HomeFragment : Fragment() {
             isUserLoaded = true
             checkDataLoaded()
             if (user != null) {
-                tvGreeting.text = "Jai Jinendra ${user.name}!" 
+                tvGreeting.text = "Jai Jinendra ${user.name}!"
             }
         }
 
@@ -208,5 +261,14 @@ class HomeFragment : Fragment() {
                 }
             }
         }
+    }
+
+    // ⭐ PAYMENT RESULT LISTENERS
+    override fun onPaymentSuccess(razorpayPaymentID: String) {
+        Toast.makeText(requireContext(), "Donation Successful! ID: $razorpayPaymentID", Toast.LENGTH_LONG).show()
+    }
+
+    override fun onPaymentError(code: Int, response: String) {
+        Toast.makeText(requireContext(), "Donation Failed. Error Code: $code", Toast.LENGTH_LONG).show()
     }
 }

@@ -113,4 +113,7 @@ dependencies {
     // Shimmer Effect
     implementation("com.facebook.shimmer:shimmer:0.5.0")
 
+   //razorpay dependency
+    implementation("com.razorpay:checkout:1.6.38")
+    implementation("org.json:json:20231013")
 }
