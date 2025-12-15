@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--
-scroll view is used to ensure it content is too tall for small phone screen , then user can scroll down to see all buttons
--->
-
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -13,62 +9,149 @@ scroll view is used to ensure it content is too tall for small phone screen , th
     android:background="@color/screen_background"
     tools:context=".ui.activities.MainActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/_20sdp">
+        android:orientation="vertical"
+        android:paddingStart="@dimen/_10sdp"
+        android:paddingEnd="@dimen/_10sdp"
+        android:paddingTop="@dimen/_10sdp">
 
-        <TextView
-            android:id="@+id/tvTitle"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:layout_width="wrap_content"
+        <!-- Header Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="JAINCONNECT"
-            android:textColor="@color/saffron_dark"
-            android:textSize="@dimen/_35ssp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
+            <!-- Profile (P) -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnProfile"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:insetLeft="0dp"
+                android:insetTop="0dp"
+                android:insetRight="0dp"
+                android:insetBottom="0dp"
+                android:padding="0dp"
+                android:text="P"
+                android:textColor="@color/saffron_dark"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                app:backgroundTint="@android:color/white"
+                app:cornerRadius="24dp"
+                app:strokeColor="@android:color/black"
+                app:strokeWidth="1.5dp" />
 
-        <!-- view is used for line
-        -->
+            <!-- Donate (Rupee) -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDonate"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="4dp"
+                android:insetLeft="0dp"
+                android:insetTop="0dp"
+                android:insetRight="0dp"
+                android:insetBottom="0dp"
+                android:padding="0dp"
+                android:text="₹"
+                android:textColor="@color/saffron_dark"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                app:backgroundTint="@android:color/white"
+                app:cornerRadius="24dp"
+                app:strokeColor="@android:color/black"
+                app:strokeWidth="1.5dp" />
+
+            <!-- Title -->
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="JainConnect"
+                android:textColor="@color/saffron_dark"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <!-- Location Toggle -->
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:theme="@style/Theme.MaterialComponents.Light"
+                app:thumbTint="@color/saffron_dark"
+                app:trackTint="#E0E0E0" />
+
+            <!-- Help (?) -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnHelp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="4dp"
+                android:insetLeft="0dp"
+                android:insetTop="0dp"
+                android:insetRight="0dp"
+                android:insetBottom="0dp"
+                android:padding="0dp"
+                android:text="?"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                app:backgroundTint="@android:color/transparent"
+                app:cornerRadius="20dp"
+                app:strokeColor="@android:color/black"
+                app:strokeWidth="1.5dp" />
+
+            <!-- Menu (=) -->
+            <ImageView
+                android:id="@+id/btnMenu"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/ic_menu_black"
+                app:tint="@color/black" />
+
+        </LinearLayout>
+
         <View
             android:id="@+id/titleUnderline"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/_2sdp"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="8dp"
             android:background="@color/saffron_dark"
-            app:layout_constraintEnd_toEndOf="@id/tvTitle"
-            app:layout_constraintStart_toStartOf="@id/tvTitle"
-            app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+            android:layout_marginBottom="24dp"/>
 
-        <!-- Shimmer Container -->
+
         <com.facebook.shimmer.ShimmerFrameLayout
             android:id="@+id/shimmerDashboard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/titleUnderline"
             android:visibility="visible"
-            tools:visibility="visible">
+            tools:visibility="gone"
+            tools:ignore="MissingClass">
             <include layout="@layout/layout_dashboard_shimmer" />
         </com.facebook.shimmer.ShimmerFrameLayout>
 
+
+
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardGreeting"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_40sdp"
             app:cardBackgroundColor="@color/lightest_saffron"
             app:cardCornerRadius="@dimen/_16sdp"
             app:cardElevation="@dimen/_4sdp"
             android:visibility="invisible"
-
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/titleUnderline">
-
+            tools:visibility="visible">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -143,14 +226,11 @@ scroll view is used to ensure it content is too tall for small phone screen , th
         </com.google.android.material.card.MaterialCardView>
 
         <GridLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_35sdp"
             android:columnCount="2"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cardGreeting">
+            android:layout_marginBottom="@dimen/_20sdp">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnTithi"
@@ -169,7 +249,6 @@ scroll view is used to ensure it content is too tall for small phone screen , th
                 app:icon="@drawable/ic_tithi"
                 app:iconGravity="textTop"
                 app:iconPadding="@dimen/_8sdp"
-
                 app:iconSize="@dimen/_36sdp"
                 app:iconTint="@null"
                 app:strokeColor="@color/saffron_dark"
@@ -192,7 +271,6 @@ scroll view is used to ensure it content is too tall for small phone screen , th
                 app:icon="@drawable/ic_horizons"
                 app:iconGravity="textTop"
                 app:iconPadding="@dimen/_8sdp"
-
                 app:iconSize="@dimen/_36sdp"
                 app:iconTint="@null"
                 app:strokeColor="@color/saffron_dark"
@@ -215,7 +293,6 @@ scroll view is used to ensure it content is too tall for small phone screen , th
                 app:icon="@drawable/ic_events"
                 app:iconGravity="textTop"
                 app:iconPadding="@dimen/_8sdp"
-
                 app:iconSize="@dimen/_36sdp"
                 app:iconTint="@null"
                 app:strokeColor="@color/saffron_dark"
@@ -238,7 +315,6 @@ scroll view is used to ensure it content is too tall for small phone screen , th
                 app:icon="@drawable/ic_monks"
                 app:iconGravity="textTop"
                 app:iconPadding="@dimen/_8sdp"
-
                 app:iconSize="@dimen/_36sdp"
                 app:iconTint="@null"
                 app:strokeColor="@color/saffron_dark"
@@ -261,7 +337,6 @@ scroll view is used to ensure it content is too tall for small phone screen , th
                 app:icon="@drawable/ic_me"
                 app:iconGravity="textTop"
                 app:iconPadding="@dimen/_8sdp"
-
                 app:iconSize="@dimen/_36sdp"
                 app:iconTint="@null"
                 app:strokeColor="@color/saffron_dark"
@@ -284,11 +359,10 @@ scroll view is used to ensure it content is too tall for small phone screen , th
                 app:icon="@drawable/ic_contact"
                 app:iconGravity="textTop"
                 app:iconPadding="@dimen/_8sdp"
-
                 app:iconSize="@dimen/_36sdp"
                 app:iconTint="@null"
                 app:strokeColor="@color/saffron_dark"
                 app:strokeWidth="@dimen/_1sdp" />
         </GridLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </ScrollView>
