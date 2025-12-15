@@ -1,195 +1,50 @@
 package com.mycompany.jainconnect.ui.activities
 
-import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.widget.Button
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
-
-import androidx.activity.viewModels
-import dagger.hilt.android.AndroidEntryPoint
+import androidx.fragment.app.Fragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.mycompany.jainconnect.R
-import com.mycompany.jainconnect.data.models.Tithi
-import com.mycompany.jainconnect.ui.viewmodel.JainViewModel
+import com.mycompany.jainconnect.ui.fragments.*
+import dagger.hilt.android.AndroidEntryPoint
 
-/**
- * The main screen of the app.
- * Annotated with @AndroidEntryPoint to allow Hilt to inject dependencies.
- */
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private val viewModel: JainViewModel by viewModels()
-    private lateinit var sharedPreferences: SharedPreferences
-
-    // UI Components
-    private lateinit var tvGreeting: TextView
-    private lateinit var tvTithiName: TextView
-    private lateinit var tvDate: TextView
-    private lateinit var tvLocationName: TextView
-    private lateinit var tvSunriseTime: TextView
-    private lateinit var tvSunsetTime: TextView
-
-    // Data Loading Status Flags
-    private var isUserLoaded = false
-    private var isTithiLoaded = false
-    private var isSunLoaded = false
-
-    private lateinit var shimmerDashboard: com.facebook.shimmer.ShimmerFrameLayout
-    private lateinit var cardGreeting: com.google.android.material.card.MaterialCardView
+    private lateinit var bottomNavigation: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // ✅ FIX IS HERE: Use "auth_prefs" to match LoginActivity
-        sharedPreferences = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+        bottomNavigation = findViewById(R.id.bottom_navigation)
 
-        shimmerDashboard = findViewById(R.id.shimmerDashboard)
-        cardGreeting = findViewById(R.id.cardGreeting)
-        shimmerDashboard.startShimmer()
+        setupBottomNavigation()
 
-        tvGreeting = findViewById(R.id.tvGreeting)
-        tvTithiName = findViewById(R.id.tvTithiName)
-        tvDate = findViewById(R.id.tvDate)
-        tvLocationName = findViewById(R.id.tvLocationName)
-        tvSunriseTime = findViewById(R.id.tvSunriseTime)
-        tvSunsetTime = findViewById(R.id.tvSunsetTime)
-
-        // Set Date immediately
-        val sdfDate = SimpleDateFormat("EEEE, dd-MM-yy", Locale.getDefault())
-        tvDate.text = sdfDate.format(Calendar.getInstance().time)
-
-        // Set Location (Placeholder for now, matching coords)
-        tvLocationName.text = "Jaipur"
-
-        setupNavigationButtons()
-        observeData()
-        loadDashboardData()
-    }
-
-    private fun setupNavigationButtons() {
-        // --- Header Buttons ---
-        findViewById<android.view.View>(R.id.btnProfile).setOnClickListener {
-            startActivity(Intent(this, ProfileActivity::class.java))
-        }
-        findViewById<android.view.View>(R.id.btnHelp).setOnClickListener {
-            // Reusing ContactActivity for Help/Support for now
-            startActivity(Intent(this, ContactActivity::class.java))
-        }
-        findViewById<android.view.View>(R.id.btnDonate).setOnClickListener {
-            android.widget.Toast.makeText(this, "Donation Feature Coming Soon", android.widget.Toast.LENGTH_SHORT).show()
-        }
-        
-        // --- Explore Grid Buttons ---
-        findViewById<android.view.View>(R.id.btnTithi).setOnClickListener {
-            startActivity(Intent(this, TithiActivity::class.java))
-        }
-        findViewById<android.view.View>(R.id.btnEvents).setOnClickListener {
-            startActivity(Intent(this, EventActivity::class.java))
-        }
-        findViewById<android.view.View>(R.id.btnMonks).setOnClickListener {
-            startActivity(Intent(this, MaharajLocationActivity::class.java))
-        }
-        findViewById<android.view.View>(R.id.btnHorizons).setOnClickListener {
-            startActivity(Intent(this, HorizonsActivity::class.java))
-        }
-
-        // --- New Features (Placeholders) ---
-        val newFeatures = mapOf(
-            R.id.btnTemples to "Temples",
-            R.id.btnBhojanshalas to "Bhojanshalas",
-            R.id.btnBusiness to "Business Directory",
-            R.id.btnCarpooling to "Carpooling",
-            R.id.btnTirthyatra to "Tirthyatra Planner",
-            R.id.btnNews to "News Portal"
-        )
-
-        newFeatures.forEach { (id, name) ->
-            findViewById<android.view.View>(id)?.setOnClickListener {
-                android.widget.Toast.makeText(this, "$name Coming Soon!", android.widget.Toast.LENGTH_SHORT).show()
-            }
+        // Load Home Fragment by default if savedInstanceState is null (first launch)
+        if (savedInstanceState == null) {
+            loadFragment(HomeFragment())
         }
     }
 
-    private fun loadDashboardData() {
-        // ✅ The key "jwt_token" is correct, and now the file "auth_prefs" matches
-        val token = sharedPreferences.getString("jwt_token", null)
-
-        if (token != null) {
-            // Token found, fetch profile
-            viewModel.fetchUserProfile(token)
-        } else {
-            // Token not found (maybe not logged in)
-            tvGreeting.text = "Jai Jinendra!"
-            isUserLoaded = true // Mark as loaded since we don't need to wait
-            checkDataLoaded()
-        }
-
-        viewModel.fetchTithis()
-        viewModel.fetchSunData(26.9124, 75.7873)
-    }
-
-    private fun checkDataLoaded() {
-        if (isUserLoaded && isTithiLoaded && isSunLoaded) {
-            shimmerDashboard.stopShimmer()
-            shimmerDashboard.visibility = android.view.View.GONE
-            cardGreeting.visibility = android.view.View.VISIBLE
+    private fun setupBottomNavigation() {
+        bottomNavigation.setOnItemSelectedListener { item ->
+            val fragment: Fragment = when (item.itemId) {
+                R.id.nav_home -> HomeFragment()
+                R.id.nav_updates -> UpdatesFragment()
+                R.id.nav_reminders -> RemindersFragment()
+                R.id.nav_leaderboard -> LeaderboardFragment()
+                R.id.nav_community -> CommunityFragment()
+                else -> HomeFragment()
+            }
+            loadFragment(fragment)
+            true
         }
     }
 
-    private fun observeData() {
-        // --- 1. Update Greeting Name ---
-        viewModel.userProfile.observe(this) { user ->
-            isUserLoaded = true
-            checkDataLoaded()
-            if (user != null) {
-                // Should now show: "Jai Jinendra Suhani"
-                // Using capitalize for First Letter Capitalization to match sketch style roughly
-                tvGreeting.text = "Jai Jinendra ${user.name}!" 
-            }
-        }
-
-        // --- 2. Update Tithi ---
-        viewModel.tithiList.observe(this) { tithiList ->
-            isTithiLoaded = true
-            checkDataLoaded()
-            if (tithiList.isNotEmpty()) {
-                val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                val todayDate = sdf.format(Calendar.getInstance().time)
-                val todayTithi = tithiList.find { it.date == todayDate }
-
-                if (todayTithi != null) {
-                    tvTithiName.text = todayTithi.name
-                } else {
-                    tvTithiName.text = "No Data"
-                }
-            }
-        }
-
-        // --- 3. Update Sunrise/Sunset ---
-        viewModel.horizonList.observe(this) { horizonList ->
-            isSunLoaded = true
-            checkDataLoaded()
-            if (horizonList.isNotEmpty()) {
-                val sdf = SimpleDateFormat("dd MMM", Locale.getDefault())
-                val todayDate = sdf.format(Calendar.getInstance().time)
-                val todayHorizon = horizonList.find { it.date == todayDate }
-
-                if (todayHorizon != null) {
-                    tvSunriseTime.text = todayHorizon.sunrise
-                    tvSunsetTime.text = todayHorizon.sunset
-                } else {
-                    tvSunriseTime.text = horizonList[0].sunrise
-                    tvSunsetTime.text = horizonList[0].sunset
-                }
-            }
-        }
+    private fun loadFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
     }
 }
