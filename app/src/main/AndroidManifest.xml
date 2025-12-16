@@ -72,6 +72,9 @@
         <activity
             android:name=".ui.activities.PachkhanActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.activities.MembersActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

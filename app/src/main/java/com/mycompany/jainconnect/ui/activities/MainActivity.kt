@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
         navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_my_profile -> startActivity(Intent(this, ProfileActivity::class.java))
-                R.id.nav_members -> Toast.makeText(this, "Members Coming Soon", Toast.LENGTH_SHORT).show()
+                R.id.nav_members -> startActivity(Intent(this, MembersActivity::class.java))
                 R.id.nav_mentors -> Toast.makeText(this, "Mentors Coming Soon", Toast.LENGTH_SHORT).show()
                 R.id.nav_rate -> Toast.makeText(this, "Rate Us Coming Soon", Toast.LENGTH_SHORT).show()
                 R.id.nav_feedback -> Toast.makeText(this, "Feedback Coming Soon", Toast.LENGTH_SHORT).show()
