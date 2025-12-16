@@ -640,6 +640,25 @@ class JainViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 _syncResult.value = NetworkResult.Error(e.message ?: "Unknown Error")
+                _syncResult.value = NetworkResult.Error(e.message ?: "Unknown Error")
+            }
+        }
+    }
+
+    // --- Chat Notifications ---
+    fun sendChatNotification(token: String, title: String, message: String) {
+        viewModelScope.launch {
+            try {
+                // Fire and forget, we don't necessarily update UI based on success
+                // but logging it is good practice
+                val response = repository.sendChatNotification(token, title, message)
+                if (response.isSuccessful) {
+                    Log.d("JainViewModel", "Notification Sent Successfully")
+                } else {
+                    Log.e("JainViewModel", "Failed to send notification: ${response.message()}")
+                }
+            } catch (e: Exception) {
+                Log.e("JainViewModel", "Error sending notification", e)
             }
         }
     }

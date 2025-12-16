@@ -191,6 +191,14 @@ class JainRepository @Inject constructor(
         )
         return api.submitMaharaj("Bearer $token", request)
     }
+
+    suspend fun sendChatNotification(token: String, title: String, message: String): Response<ApiResponse> {
+        val body = mapOf(
+            "title" to title,
+            "message" to message
+        )
+        return api.sendChatNotification("Bearer $token", body)
+    }
 }
 
 

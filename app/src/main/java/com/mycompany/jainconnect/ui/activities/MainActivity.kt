@@ -57,6 +57,11 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
         }
         
         loadProfileData()
+        
+        // Subscribe to Topic
+        com.google.firebase.messaging.FirebaseMessaging.getInstance().subscribeToTopic("global_chat")
+        
+        setupChatBadgeListener()
     }
 
     override fun onResume() {
@@ -341,5 +346,43 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
         }
 
         builder.show()
+    }
+    private fun setupChatBadgeListener() {
+        val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+        val query = firestore.collection("global_chat")
+        
+        query.addSnapshotListener { snapshots, e ->
+            if (e != null || snapshots == null) return@addSnapshotListener
+            
+            val serverCount = snapshots.size()
+            updateBadge(serverCount)
+        }
+    }
+
+    private fun updateBadge(serverCount: Int) {
+        val sharedPref = getSharedPreferences("chat_prefs", Context.MODE_PRIVATE)
+        val lastReadCount = sharedPref.getInt("last_read_count", 0)
+        
+        val unreadCount = serverCount - lastReadCount
+        
+        if (unreadCount > 0) {
+            val badge = bottomNavigation.getOrCreateBadge(R.id.nav_community)
+            badge.isVisible = true
+            badge.number = unreadCount
+            badge.backgroundColor = ContextCompat.getColor(this, R.color.error_red)
+            badge.badgeTextColor = ContextCompat.getColor(this, android.R.color.white)
+        } else {
+            bottomNavigation.removeBadge(R.id.nav_community)
+        }
+    }
+    
+    fun markChatAsRead(totalMessages: Int) {
+         val sharedPref = getSharedPreferences("chat_prefs", Context.MODE_PRIVATE)
+         with(sharedPref.edit()) {
+             putInt("last_read_count", totalMessages)
+             apply()
+         }
+         // Update UI immediately (remove badge)
+         bottomNavigation.removeBadge(R.id.nav_community)
     }
 }

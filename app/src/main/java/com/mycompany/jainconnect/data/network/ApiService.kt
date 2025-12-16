@@ -142,4 +142,11 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body data: MaharajSubmissionRequest
     ): Response<ApiResponse>
+
+    // New Endpoint for Chat Notifications
+    @POST("api/v1/notifications/send-chat")
+    suspend fun sendChatNotification(
+        @Header("Authorization") token: String,
+        @Body body: Map<String, String>
+    ): Response<ApiResponse>
 }

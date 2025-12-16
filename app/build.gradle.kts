@@ -1,10 +1,8 @@
-import org.gradle.kotlin.dsl.implementation
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.devtools.ksp")
-    id("com.google.gms.google-services") // 👈 Firebase plugin added
+    id("com.google.gms.google-services")
     id("com.google.dagger.hilt.android")
 }
 
@@ -62,7 +60,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     // Location
     implementation("com.google.android.gms:play-services-location:21.0.1")
-    implementation(libs.firebase.appdistribution.gradle)
+    // implementation(libs.firebase.appdistribution.gradle) <-- REMOVED this line
     implementation("androidx.fragment:fragment-ktx:1.8.1")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -96,6 +94,7 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-messaging")
+    implementation("com.google.firebase:firebase-firestore")
 
     //for circular profile photo
     implementation ("de.hdodenhof:circleimageview:3.1.0")

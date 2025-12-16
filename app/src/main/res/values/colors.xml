@@ -2,6 +2,7 @@
 <resources>
     <!-- Your main saffron color -->
     <color name="saffron">#FF9933</color>
+    <color name="error_red">#B00020</color>
 
     <!-- A slightly darker saffron for the status bar, etc. -->
     <color name="saffron_dark">#E68A2E</color>

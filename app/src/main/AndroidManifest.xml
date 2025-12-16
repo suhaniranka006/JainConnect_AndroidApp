@@ -64,6 +64,7 @@
             android:exported="false" />
         <activity
             android:name=".ui.activities.MainActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" /> <!-- Yeh 'false' sahi hai, kyunki Splash se open ho rahi hai -->
         <activity
             android:name=".ui.activities.ProfileActivity"

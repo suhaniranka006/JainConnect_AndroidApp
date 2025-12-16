@@ -1,14 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="#F5F5F5">
 
+    <!-- Header -->
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/tvHeader"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Community Coming Soon"
+        android:background="#FF9800"
+        android:padding="16dp"
+        android:text="Global Community Chat"
+        android:textColor="@android:color/white"
         android:textSize="20sp"
-        android:textColor="@android:color/black" />
-</FrameLayout>
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Chat List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvChat"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@id/layoutInput"
+        app:layout_constraintTop_toBottomOf="@id/tvHeader" />
+
+    <!-- Input Area -->
+    <LinearLayout
+        android:id="@+id/layoutInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:elevation="8dp"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <EditText
+            android:id="@+id/etMessage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:hint="Type a message..."
+            android:padding="12dp"
+            android:inputType="textCapSentences|textMultiLine|textShortMessage"
+            android:maxLines="4" />
+
+        <ImageButton
+            android:id="@+id/btnSend"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_send"
+            app:tint="#FF9800" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
