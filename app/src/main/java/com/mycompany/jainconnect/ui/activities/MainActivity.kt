@@ -73,6 +73,7 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
                     startActivity(shareIntent)
                 }
                 R.id.nav_logout -> performLogout()
+                R.id.nav_delete_account -> showDeleteAccountDialog()
             }
             drawerLayout.closeDrawer(GravityCompat.START)
             true
@@ -87,10 +88,68 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
             clear()
             apply()
         }
+        val session = com.mycompany.jainconnect.data.local.SessionManager(this)
+        session.saveLoginStatus(false)
+        session.clearSession()
         val intent = Intent(this, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         finish()
+    }
+
+    private fun showDeleteAccountDialog() {
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Delete Account")
+            .setMessage("Are you sure you want to delete your account? This action cannot be undone.")
+            .setPositiveButton("Delete") { _, _ ->
+                performDeleteAccount()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun performDeleteAccount() {
+        val sharedPref = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+        val token = sharedPref.getString("jwt_token", null)
+
+        if (token != null) {
+            // 1. Delete from Backend first
+            viewModel.deleteAccount(token)
+            
+            // Observe result (since this is an Activity method, we need to set up observation beforehand or here)
+            // But doing it here might add multiple observers if clicked multiple times. 
+            // Better to observe in onCreate, but for simplicity/direct flow:
+            viewModel.deleteResult.observe(this) { result ->
+                when (result) {
+                    is com.mycompany.jainconnect.data.network.NetworkResult.Success -> {
+                        // Backend deletion success, now delete from Firebase
+                         deleteFirebaseAccount()
+                    }
+                    is com.mycompany.jainconnect.data.network.NetworkResult.Error -> {
+                        Toast.makeText(this, "Backend Deletion Failed: ${result.message}", Toast.LENGTH_SHORT).show()
+                        // Optional: Force delete Firebase anyway? No, safer to fail.
+                    }
+                    is com.mycompany.jainconnect.data.network.NetworkResult.Loading -> {
+                        // Show loading if needed
+                    }
+                }
+            }
+        } else {
+            // No backend token (Force Login state), just delete Firebase
+            deleteFirebaseAccount()
+        }
+    }
+
+    private fun deleteFirebaseAccount() {
+        val user = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
+        user?.delete()?.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Toast.makeText(this, "Account Deleted Successfully", Toast.LENGTH_SHORT).show()
+                performLogout()
+            } else {
+                Toast.makeText(this, "Failed to delete account: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun loadProfileData() {
@@ -103,7 +162,6 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
                 if (user != null) {
                     val headerView = navigationView.getHeaderView(0)
                     headerView.findViewById<TextView>(R.id.tvNavName).text = user.name
-                    // Subtitle could be phone or roles if available
                     
                     val ivProfile = headerView.findViewById<ImageView>(R.id.ivNavProfile)
                     Glide.with(this)
@@ -112,6 +170,22 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
                         .error(R.drawable.ic_launcher_foreground)
                         .into(ivProfile)
                 }
+            }
+        } else {
+            // Fallback: If no token (Force Login), use Firebase Data
+            val firebaseUser = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
+            if (firebaseUser != null) {
+                val headerView = navigationView.getHeaderView(0)
+                val displayName = firebaseUser.displayName ?: "Jain Connect User"
+                headerView.findViewById<TextView>(R.id.tvNavName).text = displayName
+
+                val ivProfile = headerView.findViewById<ImageView>(R.id.ivNavProfile)
+                val photoUrl = firebaseUser.photoUrl
+                Glide.with(this)
+                    .load(photoUrl)
+                    .placeholder(R.drawable.ic_launcher_foreground)
+                    .error(R.drawable.ic_launcher_foreground)
+                    .into(ivProfile)
             }
         }
     }

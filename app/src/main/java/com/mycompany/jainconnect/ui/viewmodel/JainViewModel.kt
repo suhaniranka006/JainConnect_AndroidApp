@@ -49,6 +49,7 @@ import com.mycompany.jainconnect.data.repository.JainRepository
 import com.mycompany.jainconnect.data.models.AuthResponse
 import com.mycompany.jainconnect.data.models.HorizonItem
 import com.mycompany.jainconnect.data.models.SunResponse
+import com.mycompany.jainconnect.data.models.ApiResponse
 
 /**
  * HiltViewModel for managing UI-related data in a lifecycle-conscious way.
@@ -281,6 +282,8 @@ class JainViewModel @Inject constructor(
             }
         }
     }
+
+
 
 
 
@@ -601,4 +604,44 @@ class JainViewModel @Inject constructor(
     fun resetFilters() {
         _filteredMaharaj.value = _maharajList.value
     }
+
+    // --- Account Management ---
+    private val _deleteResult = MutableLiveData<NetworkResult<ApiResponse>>()
+    val deleteResult: LiveData<NetworkResult<ApiResponse>> = _deleteResult
+
+    fun deleteAccount(token: String) {
+        viewModelScope.launch {
+            _deleteResult.value = NetworkResult.Loading<ApiResponse>()
+            try {
+                val response = repository.deleteProfile(token)
+                if (response.isSuccessful && response.body() != null) {
+                    _deleteResult.value = NetworkResult.Success(response.body()!!)
+                } else {
+                    _deleteResult.value = NetworkResult.Error(response.message())
+                }
+            } catch (e: Exception) {
+                _deleteResult.value = NetworkResult.Error(e.message ?: "Unknown Error")
+            }
+        }
+    }
+
+    private val _syncResult = MutableLiveData<NetworkResult<AuthResponse>>()
+    val syncResult: LiveData<NetworkResult<AuthResponse>> = _syncResult
+
+    fun syncUser(email: String, password: String) {
+        viewModelScope.launch {
+            _syncResult.value = NetworkResult.Loading<AuthResponse>()
+            try {
+                val response = repository.fixUser(email, password)
+                if (response.isSuccessful && response.body()?.success == true) {
+                    _syncResult.value = NetworkResult.Success(response.body()!!)
+                } else {
+                    _syncResult.value = NetworkResult.Error(response.body()?.message ?: response.message())
+                }
+            } catch (e: Exception) {
+                _syncResult.value = NetworkResult.Error(e.message ?: "Unknown Error")
+            }
+        }
+    }
+
 }

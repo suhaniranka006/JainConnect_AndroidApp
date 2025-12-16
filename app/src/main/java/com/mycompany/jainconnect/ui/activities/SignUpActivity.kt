@@ -9,6 +9,7 @@ import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.widget.*
+import com.google.firebase.auth.FirebaseAuth
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -196,9 +197,20 @@ class SignUpActivity : AppCompatActivity() {
             return
         }
 
-        // 4. Call ViewModel (with all data)
-        Log.d(TAG, "--- Calling viewModel.performSignup() with all data ---")
-        viewModel.performSignup(name, email, password, phone, location, dob, gender, imageFile)
+        // 4. Firebase Create User (Hybrid Auth)
+        val auth = FirebaseAuth.getInstance()
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG, "Firebase User Created Successfuly. Proceeding to Backend...")
+                    // Proceed to MongoDB Backend
+                    viewModel.performSignup(name, email, password, phone, location, dob, gender, imageFile)
+                } else {
+                    progressBar.visibility = View.GONE
+                    Log.e(TAG, "Firebase Create Failed: ${task.exception?.message}")
+                    Toast.makeText(this, "Signup Failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                }
+            }
     }
 
 

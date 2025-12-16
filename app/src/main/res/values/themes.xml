@@ -2,10 +2,10 @@
     <!-- Base application theme -->
     <!-- FIX YAHAN HAI: Humne "Material3" ko "MaterialComponents" se badal diya hai. Yeh aapke androidx.appcompat.widget.SearchView ke saath sahi se kaam karega. -->
     <style name="Base.Theme.JainConnect" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="colorPrimary">@color/saffron_dark</item>
-        <item name="colorPrimaryVariant">@color/saffron_light</item>
-        <item name="colorOnPrimary">@color/text_on_saffron</item>
-        <item name="android:windowBackground">@android:color/white</item>
+        <item name="colorPrimary">@color/bright_saffron</item>
+        <item name="colorPrimaryVariant">@color/dark_charcoal</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="android:windowBackground">@drawable/app_bg</item>
         <!-- system default bg -->
     </style>
 

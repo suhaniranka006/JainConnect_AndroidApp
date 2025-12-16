@@ -112,6 +112,8 @@ class JainRepository @Inject constructor(
 
 
 
+
+
     // Updates user profile. Passes Bearer token for authentication.
     suspend fun updateUserProfile(
         token: String, name: String, phone: String, location: String,
@@ -133,6 +135,15 @@ class JainRepository @Inject constructor(
         }
 
         return api.updateUserProfile("Bearer $token", partsMap, imagePart)
+    }
+
+    suspend fun deleteProfile(token: String): Response<ApiResponse> {
+        return api.deleteProfile("Bearer $token")
+    }
+
+    suspend fun fixUser(email: String, password: String): Response<AuthResponse> {
+        val request = LoginRequest(email, password) // Reusing LoginRequest as structure is same {email, password}
+        return api.fixUser(request)
     }
 
 

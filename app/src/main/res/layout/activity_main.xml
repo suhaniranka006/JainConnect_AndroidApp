@@ -11,7 +11,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/screen_background"
+        android:background="@drawable/app_bg"
         tools:context=".ui.activities.MainActivity">
 
         <!-- Fragment Container -->
@@ -30,8 +30,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#FFFFFF"
-            app:itemIconTint="@color/saffron_dark"
-            app:itemTextColor="@color/saffron_dark"
+            app:itemIconTint="@color/bright_saffron"
+            app:itemTextColor="@color/bright_saffron"
             app:menu="@menu/bottom_nav_menu"
             app:labelVisibilityMode="labeled"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -49,7 +49,7 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/activity_main_drawer"
-        app:itemIconTint="@color/saffron_dark"
+        app:itemIconTint="@color/bright_saffron"
         app:itemTextColor="@color/black" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

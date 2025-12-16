@@ -17,7 +17,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:src="@drawable/ic_circle_orange" 
-        app:tint="#F57C00"/>
+        app:tint="@color/bright_saffron"/>
 
     <TextView
         android:id="@+id/tvMenuTitle"
@@ -26,7 +26,7 @@
         android:layout_weight="1"
         android:layout_marginStart="24dp"
         android:text="Menu Option"
-        android:textColor="@android:color/black"
+        android:textColor="@color/dark_charcoal"
         android:textSize="16sp"
         android:textStyle="bold"/>
 

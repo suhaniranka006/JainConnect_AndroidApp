@@ -229,7 +229,7 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
     private fun startPayment(amount: Int) {
         val checkout = Checkout()
         // Using your TEST key as requested for development purposes
-        checkout.setKeyID("rzp_test_RrvWpop5fJ1utF")
+        checkout.setKeyID("rzp_test_RNVxYRUof2vEci")
 
         try {
             val options = org.json.JSONObject()

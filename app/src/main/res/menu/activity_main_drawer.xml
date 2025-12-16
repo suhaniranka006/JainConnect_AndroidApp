@@ -44,6 +44,10 @@
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_circle_orange"
                 android:title="Logout" />
+            <item
+                android:id="@+id/nav_delete_account"
+                android:icon="@drawable/ic_circle_orange"
+                android:title="Delete Account" />
         </menu>
     </item>
 

@@ -1,7 +1,11 @@
 package com.mycompany.jainconnect.ui.activities
 
+import android.app.AlertDialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.content.Context
 import android.content.Intent
+import com.google.firebase.auth.FirebaseAuth
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
@@ -36,6 +40,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var btnLogin: Button
     private lateinit var loginProgressBar: ProgressBar
     private lateinit var tvGoToSignUp: TextView
+    private lateinit var tvForgotPassword: TextView
 
     // --- ViewModel ---
     // 'by viewModels()' is a property delegate that:
@@ -53,6 +58,7 @@ class LoginActivity : AppCompatActivity() {
         initializeViews()
         setClickListeners()
         observeLoginResult()
+        observeSyncResult()
     }
 
     private fun initializeViews() {
@@ -61,6 +67,7 @@ class LoginActivity : AppCompatActivity() {
         btnLogin = findViewById(R.id.btnLogin)
         loginProgressBar = findViewById(R.id.loginProgressBar)
         tvGoToSignUp = findViewById(R.id.tvGoToSignUp)
+        tvForgotPassword = findViewById(R.id.tvForgotPassword)
     }
 
     private fun setClickListeners() {
@@ -75,6 +82,10 @@ class LoginActivity : AppCompatActivity() {
             // Navigate to SignUpActivity if user doesn't have an account
             val intent = Intent(this, SignUpActivity::class.java)
             startActivity(intent)
+        }
+
+        tvForgotPassword.setOnClickListener {
+            showForgotPasswordDialog()
         }
     }
 
@@ -94,7 +105,20 @@ class LoginActivity : AppCompatActivity() {
 
         // Show loading indicator and initiate API call
         loginProgressBar.visibility = View.VISIBLE
-        viewModel.performLogin(email, password)
+        
+        // 1. Firebase Login First (Hybrid Auth)
+        val auth = FirebaseAuth.getInstance()
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                     // 2. If Firebase Success, Login to Backend (MongoDB)
+                    viewModel.performLogin(email, password)
+                } else {
+                     // Firebase Failed
+                    loginProgressBar.visibility = View.GONE
+                    Toast.makeText(this, "Login Failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                }
+            }
     }
 
     // LoginActivity.kt
@@ -129,9 +153,47 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
                 is NetworkResult.Error -> {
-                    loginProgressBar.visibility = View.GONE
-                    btnLogin.isEnabled = true
-                    Toast.makeText(this, result.message, Toast.LENGTH_LONG).show()
+                    // Hybrid Auth Fix: If Firebase is logged in but Backend fails (e.g. Password Sync issue)
+                    if (FirebaseAuth.getInstance().currentUser != null) {
+                         // Instead of forcing entry immediately, try to SYNC the password
+                         Toast.makeText(this, "Syncing password with backend...", Toast.LENGTH_SHORT).show()
+                         val email = etLoginEmail.text.toString().trim()
+                         val password = etLoginPassword.text.toString().trim()
+                         viewModel.syncUser(email, password)
+                    } else {
+                        loginProgressBar.visibility = View.GONE
+                        btnLogin.isEnabled = true
+                        Toast.makeText(this, result.message, Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun observeSyncResult() {
+        viewModel.syncResult.observe(this) { result ->
+            when (result) {
+                is NetworkResult.Loading -> {
+                    // Keep progress bar visible
+                }
+                is NetworkResult.Success -> {
+                    Toast.makeText(this, "Sync Successful! Retrying Login...", Toast.LENGTH_SHORT).show()
+                    // Retry Login with the new password
+                    val email = etLoginEmail.text.toString().trim()
+                    val password = etLoginPassword.text.toString().trim()
+                    viewModel.performLogin(email, password)
+                }
+                is NetworkResult.Error -> {
+                    // Sync Failed (maybe backend endpoint missing), Fallback to Force Entry
+                    Toast.makeText(this, "Sync Failed. Entering Offline Mode.", Toast.LENGTH_SHORT).show()
+                    
+                    val session = SessionManager(this)
+                    session.saveLoginStatus(true)
+                    
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                    finish()
                 }
             }
         }
@@ -148,5 +210,53 @@ class LoginActivity : AppCompatActivity() {
             apply()
         }
         Log.d("Auth", "Token saved successfully!")
+    }
+
+    private fun showForgotPasswordDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_forgot_password, null)
+        val dialogBuilder = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(true)
+
+        val dialog = dialogBuilder.create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val etResetEmail = dialogView.findViewById<EditText>(R.id.etResetEmail)
+        val btnCancelReset = dialogView.findViewById<Button>(R.id.btnCancelReset)
+        val btnSendResetLink = dialogView.findViewById<Button>(R.id.btnSendResetLink)
+
+        btnCancelReset.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        btnSendResetLink.setOnClickListener {
+            val email = etResetEmail.text.toString().trim()
+            if (email.isEmpty()) {
+                etResetEmail.error = "Enter email"
+                return@setOnClickListener
+            }
+            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                etResetEmail.error = "Invalid email"
+                return@setOnClickListener
+            }
+
+            // Send Reset Link via Firebase
+            sendPasswordResetEmail(email, dialog)
+        }
+
+        dialog.show()
+    }
+
+    private fun sendPasswordResetEmail(email: String, dialog: AlertDialog) {
+        val auth = FirebaseAuth.getInstance()
+        auth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(this,"Check email for reset link", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                } else {
+                    Toast.makeText(this,"Error: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
     }
 }

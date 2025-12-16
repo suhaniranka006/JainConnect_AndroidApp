@@ -11,7 +11,7 @@
     app:cardBackgroundColor="@android:color/white"
     app:cardCornerRadius="16dp"
     app:cardElevation="0dp"
-    app:strokeColor="@color/saffron_dark"
+    app:strokeColor="@color/bright_saffron"
     app:strokeWidth="1.5dp">
 
     <LinearLayout
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#212121"
+            android:textColor="@color/dark_charcoal"
             tools:text="Maharaj Name"/>
 
         <TextView

@@ -57,7 +57,3 @@ data class EventSubmissionRequest(
     val description: String
 )
 
-data class ApiResponse(
-    val success: Boolean,
-    val message: String
-)

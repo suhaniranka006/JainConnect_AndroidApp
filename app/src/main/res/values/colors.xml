@@ -37,8 +37,12 @@
 
     <color name="jain_orange">#FF9800</color>
 
+    <color name="bright_saffron">#FF7518</color>
+
+
     <!-- Semantic Colors for Theming -->
+    <color name="dark_charcoal">#212121</color>
     <color name="card_background">#FFFFFF</color>
-    <color name="screen_background">@color/saffron_light</color>
+    <color name="screen_background">#EBEBEB</color>
 </resources>
 

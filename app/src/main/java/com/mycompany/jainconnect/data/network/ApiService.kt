@@ -25,6 +25,7 @@ import com.mycompany.jainconnect.data.models.LoginRequest
 import com.mycompany.jainconnect.data.models.MaharajSubmissionRequest
 import com.mycompany.jainconnect.data.models.RsvpResponse
 import com.mycompany.jainconnect.data.models.SunResponse
+import retrofit2.http.DELETE
 
 /**
  * ApiService defines all the network API endpoints for the JainConnect app.
@@ -100,6 +101,12 @@ interface ApiService {
         @PartMap parts: Map<String, @JvmSuppressWildcards RequestBody>,
         @Part profileImage: MultipartBody.Part?
     ): Response<AuthResponse>
+
+    @DELETE("api/users/profile")
+    suspend fun deleteProfile(@Header("Authorization") token: String): Response<ApiResponse>
+
+    @POST("api/users/fix-user") // Assuming fix-user endpoint exists as per controller
+    suspend fun fixUser(@Body request: LoginRequest): Response<AuthResponse>
 
 
     // === YEH NAYA FUNCTION ADD KAREIN ===
