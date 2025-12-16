@@ -20,6 +20,13 @@ import com.mycompany.jainconnect.R
 import com.mycompany.jainconnect.ui.fragments.*
 import com.mycompany.jainconnect.ui.viewmodel.JainViewModel
 import com.razorpay.PaymentResultListener
+import android.Manifest
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -40,6 +47,9 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
 
         setupBottomNavigation()
         setupDrawer()
+        
+        // Check Permissions immediately on launch
+        checkAndRequestPermissions()
 
         // Load Home Fragment by default
         if (savedInstanceState == null) {
@@ -47,6 +57,14 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
         }
         
         loadProfileData()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Re-check permissions when coming back (e.g. from Settings)
+        if (!hasPermissions()) {
+            checkAndRequestPermissions()
+        }
     }
 
     fun openDrawer() {
@@ -228,5 +246,100 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
         } else {
             Toast.makeText(this, "Payment Failed. Error: $response", Toast.LENGTH_LONG).show()
         }
+    }
+
+    // =================================================================================
+    //                           MANDATORY PERMISSIONS LOGIC
+    // =================================================================================
+    private val PERMISSION_REQUEST_CODE = 101
+
+    private fun hasPermissions(): Boolean {
+        val permissions = mutableListOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissions.add(Manifest.permission.POST_NOTIFICATIONS)
+        }
+
+        return permissions.all {
+            ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
+        }
+    }
+
+    private fun checkAndRequestPermissions() {
+        val permissionsToRequest = mutableListOf<String>()
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.ACCESS_FINE_LOCATION)
+            permissionsToRequest.add(Manifest.permission.ACCESS_COARSE_LOCATION)
+        }
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+
+        if (permissionsToRequest.isNotEmpty()) {
+            ActivityCompat.requestPermissions(this, permissionsToRequest.toTypedArray(), PERMISSION_REQUEST_CODE)
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            val deniedPermissions = mutableListOf<String>()
+            
+            for (i in grantResults.indices) {
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                    deniedPermissions.add(permissions[i])
+                }
+            }
+
+            if (deniedPermissions.isNotEmpty()) {
+                // Determine if we should show rationale or if user checked "Don't ask again"
+                val shouldShowRationale = deniedPermissions.any { ActivityCompat.shouldShowRequestPermissionRationale(this, it) }
+                
+                if (!shouldShowRationale) {
+                    // "Don't ask again" was checked -> Redirect to Settings
+                    showMandatoryPermissionsDialog(isPermanentDenial = true)
+                } else {
+                    // Normal denial -> Show blocking dialog to retry
+                    showMandatoryPermissionsDialog(isPermanentDenial = false)
+                }
+            } else {
+                // All granted!
+                Toast.makeText(this, "Permissions Granted. Welcome!", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun showMandatoryPermissionsDialog(isPermanentDenial: Boolean) {
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+        builder.setTitle("Permissions Required")
+        builder.setCancelable(false) // BLOCKING: User cannot click outside
+
+        if (isPermanentDenial) {
+            builder.setMessage("This app requires Location and Notification permissions to function correctly. You have denied them permanently. Please enable them manually in Settings.")
+            builder.setPositiveButton("Go to Settings") { _, _ ->
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                val uri = Uri.fromParts("package", packageName, null)
+                intent.data = uri
+                startActivity(intent)
+            }
+        } else {
+            builder.setMessage("JainConnect requires Location (for Sunrise/Sunset & Monk finding) and Notifications (for updates). Please grant these permissions to continue.")
+            builder.setPositiveButton("Grant") { _, _ ->
+                checkAndRequestPermissions()
+            }
+        }
+
+        builder.setNegativeButton("Exit App") { _, _ ->
+            finishAffinity() // Store listing requirement compliant? Ideally shouldn't crash, just close.
+        }
+
+        builder.show()
     }
 }

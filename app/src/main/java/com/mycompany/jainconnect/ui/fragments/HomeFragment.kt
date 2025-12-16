@@ -364,7 +364,10 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
         }
 
         // Load saved state
-        val isLocationOn = sharedPreferences.getBoolean("is_location_on", false)
+        // Load state: If permission is granted, force ON. Else rely on pref.
+        val hasPermission = ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        val isLocationOn = hasPermission || sharedPreferences.getBoolean("is_location_on", false)
+        
         switchLocation.isChecked = isLocationOn
         updateSwitchColor(isLocationOn)
 
@@ -372,6 +375,8 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
             tvToggleLabel.visibility = View.VISIBLE
             tvToggleLabel.text = "Locating..."
             tvToggleLabel.setTextColor(android.graphics.Color.BLACK)
+            // Save state as true if permission exists
+            if(hasPermission) sharedPreferences.edit().putBoolean("is_location_on", true).apply()
             checkAndRequestLocation()
         } else {
             tvToggleLabel.visibility = View.GONE
@@ -412,6 +417,7 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
+            // Permission missing (though Mandatory logic should have caught this), ask again
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         } else {
             setupLocationListener()
