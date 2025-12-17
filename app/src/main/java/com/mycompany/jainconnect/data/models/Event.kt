@@ -33,8 +33,16 @@ data class Event(
 
     // === NAYA FIELD ===
     // Yeh unn users ki list hai jo event mein jaa rahe hain
+    // === NAYA FIELD ===
+    // Yeh unn users ki list hai jo event mein jaa rahe hain
     @SerializedName("rsvps")
-    val rsvps: List<String>
+    val rsvps: List<String>,
+
+    @SerializedName("image") 
+    val image: String?,
+
+    @SerializedName("contact")
+    val contact: String?
 )
 
 // Moved from JainRepository
@@ -54,6 +62,7 @@ data class EventSubmissionRequest(
     val city: String,  // Was 'location'
     val date: String,
     val time: String,  // ✅ Added
+    val contact: String,
     val description: String
 )
 

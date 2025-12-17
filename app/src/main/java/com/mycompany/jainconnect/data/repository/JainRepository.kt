@@ -163,11 +163,38 @@ class JainRepository @Inject constructor(
         city: String,
         date: String,
         time: String,
-        desc: String
+        desc: String,
+        contact: String
     ): Response<ApiResponse> {
         // Map the function args to the Data Class
-        val request = EventSubmissionRequest(title, city, date, time, desc)
+        val request = EventSubmissionRequest(title, city, date, time, contact, desc)
         return api.submitEvent("Bearer $token", request)
+    }
+
+    suspend fun submitEventWithImage(
+        token: String,
+        title: String,
+        city: String,
+        date: String,
+        time: String,
+        desc: String,
+        contact: String,
+        imageFile: File?
+    ): Response<ApiResponse> {
+        val partsMap = mutableMapOf<String, RequestBody>()
+        partsMap["title"] = title.toRequestBody("text/plain".toMediaTypeOrNull()) // Note: Backend expects 'title'
+        partsMap["city"] = city.toRequestBody("text/plain".toMediaTypeOrNull())  // Backend expects 'city'
+        partsMap["date"] = date.toRequestBody("text/plain".toMediaTypeOrNull())
+        partsMap["time"] = time.toRequestBody("text/plain".toMediaTypeOrNull())
+        partsMap["contact"] = contact.toRequestBody("text/plain".toMediaTypeOrNull())
+        partsMap["description"] = desc.toRequestBody("text/plain".toMediaTypeOrNull())
+
+        val imagePart: MultipartBody.Part? = imageFile?.let {
+            val requestFile = it.asRequestBody("image/*".toMediaTypeOrNull())
+            MultipartBody.Part.createFormData("image", it.name, requestFile)
+        }
+
+        return api.submitEventWithImage("Bearer $token", partsMap, imagePart)
     }
 
 

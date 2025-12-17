@@ -144,6 +144,14 @@ interface ApiService {
     ): Response<ApiResponse>
 
     @Multipart
+    @POST("api/events/with-image")
+    suspend fun submitEventWithImage(
+        @Header("Authorization") token: String,
+        @PartMap parts: Map<String, @JvmSuppressWildcards RequestBody>,
+        @Part image: MultipartBody.Part?
+    ): Response<ApiResponse>
+
+    @Multipart
     @POST("api/maharajs/with-image")
     suspend fun submitMaharajWithImage(
         @Header("Authorization") token: String,

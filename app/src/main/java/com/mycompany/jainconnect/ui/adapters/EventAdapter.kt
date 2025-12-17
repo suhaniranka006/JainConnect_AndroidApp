@@ -23,10 +23,12 @@ class EventAdapter(
 
     // === STEP 3: ViewHolder for Event items ===
     class EventViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val ivEventImage: android.widget.ImageView = itemView.findViewById(R.id.ivEventImage)
         val tvEventName: TextView = itemView.findViewById(R.id.tvEventName)
         val tvEventDateTime: TextView = itemView.findViewById(R.id.tvEventDateTime)
         val tvEventTime: TextView = itemView.findViewById(R.id.tvEventTime)
         val tvEventLocation: TextView = itemView.findViewById(R.id.tvEventLocation)
+        val tvEventContact: TextView = itemView.findViewById(R.id.tvEventContact)
         val tvEventDescription: TextView = itemView.findViewById(R.id.tvEventDescription)
         val tvRsvpCount: TextView = itemView.findViewById(R.id.tvRsvpCount)
         val btnRsvp: MaterialButton = itemView.findViewById(R.id.btnRsvp)
@@ -46,6 +48,27 @@ class EventAdapter(
         holder.tvEventDateTime.text = event.date
         holder.tvEventTime.text = event.time ?: "Time not available"
         holder.tvEventLocation.text = event.location
+
+        // Bind Contact
+        if (!event.contact.isNullOrEmpty()) {
+            holder.tvEventContact.text = "Contact: ${event.contact}"
+            holder.tvEventContact.visibility = View.VISIBLE
+        } else {
+            holder.tvEventContact.visibility = View.GONE
+        }
+
+        // Image Binding (Glide)
+        // Ensure you add 'ivEventImage' to EventViewHolder class first!
+        if (!event.image.isNullOrEmpty()) {
+             holder.ivEventImage.visibility = View.VISIBLE
+             com.bumptech.glide.Glide.with(holder.itemView.context)
+                 .load(event.image)
+                 .centerCrop()
+                 .placeholder(R.drawable.ic_launcher_background)
+                 .into(holder.ivEventImage)
+        } else {
+             holder.ivEventImage.visibility = View.GONE
+        }
 
         // Handle optional description
         if (!event.description.isNullOrEmpty()) {

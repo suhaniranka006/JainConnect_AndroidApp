@@ -201,11 +201,18 @@ class JainViewModel @Inject constructor(
         city: String,
         date: String,
         time: String,
-        desc: String
+        desc: String,
+        contact: String,
+        imageFile: File? = null
     ) {
         viewModelScope.launch {
             try {
-                val response = repository.submitEvent(token, title, city, date, time, desc)
+                val response = if (imageFile != null) {
+                    repository.submitEventWithImage(token, title, city, date, time, desc, contact, imageFile)
+                } else {
+                    repository.submitEvent(token, title, city, date, time, desc, contact)
+                }
+
                 if (response.isSuccessful && response.body()?.success == true) {
                     _addEventResult.value = "Success"
                 } else {
