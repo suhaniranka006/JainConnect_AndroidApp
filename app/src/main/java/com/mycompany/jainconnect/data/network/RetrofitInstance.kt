@@ -33,7 +33,7 @@ object RetrofitInstance {
         }
     }).apply {
         // Logs the full request and response body including headers and URL
-        level = HttpLoggingInterceptor.Level.BODY
+        level = HttpLoggingInterceptor.Level.HEADERS
     }
 
     /**
@@ -42,9 +42,11 @@ object RetrofitInstance {
      */
     private val httpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)        // Add logging interceptor for debugging
-        .connectTimeout(30, TimeUnit.SECONDS)      // Max time to establish a connection
-        .readTimeout(30, TimeUnit.SECONDS)         // Max time to read data from server
-        .writeTimeout(30, TimeUnit.SECONDS)        // Max time to send data to server
+        .connectTimeout(120, TimeUnit.SECONDS)      // Max time to establish a connection
+        .readTimeout(120, TimeUnit.SECONDS)         // Max time to read data from server
+        .writeTimeout(120, TimeUnit.SECONDS)        // Max time to send data to server
+        .callTimeout(120, TimeUnit.SECONDS)         // Explicit global timeout
+        .retryOnConnectionFailure(true)
         .build()                                   // Build the OkHttpClient instance
 
     /**

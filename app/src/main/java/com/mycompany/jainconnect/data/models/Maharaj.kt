@@ -26,8 +26,11 @@ data class Maharaj(
     val city: String?, // Add this if you want to store the city separately
 
     @SerializedName("date")
-    val relevantDate: String? // Add this if the date from JSON is important
+    val relevantDate: String?, // Add this if the date from JSON is important
     // and give it a meaningful name
+
+    @SerializedName("image")
+    val image: String? // URL from Cloudinary
 )
 
 // Update this Data Class at the bottom

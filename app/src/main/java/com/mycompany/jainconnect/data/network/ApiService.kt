@@ -143,6 +143,14 @@ interface ApiService {
         @Body data: MaharajSubmissionRequest
     ): Response<ApiResponse>
 
+    @Multipart
+    @POST("api/maharajs/with-image")
+    suspend fun submitMaharajWithImage(
+        @Header("Authorization") token: String,
+        @PartMap parts: Map<String, @JvmSuppressWildcards RequestBody>,
+        @Part image: MultipartBody.Part?
+    ): Response<ApiResponse>
+
     // New Endpoint for Chat Notifications
     @POST("api/v1/notifications/send-chat")
     suspend fun sendChatNotification(

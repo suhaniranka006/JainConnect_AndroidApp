@@ -192,6 +192,30 @@ class JainRepository @Inject constructor(
         return api.submitMaharaj("Bearer $token", request)
     }
 
+    suspend fun submitMaharajWithImage(
+        token: String,
+        name: String,
+        title: String,
+        city: String,
+        date: String,
+        contact: String,
+        imageFile: File?
+    ): Response<ApiResponse> {
+        val partsMap = mutableMapOf<String, RequestBody>()
+        partsMap["name"] = name.toRequestBody("text/plain".toMediaTypeOrNull())
+        partsMap["title"] = title.toRequestBody("text/plain".toMediaTypeOrNull())
+        partsMap["city"] = city.toRequestBody("text/plain".toMediaTypeOrNull())
+        partsMap["date"] = date.toRequestBody("text/plain".toMediaTypeOrNull())
+        partsMap["contactInfo"] = contact.toRequestBody("text/plain".toMediaTypeOrNull())
+
+        val imagePart: MultipartBody.Part? = imageFile?.let {
+            val requestFile = it.asRequestBody("image/*".toMediaTypeOrNull())
+            MultipartBody.Part.createFormData("image", it.name, requestFile)
+        }
+
+        return api.submitMaharajWithImage("Bearer $token", partsMap, imagePart)
+    }
+
     suspend fun sendChatNotification(token: String, title: String, message: String): Response<ApiResponse> {
         val body = mapOf(
             "title" to title,

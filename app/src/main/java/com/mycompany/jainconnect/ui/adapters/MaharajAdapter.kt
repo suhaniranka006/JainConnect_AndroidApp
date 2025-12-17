@@ -24,6 +24,7 @@ class MaharajAdapter(private var maharajList: List<Maharaj>) :
      * Holds references to the views for each item.
      */
     class MaharajViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val ivMaharajImage: android.widget.ImageView = itemView.findViewById(R.id.ivMaharajImage)
         val tvMaharajName: TextView = itemView.findViewById(R.id.tvMaharajName)
 
         val tvMaharajCity: TextView = itemView.findViewById(R.id.tvMaharajCity)
@@ -50,7 +51,18 @@ class MaharajAdapter(private var maharajList: List<Maharaj>) :
 
         // Required fields
         holder.tvMaharajName.text = maharaj.name
-
+        
+        // Image Binding (Glide)
+        if (!maharaj.image.isNullOrEmpty()) {
+            holder.ivMaharajImage.visibility = View.VISIBLE
+            com.bumptech.glide.Glide.with(holder.itemView.context)
+                .load(maharaj.image)
+                .centerCrop()
+                .placeholder(R.drawable.ic_launcher_background) // Placeholder
+                .into(holder.ivMaharajImage)
+        } else {
+            holder.ivMaharajImage.visibility = View.GONE
+        }
 
         // Optional fields
         holder.tvMaharajCity.apply {

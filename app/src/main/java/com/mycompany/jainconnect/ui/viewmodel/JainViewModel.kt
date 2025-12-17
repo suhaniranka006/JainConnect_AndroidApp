@@ -171,6 +171,29 @@ class JainViewModel @Inject constructor(
         }
     }
 
+    fun submitNewMaharajWithImage(
+        token: String,
+        name: String,
+        title: String,
+        city: String,
+        date: String,
+        contact: String,
+        imageFile: File?
+    ) {
+        viewModelScope.launch {
+            try {
+                val response = repository.submitMaharajWithImage(token, name, title, city, date, contact, imageFile)
+                if (response.isSuccessful && response.body()?.success == true) {
+                    _addMaharajResult.value = "Success"
+                } else {
+                    _addMaharajResult.value = "Failed: ${response.message()}"
+                }
+            } catch (e: Exception) {
+                _addMaharajResult.value = "Error: ${e.message}"
+            }
+        }
+    }
+
 
     fun submitNewEvent(
         token: String,

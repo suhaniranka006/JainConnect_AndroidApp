@@ -18,8 +18,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp"
+        android:padding="0dp"
         android:background="?android:attr/selectableItemBackground">
+
+        <ImageView
+            android:id="@+id/ivMaharajImage"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_launcher_background"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
 
         <TextView
             android:id="@+id/tvMaharajName"
@@ -67,6 +82,8 @@
             android:layout_marginTop="4dp"
             android:visibility="gone"
             tools:text="Contact Info"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
