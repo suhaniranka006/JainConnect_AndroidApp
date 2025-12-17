@@ -13,10 +13,14 @@ import retrofit2.http.Part
 import retrofit2.http.PartMap
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
 import com.mycompany.jainconnect.R
 import com.mycompany.jainconnect.data.models.Event
 import com.mycompany.jainconnect.data.models.Maharaj
 import com.mycompany.jainconnect.data.models.Tithi
+import com.mycompany.jainconnect.data.models.Carpool
+import com.mycompany.jainconnect.data.models.CarpoolRequest
 import com.mycompany.jainconnect.data.models.User
 import com.mycompany.jainconnect.data.models.ApiResponse
 import com.mycompany.jainconnect.data.models.AuthResponse
@@ -26,6 +30,7 @@ import com.mycompany.jainconnect.data.models.MaharajSubmissionRequest
 import com.mycompany.jainconnect.data.models.RsvpResponse
 import com.mycompany.jainconnect.data.models.SunResponse
 import com.mycompany.jainconnect.data.models.Bhojanshala
+import com.mycompany.jainconnect.data.models.Temple
 import com.mycompany.jainconnect.data.models.BhojanshalaSubmissionRequest
 import retrofit2.http.DELETE
 
@@ -56,6 +61,9 @@ interface ApiService {
 
     @GET("api/bhojanshalas")
     suspend fun getBhojanshalas(): List<Bhojanshala>
+
+    @GET("api/temples")
+    suspend fun getTemples(): List<Temple>
 
     /**
      * Fetches a user profile by their email address.
@@ -181,6 +189,27 @@ interface ApiService {
         @Part("timings") timings: RequestBody,
         @Part("contact") contact: RequestBody,
         @Part("description") description: RequestBody
+    ): Response<ApiResponse>
+
+    @POST("api/temples/with-image")
+    @Multipart
+    suspend fun submitTempleWithImage(
+        @Header("Authorization") token: String,
+        @Part image: MultipartBody.Part,
+        @Part("name") name: RequestBody,
+        @Part("city") city: RequestBody,
+        @Part("address") address: RequestBody,
+        @Part("contact") contact: RequestBody,
+        @Part("description") description: RequestBody
+    ): Response<ApiResponse>
+
+    // --- Carpool ---
+    @GET("api/carpool/all")
+    suspend fun getCarpools(): List<Carpool>
+
+    @POST("api/carpool/create")
+    suspend fun createCarpool(
+        @Body request: CarpoolRequest
     ): Response<ApiResponse>
 
     // New Endpoint for Chat Notifications

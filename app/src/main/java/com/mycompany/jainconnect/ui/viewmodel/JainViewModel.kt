@@ -43,6 +43,9 @@ import com.mycompany.jainconnect.R
 import com.mycompany.jainconnect.data.models.Event
 import com.mycompany.jainconnect.data.models.Maharaj
 import com.mycompany.jainconnect.data.models.Bhojanshala
+import com.mycompany.jainconnect.data.models.Temple
+import com.mycompany.jainconnect.data.models.Carpool
+import com.mycompany.jainconnect.data.models.CarpoolRequest
 import com.mycompany.jainconnect.data.models.Tithi
 import com.mycompany.jainconnect.data.models.User
 import com.mycompany.jainconnect.data.network.NetworkResult
@@ -65,7 +68,6 @@ class JainViewModel @Inject constructor(
     //
     //                                  USER AUTHENTICATION
     //
-
 
 
     // --- LiveData for Signup ---
@@ -139,7 +141,16 @@ class JainViewModel @Inject constructor(
         // preventing memory leaks.
         viewModelScope.launch {
             try {
-                val response = repository.registerUser(name, email, password, phone, location, dob, gender, imageFile)  //calls repo fun
+                val response = repository.registerUser(
+                    name,
+                    email,
+                    password,
+                    phone,
+                    location,
+                    dob,
+                    gender,
+                    imageFile
+                )  //calls repo fun
                 _signupResult.postValue(response)
             } catch (e: Exception) {
                 Log.e("JainViewModel", "Signup Exception", e)  //for debugging
@@ -172,6 +183,33 @@ class JainViewModel @Inject constructor(
         }
     }
 
+
+    fun submitNewCarpool(driver: String, source: String, dest: String, date: String, time: String, vehicle: String, seats: Int, contact: String) {
+        viewModelScope.launch {
+            try {
+                val request = CarpoolRequest(
+                    driverName = driver,
+                    source = source,
+                    destination = dest,
+                    date = date,
+                    time = time,
+                    vehicleType = vehicle,
+                    seatsAvailable = seats,
+                    contactNumber = contact
+                )
+                val response = repository.createCarpool(request)
+                if (response.isSuccessful && response.body()?.success == true) {
+                    _addCarpoolResult.postValue("Success")
+                    fetchCarpools() // refresh list
+                } else {
+                    _addCarpoolResult.postValue("Failed: ${response.message()}")
+                }
+            } catch (e: Exception) {
+                _addCarpoolResult.postValue("Error: ${e.message}")
+            }
+        }
+    }
+
     fun submitNewMaharajWithImage(
         token: String,
         name: String,
@@ -183,7 +221,15 @@ class JainViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             try {
-                val response = repository.submitMaharajWithImage(token, name, title, city, date, contact, imageFile)
+                val response = repository.submitMaharajWithImage(
+                    token,
+                    name,
+                    title,
+                    city,
+                    date,
+                    contact,
+                    imageFile
+                )
                 if (response.isSuccessful && response.body()?.success == true) {
                     _addMaharajResult.value = "Success"
                 } else {
@@ -209,7 +255,16 @@ class JainViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val response = if (imageFile != null) {
-                    repository.submitEventWithImage(token, title, city, date, time, desc, contact, imageFile)
+                    repository.submitEventWithImage(
+                        token,
+                        title,
+                        city,
+                        date,
+                        time,
+                        desc,
+                        contact,
+                        imageFile
+                    )
                 } else {
                     repository.submitEvent(token, title, city, date, time, desc, contact)
                 }
@@ -294,8 +349,6 @@ class JainViewModel @Inject constructor(
     //flow view->viewmodel - repo-response - then update view with live data after observing login results
 
 
-
-
     //fetch use profile after authorization
     fun fetchUserProfile(token: String) {
         viewModelScope.launch {
@@ -315,10 +368,6 @@ class JainViewModel @Inject constructor(
     }
 
 
-
-
-
-
     //used to update profile
     fun updateProfile(
         token: String, name: String, phone: String, location: String,
@@ -326,7 +375,15 @@ class JainViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             try {
-                val response = repository.updateUserProfile(token, name, phone, location, dob, gender, imageFile)  //token for auth
+                val response = repository.updateUserProfile(
+                    token,
+                    name,
+                    phone,
+                    location,
+                    dob,
+                    gender,
+                    imageFile
+                )  //token for auth
                 _updateResult.postValue(response)
             } catch (e: Exception) {
                 Log.e("JJainViewModel", "Update Profile Exception", e)
@@ -334,8 +391,6 @@ class JainViewModel @Inject constructor(
             }
         }
     }
-
-
 
 
     // =====================================================================================
@@ -346,8 +401,6 @@ class JainViewModel @Inject constructor(
 
     private val _filteredTithis = MutableLiveData<List<Tithi>>()
     val filteredTithis: LiveData<List<Tithi>> get() = _filteredTithis
-
-
 
 
     // Fetches tithi data from the repository
@@ -365,8 +418,6 @@ class JainViewModel @Inject constructor(
             }
         }
     }
-
-
 
 
     // Filters tithis based on a search query
@@ -390,7 +441,6 @@ class JainViewModel @Inject constructor(
      * @param allTithis The complete list of tithis from the repository.
      * @return A new list containing only upcoming tithis.
      */
-
 
 
     // Filters the list to show only upcoming tithis (including today)
@@ -477,8 +527,6 @@ class JainViewModel @Inject constructor(
     }
 
 
-
-
     // =====================================================================================
     //                                      EVENTS
     // =====================================================================================
@@ -509,7 +557,6 @@ class JainViewModel @Inject constructor(
     }
 
 
-
     //filter events by states
 
     fun filterEventsByState(state: String, stateToCities: Map<String, List<String>>) {
@@ -521,8 +568,6 @@ class JainViewModel @Inject constructor(
         }
         _eventList.value = filtered
     }
-
-
 
 
     //filter by date
@@ -630,7 +675,6 @@ class JainViewModel @Inject constructor(
     }
 
 
-
     //reset all filters
     fun resetFilters() {
         _filteredMaharaj.value = _maharajList.value
@@ -668,7 +712,7 @@ class JainViewModel @Inject constructor(
             val nameMatches = item.name.lowercase().contains(q)
             val cityMatches = item.city.lowercase().contains(q)
             val addressMatches = item.address.lowercase().contains(q)
-            
+
             nameMatches || cityMatches || addressMatches
         }
         _bhojanshalaList.value = filtered
@@ -687,9 +731,26 @@ class JainViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val response = if (imageFile != null) {
-                    repository.submitBhojanshalaWithImage(token, name, city, address, timings, contact, description, imageFile)
+                    repository.submitBhojanshalaWithImage(
+                        token,
+                        name,
+                        city,
+                        address,
+                        timings,
+                        contact,
+                        description,
+                        imageFile
+                    )
                 } else {
-                    repository.submitBhojanshala(token, name, city, address, timings, contact, description)
+                    repository.submitBhojanshala(
+                        token,
+                        name,
+                        city,
+                        address,
+                        timings,
+                        contact,
+                        description
+                    )
                 }
 
                 if (response.isSuccessful && response.body()?.success == true) {
@@ -700,8 +761,127 @@ class JainViewModel @Inject constructor(
             } catch (e: Exception) {
                 _addBhojanshalaResult.value = "Error: ${e.message}"
             }
+
         }
     }
+
+    // =====================================================================================
+    //                                      TEMPLE
+    // =====================================================================================
+    private val _templeList = MutableLiveData<List<Temple>>()
+    val templeList: LiveData<List<Temple>> = _templeList
+
+    // Backup list for filtering
+    private val _allTemples = mutableListOf<Temple>()
+
+    private val _addTempleResult = MutableLiveData<String>()
+    val addTempleResult: LiveData<String> = _addTempleResult
+
+    fun fetchTemples() {
+        viewModelScope.launch {
+            try {
+                val list = repository.getTemples()
+                _allTemples.clear()
+                _allTemples.addAll(list)
+                _templeList.value = list
+            } catch (e: Exception) {
+                _templeList.value = emptyList()
+            }
+        }
+    }
+
+    // Filter Temples
+    fun filterTemples(query: String) {
+        val q = query.trim().lowercase()
+        val filtered = _allTemples.filter { item ->
+            val nameMatches = item.name.lowercase().contains(q)
+            val cityMatches = item.city.lowercase().contains(q)
+            val addressMatches = item.address?.lowercase()?.contains(q) == true
+
+            nameMatches || cityMatches || addressMatches
+        }
+        _templeList.value = filtered
+    }
+
+    fun submitNewTemple(
+        token: String,
+        name: String,
+        city: String,
+        address: String,
+        contact: String,
+        description: String,
+        imageFile: File?
+    ) {
+        viewModelScope.launch {
+            try {
+                if (imageFile != null) {
+                    val response = repository.submitTempleWithImage(
+                        token,
+                        name,
+                        city,
+                        address,
+                        contact,
+                        description,
+                        imageFile
+                    )
+                    if (response.isSuccessful && response.body()?.success == true) {
+                        _addTempleResult.value = "Success"
+                    } else {
+                        _addTempleResult.value = "Failed: ${response.message()}"
+                    }
+                } else {
+                    _addTempleResult.value = "Image is required"
+                }
+
+            } catch (e: Exception) {
+                _addTempleResult.value = "Error: ${e.message}"
+            }
+        }
+    }
+
+
+
+    // =====================================================================================
+    //                                      CARPOOL
+    // =====================================================================================
+    private val _carpoolList = MutableLiveData<List<Carpool>>()
+    val carpoolList: LiveData<List<Carpool>> = _carpoolList
+
+    // Backup list for filtering
+    private val _allCarpools = mutableListOf<Carpool>()
+
+    private val _addCarpoolResult = MutableLiveData<String>()
+    val addCarpoolResult: LiveData<String> = _addCarpoolResult
+
+    fun fetchCarpools() {
+        viewModelScope.launch {
+            try {
+                val list = repository.getCarpools()
+                _allCarpools.clear()
+                _allCarpools.addAll(list)
+                _carpoolList.value = list
+            } catch (e: Exception) {
+                _carpoolList.value = emptyList()
+            }
+        }
+    }
+
+    // Filter Carpools
+    // Filter Carpools
+    fun filterCarpools(query: String) {
+        val q = query.trim().lowercase()
+        val filtered = _allCarpools.filter { item ->
+            val driverMatches = item.driverName?.lowercase()?.contains(q) == true
+            val sourceMatches = item.source?.lowercase()?.contains(q) == true
+            val destMatches = item.destination?.lowercase()?.contains(q) == true
+            val dateMatches = item.date?.contains(q) == true
+
+            driverMatches || sourceMatches || destMatches || dateMatches
+        }
+        _carpoolList.value = filtered
+    }
+
+
 
     // --- Account Management ---
     private val _deleteResult = MutableLiveData<NetworkResult<ApiResponse>>()
@@ -734,10 +914,10 @@ class JainViewModel @Inject constructor(
                 if (response.isSuccessful && response.body()?.success == true) {
                     _syncResult.value = NetworkResult.Success(response.body()!!)
                 } else {
-                    _syncResult.value = NetworkResult.Error(response.body()?.message ?: response.message())
+                    _syncResult.value =
+                        NetworkResult.Error(response.body()?.message ?: response.message())
                 }
             } catch (e: Exception) {
-                _syncResult.value = NetworkResult.Error(e.message ?: "Unknown Error")
                 _syncResult.value = NetworkResult.Error(e.message ?: "Unknown Error")
             }
         }
@@ -747,8 +927,7 @@ class JainViewModel @Inject constructor(
     fun sendChatNotification(token: String, title: String, message: String) {
         viewModelScope.launch {
             try {
-                // Fire and forget, we don't necessarily update UI based on success
-                // but logging it is good practice
+                // Fire and forget
                 val response = repository.sendChatNotification(token, title, message)
                 if (response.isSuccessful) {
                     Log.d("JainViewModel", "Notification Sent Successfully")

@@ -13,6 +13,9 @@ import com.mycompany.jainconnect.R
 import com.mycompany.jainconnect.data.models.Event
 import com.mycompany.jainconnect.data.models.Maharaj
 import com.mycompany.jainconnect.data.models.Bhojanshala
+import com.mycompany.jainconnect.data.models.Temple
+import com.mycompany.jainconnect.data.models.Carpool
+import com.mycompany.jainconnect.data.models.CarpoolRequest
 import com.mycompany.jainconnect.data.models.Tithi
 import com.mycompany.jainconnect.data.models.User
 import com.mycompany.jainconnect.data.network.ApiService
@@ -45,6 +48,8 @@ class JainRepository @Inject constructor(
     suspend fun getEvents(): List<Event> = api.getEvents()
     suspend fun getMaharaj(): List<Maharaj> = api.getMaharaj()
     suspend fun getBhojanshalas(): List<Bhojanshala> = api.getBhojanshalas()
+    suspend fun getTemples(): List<Temple> = api.getTemples()
+    suspend fun getCarpools(): List<Carpool> = api.getCarpools()
 
     // === RSVP FUNCTION ===
     /**
@@ -275,12 +280,31 @@ class JainRepository @Inject constructor(
         return api.submitBhojanshalaWithImage("Bearer $token", imagePart, namePart, cityPart, addressPart, timingsPart, contactPart, descPart)
     }
 
+    suspend fun submitTempleWithImage(
+        token: String, name: String, city: String, address: String, contact: String, description: String, imageFile: java.io.File
+    ): Response<ApiResponse> {
+        val namePart = name.toRequestBody("text/plain".toMediaTypeOrNull())
+        val cityPart = city.toRequestBody("text/plain".toMediaTypeOrNull())
+        val addressPart = address.toRequestBody("text/plain".toMediaTypeOrNull())
+        val contactPart = contact.toRequestBody("text/plain".toMediaTypeOrNull())
+        val descPart = description.toRequestBody("text/plain".toMediaTypeOrNull())
+
+        val requestFile = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
+        val imagePart = MultipartBody.Part.createFormData("image", imageFile.name, requestFile)
+
+        return api.submitTempleWithImage("Bearer $token", imagePart, namePart, cityPart, addressPart, contactPart, descPart)
+    }
+
     suspend fun sendChatNotification(token: String, title: String, message: String): Response<ApiResponse> {
         val body = mapOf(
             "title" to title,
             "message" to message
         )
         return api.sendChatNotification("Bearer $token", body)
+    }
+
+    suspend fun createCarpool(request: CarpoolRequest): Response<ApiResponse> {
+        return api.createCarpool(request)
     }
 }
 

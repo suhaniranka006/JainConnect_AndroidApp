@@ -69,6 +69,18 @@
             android:name=".ui.activities.AddBhojanshalaActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.activities.CarpoolActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activities.AddCarpoolActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activities.TempleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activities.AddTempleActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activities.MainActivity"
             android:windowSoftInputMode="adjustResize"
             android:exported="false" /> <!-- Yeh 'false' sahi hai, kyunki Splash se open ho rahi hai -->
