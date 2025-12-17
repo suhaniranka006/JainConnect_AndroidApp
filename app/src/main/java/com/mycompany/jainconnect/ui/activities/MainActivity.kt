@@ -62,7 +62,24 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
         com.google.firebase.messaging.FirebaseMessaging.getInstance().subscribeToTopic("global_chat")
         
         setupChatBadgeListener()
+        observeDeleteResult()
     }
+
+    private fun observeDeleteResult() {
+        viewModel.deleteResult.observe(this) { result ->
+            when (result) {
+                is com.mycompany.jainconnect.data.network.NetworkResult.Success -> {
+                    // Backend deletion success, now delete from Firebase
+                    deleteFirebaseAccount()
+                }
+                is com.mycompany.jainconnect.data.network.NetworkResult.Error -> {
+                    Toast.makeText(this, "Backend Deletion Failed: ${result.message}", Toast.LENGTH_SHORT).show()
+                }
+                is com.mycompany.jainconnect.data.network.NetworkResult.Loading -> {
+                     // Loading
+                }
+            }
+        }
 
     override fun onResume() {
         super.onResume()
@@ -138,25 +155,7 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
         if (token != null) {
             // 1. Delete from Backend first
             viewModel.deleteAccount(token)
-            
-            // Observe result (since this is an Activity method, we need to set up observation beforehand or here)
-            // But doing it here might add multiple observers if clicked multiple times. 
-            // Better to observe in onCreate, but for simplicity/direct flow:
-            viewModel.deleteResult.observe(this) { result ->
-                when (result) {
-                    is com.mycompany.jainconnect.data.network.NetworkResult.Success -> {
-                        // Backend deletion success, now delete from Firebase
-                         deleteFirebaseAccount()
-                    }
-                    is com.mycompany.jainconnect.data.network.NetworkResult.Error -> {
-                        Toast.makeText(this, "Backend Deletion Failed: ${result.message}", Toast.LENGTH_SHORT).show()
-                        // Optional: Force delete Firebase anyway? No, safer to fail.
-                    }
-                    is com.mycompany.jainconnect.data.network.NetworkResult.Loading -> {
-                        // Show loading if needed
-                    }
-                }
-            }
+            // Result observed in observeDeleteResult()
         } else {
             // No backend token (Force Login state), just delete Firebase
             deleteFirebaseAccount()
@@ -165,13 +164,22 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
 
     private fun deleteFirebaseAccount() {
         val user = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
-        user?.delete()?.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                Toast.makeText(this, "Account Deleted Successfully", Toast.LENGTH_SHORT).show()
-                performLogout()
-            } else {
-                Toast.makeText(this, "Failed to delete account: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+        if (user != null) {
+            user.delete().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(this, "Account Deleted Successfully", Toast.LENGTH_SHORT).show()
+                    performLogout()
+                } else {
+                    Toast.makeText(this, "Failed to delete Firebase account: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                    // Still logout because backend account is gone?
+                    // Yes, consistency is better. Force logout.
+                    performLogout()
+                }
             }
+        } else {
+            // User already null in Firebase, but backend deletion happened.
+            Toast.makeText(this, "Account Deleted Successfully", Toast.LENGTH_SHORT).show()
+            performLogout()
         }
     }
 
