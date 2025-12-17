@@ -2,6 +2,7 @@ package com.mycompany.jainconnect.ui.viewmodel
 
 // 1. Android & Lifecycle Components
 import android.util.Log
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -46,6 +47,7 @@ import com.mycompany.jainconnect.data.models.Bhojanshala
 import com.mycompany.jainconnect.data.models.Temple
 import com.mycompany.jainconnect.data.models.Carpool
 import com.mycompany.jainconnect.data.models.CarpoolRequest
+import com.mycompany.jainconnect.data.models.Story
 import com.mycompany.jainconnect.data.models.Tithi
 import com.mycompany.jainconnect.data.models.User
 import com.mycompany.jainconnect.data.network.NetworkResult
@@ -879,6 +881,51 @@ class JainViewModel @Inject constructor(
             driverMatches || sourceMatches || destMatches || dateMatches
         }
         _carpoolList.value = filtered
+    }
+
+
+    // =====================================================================================
+    //                                      JAIN LEGACY (STORIES)
+    // =====================================================================================
+    private val _storyList = MutableLiveData<List<Story>>()
+    val storyList: LiveData<List<Story>> = _storyList
+
+    fun fetchStories(context: Context) {
+        viewModelScope.launch {
+            try {
+                val prefs = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                val token = prefs.getString("jwt_token", null)
+                
+                if (token != null) {
+                    val fullToken = "Bearer $token"
+                    val list = repository.getStories(fullToken)
+                    _storyList.value = list
+                } else {
+                    _storyList.value = emptyList()
+                }
+            } catch (e: Exception) {
+                _storyList.value = emptyList()
+            }
+        }
+    }
+
+    fun likeStory(context: Context, id: String) {
+        viewModelScope.launch {
+            try {
+                val prefs = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                val token = prefs.getString("jwt_token", null)
+                
+                if (token != null) {
+                     val fullToken = "Bearer $token"
+                     val response = repository.likeStory(fullToken, id)
+                     if(response.isSuccessful){
+                         fetchStories(context)
+                     }
+                }
+            } catch (e: Exception) {
+               Log.e("JainViewModel", "Like Failed", e)
+            }
+        }
     }
 
 

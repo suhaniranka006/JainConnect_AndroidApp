@@ -32,6 +32,7 @@ import com.mycompany.jainconnect.data.models.SunResponse
 import com.mycompany.jainconnect.data.models.Bhojanshala
 import com.mycompany.jainconnect.data.models.Temple
 import com.mycompany.jainconnect.data.models.BhojanshalaSubmissionRequest
+import com.mycompany.jainconnect.data.models.Story
 import retrofit2.http.DELETE
 
 /**
@@ -218,4 +219,14 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body body: Map<String, String>
     ): Response<ApiResponse>
+
+    // --- Jain Legacy (Stories) ---
+    @GET("api/stories/all")
+    suspend fun getStories(@Header("Authorization") token: String): List<Story>
+
+    @POST("api/stories/like/{id}")
+    suspend fun likeStory(
+        @Header("Authorization") token: String,
+        @Path("id") id: String
+    ): Response<Map<String, Any>> // Backend returns { success: true, likes: 10 }
 }

@@ -16,6 +16,7 @@ import com.mycompany.jainconnect.data.models.Bhojanshala
 import com.mycompany.jainconnect.data.models.Temple
 import com.mycompany.jainconnect.data.models.Carpool
 import com.mycompany.jainconnect.data.models.CarpoolRequest
+import com.mycompany.jainconnect.data.models.Story
 import com.mycompany.jainconnect.data.models.Tithi
 import com.mycompany.jainconnect.data.models.User
 import com.mycompany.jainconnect.data.network.ApiService
@@ -305,6 +306,14 @@ class JainRepository @Inject constructor(
 
     suspend fun createCarpool(request: CarpoolRequest): Response<ApiResponse> {
         return api.createCarpool(request)
+    }
+
+    // --- Jain Legacy ---
+    // --- Jain Legacy ---
+    suspend fun getStories(token: String): List<Story> = api.getStories(token)
+
+    suspend fun likeStory(token: String, id: String): Response<Map<String, Any>> {
+        return api.likeStory(token, id)
     }
 }
 
