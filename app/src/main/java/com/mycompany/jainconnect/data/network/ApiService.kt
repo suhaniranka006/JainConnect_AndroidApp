@@ -57,10 +57,10 @@ interface ApiService {
     @GET("api/events")
     suspend fun getEvents(): List<Event>
 
-    @GET("api/maharajs")
+    @GET("api/maharaj")
     suspend fun getMaharaj(): List<Maharaj>
 
-    @GET("api/bhojanshalas")
+    @GET("api/bhojanshala")
     suspend fun getBhojanshalas(): List<Bhojanshala>
 
     @GET("api/temples")
@@ -151,7 +151,7 @@ interface ApiService {
 
 
     // Add this function to Interface
-    @POST("api/maharajs") // Check your exact route path
+    @POST("api/maharaj") // Check your exact route path
     suspend fun submitMaharaj(
         @Header("Authorization") token: String,
         @Body data: MaharajSubmissionRequest
@@ -166,20 +166,20 @@ interface ApiService {
     ): Response<ApiResponse>
 
     @Multipart
-    @POST("api/maharajs/with-image")
+    @POST("api/maharaj/with-image")
     suspend fun submitMaharajWithImage(
         @Header("Authorization") token: String,
         @PartMap parts: Map<String, @JvmSuppressWildcards RequestBody>,
         @Part image: MultipartBody.Part?
     ): Response<ApiResponse>
 
-    @POST("api/bhojanshalas")
+    @POST("api/bhojanshala")
     suspend fun submitBhojanshala(
         @Header("Authorization") token: String,
         @Body request: BhojanshalaSubmissionRequest
     ): Response<ApiResponse>
 
-    @POST("api/bhojanshalas/with-image")
+    @POST("api/bhojanshala/with-image")
     @Multipart
     suspend fun submitBhojanshalaWithImage(
         @Header("Authorization") token: String,

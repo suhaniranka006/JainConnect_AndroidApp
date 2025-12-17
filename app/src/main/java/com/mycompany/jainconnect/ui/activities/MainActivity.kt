@@ -80,6 +80,7 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
                 }
             }
         }
+    }
 
     override fun onResume() {
         super.onResume()

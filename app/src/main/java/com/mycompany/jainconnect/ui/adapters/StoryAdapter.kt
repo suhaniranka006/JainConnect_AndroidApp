@@ -21,6 +21,7 @@ class StoryAdapter(
     class StoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val ivImage: ImageView = itemView.findViewById(R.id.ivStoryImage)
         val tvTitle: TextView = itemView.findViewById(R.id.tvStoryTitle)
+        val tvSource: TextView = itemView.findViewById(R.id.tvStorySource)
         val tvSummary: TextView = itemView.findViewById(R.id.tvStorySummary)
         val btnLike: LinearLayout = itemView.findViewById(R.id.btnLike)
         val tvLikeCount: TextView = itemView.findViewById(R.id.tvLikeCount)
@@ -38,6 +39,13 @@ class StoryAdapter(
         holder.tvTitle.text = story.title
         holder.tvSummary.text = story.summary
         holder.tvLikeCount.text = "${story.likes} Likes"
+
+        if (!story.source.isNullOrEmpty()) {
+            holder.tvSource.visibility = View.VISIBLE
+            holder.tvSource.text = "Source: ${story.source}"
+        } else {
+            holder.tvSource.visibility = View.GONE
+        }
 
         Glide.with(holder.itemView.context)
             .load(story.imageUrl)

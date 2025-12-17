@@ -64,6 +64,16 @@ class CommunityFragment : Fragment() {
         rvChat = view.findViewById(R.id.rvChat)
         etMessage = view.findViewById(R.id.etMessage)
         btnSend = view.findViewById(R.id.btnSend)
+        val tvCharCount = view.findViewById<android.widget.TextView>(R.id.tvCharCount)
+
+        etMessage.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val length = s?.length ?: 0
+                tvCharCount.text = "$length/200"
+            }
+            override fun afterTextChanged(s: android.text.Editable?) {}
+        })
     }
 
     private fun setupRecyclerView() {

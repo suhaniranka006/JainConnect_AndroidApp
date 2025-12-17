@@ -37,6 +37,16 @@
                 android:textStyle="bold"
                 android:textColor="#D81B60"
                 android:fontFamily="sans-serif-medium"
+                android:layout_marginBottom="4dp"/>
+
+            <TextView
+                android:id="@+id/tvStorySource"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Source: Wikipedia"
+                android:textSize="12sp"
+                android:textColor="#9E9E9E"
+                android:textStyle="italic"
                 android:layout_marginBottom="8dp"/>
 
             <!-- Summary -->

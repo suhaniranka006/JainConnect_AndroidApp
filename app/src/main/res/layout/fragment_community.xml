@@ -38,21 +38,40 @@
         android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <EditText
-            android:id="@+id/etMessage"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@null"
-            android:hint="Type a message..."
-            android:padding="12dp"
-            android:inputType="textCapSentences|textMultiLine|textShortMessage"
-            android:maxLines="4" />
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/etMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="Type a message..."
+                android:padding="12dp"
+                android:inputType="textCapSentences|textMultiLine|textShortMessage"
+                android:maxLines="4"
+                android:maxLength="200"/>
+
+            <TextView
+                android:id="@+id/tvCharCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:paddingEnd="8dp"
+                android:paddingBottom="2dp"
+                android:text="0/200"
+                android:textSize="10sp"
+                android:textColor="#9E9E9E"/>
+        </LinearLayout>
 
         <ImageButton
             android:id="@+id/btnSend"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:layout_gravity="center_vertical"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@android:drawable/ic_menu_send"
             app:tint="#FF9800" />
