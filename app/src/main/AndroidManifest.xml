@@ -63,6 +63,12 @@
             android:name=".ui.activities.TithiActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.activities.BhojanshalaActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activities.AddBhojanshalaActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activities.MainActivity"
             android:windowSoftInputMode="adjustResize"
             android:exported="false" /> <!-- Yeh 'false' sahi hai, kyunki Splash se open ho rahi hai -->

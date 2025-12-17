@@ -12,6 +12,7 @@ import javax.inject.Inject
 import com.mycompany.jainconnect.R
 import com.mycompany.jainconnect.data.models.Event
 import com.mycompany.jainconnect.data.models.Maharaj
+import com.mycompany.jainconnect.data.models.Bhojanshala
 import com.mycompany.jainconnect.data.models.Tithi
 import com.mycompany.jainconnect.data.models.User
 import com.mycompany.jainconnect.data.network.ApiService
@@ -21,6 +22,7 @@ import com.mycompany.jainconnect.data.models.AuthResponse
 import com.mycompany.jainconnect.data.models.EventSubmissionRequest
 import com.mycompany.jainconnect.data.models.LoginRequest
 import com.mycompany.jainconnect.data.models.MaharajSubmissionRequest
+import com.mycompany.jainconnect.data.models.BhojanshalaSubmissionRequest
 import com.mycompany.jainconnect.data.models.RsvpResponse
 import com.mycompany.jainconnect.data.models.SunResponse
 
@@ -42,6 +44,7 @@ class JainRepository @Inject constructor(
     suspend fun getTithis(): List<Tithi> = api.getTithis()
     suspend fun getEvents(): List<Event> = api.getEvents()
     suspend fun getMaharaj(): List<Maharaj> = api.getMaharaj()
+    suspend fun getBhojanshalas(): List<Bhojanshala> = api.getBhojanshalas()
 
     // === RSVP FUNCTION ===
     /**
@@ -241,6 +244,19 @@ class JainRepository @Inject constructor(
         }
 
         return api.submitMaharajWithImage("Bearer $token", partsMap, imagePart)
+    }
+
+    suspend fun submitBhojanshala(
+        token: String,
+        name: String,
+        city: String,
+        address: String,
+        timings: String,
+        contact: String,
+        description: String
+    ): Response<ApiResponse> {
+        val request = BhojanshalaSubmissionRequest(name, city, address, timings, contact, description)
+        return api.submitBhojanshala("Bearer $token", request)
     }
 
     suspend fun sendChatNotification(token: String, title: String, message: String): Response<ApiResponse> {

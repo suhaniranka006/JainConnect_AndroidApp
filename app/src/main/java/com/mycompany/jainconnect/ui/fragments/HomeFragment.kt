@@ -184,11 +184,13 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
         view.findViewById<View>(R.id.btnHorizons).setOnClickListener {
             startActivity(Intent(requireContext(), HorizonsActivity::class.java))
         }
+        view.findViewById<View>(R.id.btnBhojanshalas).setOnClickListener {
+            startActivity(Intent(requireContext(), BhojanshalaActivity::class.java))
+        }
 
         // --- New Features (Placeholders) ---
         val newFeatures = mapOf(
             R.id.btnTemples to "Temples",
-            R.id.btnBhojanshalas to "Bhojanshalas",
             R.id.btnBusiness to "Business Directory",
             R.id.btnCarpooling to "Carpooling",
             R.id.btnTirthyatra to "Tirthyatra Planner",

@@ -25,6 +25,8 @@ import com.mycompany.jainconnect.data.models.LoginRequest
 import com.mycompany.jainconnect.data.models.MaharajSubmissionRequest
 import com.mycompany.jainconnect.data.models.RsvpResponse
 import com.mycompany.jainconnect.data.models.SunResponse
+import com.mycompany.jainconnect.data.models.Bhojanshala
+import com.mycompany.jainconnect.data.models.BhojanshalaSubmissionRequest
 import retrofit2.http.DELETE
 
 /**
@@ -51,6 +53,9 @@ interface ApiService {
 
     @GET("api/maharajs")
     suspend fun getMaharaj(): List<Maharaj>
+
+    @GET("api/bhojanshalas")
+    suspend fun getBhojanshalas(): List<Bhojanshala>
 
     /**
      * Fetches a user profile by their email address.
@@ -157,6 +162,12 @@ interface ApiService {
         @Header("Authorization") token: String,
         @PartMap parts: Map<String, @JvmSuppressWildcards RequestBody>,
         @Part image: MultipartBody.Part?
+    ): Response<ApiResponse>
+
+    @POST("api/bhojanshalas")
+    suspend fun submitBhojanshala(
+        @Header("Authorization") token: String,
+        @Body data: BhojanshalaSubmissionRequest
     ): Response<ApiResponse>
 
     // New Endpoint for Chat Notifications

@@ -42,6 +42,7 @@ import javax.inject.Inject
 import com.mycompany.jainconnect.R
 import com.mycompany.jainconnect.data.models.Event
 import com.mycompany.jainconnect.data.models.Maharaj
+import com.mycompany.jainconnect.data.models.Bhojanshala
 import com.mycompany.jainconnect.data.models.Tithi
 import com.mycompany.jainconnect.data.models.User
 import com.mycompany.jainconnect.data.network.NetworkResult
@@ -633,6 +634,67 @@ class JainViewModel @Inject constructor(
     //reset all filters
     fun resetFilters() {
         _filteredMaharaj.value = _maharajList.value
+    }
+
+    // =====================================================================================
+    //                                      BHOJANSHALA
+    // =====================================================================================
+    private val _bhojanshalaList = MutableLiveData<List<Bhojanshala>>()
+    val bhojanshalaList: LiveData<List<Bhojanshala>> = _bhojanshalaList
+
+    // Backup list for filtering
+    private val _allBhojanshalas = mutableListOf<Bhojanshala>()
+
+    private val _addBhojanshalaResult = MutableLiveData<String>()
+    val addBhojanshalaResult: LiveData<String> = _addBhojanshalaResult
+
+    fun fetchBhojanshalas() {
+        viewModelScope.launch {
+            try {
+                val list = repository.getBhojanshalas()
+                _allBhojanshalas.clear()
+                _allBhojanshalas.addAll(list)
+                _bhojanshalaList.value = list
+            } catch (e: Exception) {
+                _bhojanshalaList.value = emptyList()
+            }
+        }
+    }
+
+    // Filter Bhojanshalas
+    fun filterBhojanshalas(query: String) {
+        val q = query.trim().lowercase()
+        val filtered = _allBhojanshalas.filter { item ->
+            val nameMatches = item.name.lowercase().contains(q)
+            val cityMatches = item.city.lowercase().contains(q)
+            val addressMatches = item.address.lowercase().contains(q)
+            
+            nameMatches || cityMatches || addressMatches
+        }
+        _bhojanshalaList.value = filtered
+    }
+
+    fun submitNewBhojanshala(
+        token: String,
+        name: String,
+        city: String,
+        address: String,
+        timings: String,
+        contact: String,
+        description: String
+    ) {
+        viewModelScope.launch {
+            try {
+                val response = repository.submitBhojanshala(token, name, city, address, timings, contact, description)
+                if (response.isSuccessful && response.body()?.success == true) {
+                    _addBhojanshalaResult.value = "Success"
+                } else {
+                    _addBhojanshalaResult.value = "Failed: ${response.message()}"
+                }
+            } catch (e: Exception) {
+                _addBhojanshalaResult.value = "Error: ${e.message}"
+            }
+        }
     }
 
     // --- Account Management ---
