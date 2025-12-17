@@ -681,11 +681,17 @@ class JainViewModel @Inject constructor(
         address: String,
         timings: String,
         contact: String,
-        description: String
+        description: String,
+        imageFile: File? = null
     ) {
         viewModelScope.launch {
             try {
-                val response = repository.submitBhojanshala(token, name, city, address, timings, contact, description)
+                val response = if (imageFile != null) {
+                    repository.submitBhojanshalaWithImage(token, name, city, address, timings, contact, description, imageFile)
+                } else {
+                    repository.submitBhojanshala(token, name, city, address, timings, contact, description)
+                }
+
                 if (response.isSuccessful && response.body()?.success == true) {
                     _addBhojanshalaResult.value = "Success"
                 } else {

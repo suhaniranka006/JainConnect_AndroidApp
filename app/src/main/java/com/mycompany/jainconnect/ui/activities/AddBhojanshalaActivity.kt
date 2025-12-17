@@ -16,9 +16,24 @@ class AddBhojanshalaActivity : AppCompatActivity() {
 
     private val viewModel: JainViewModel by viewModels()
 
+    private lateinit var ivPreview: android.widget.ImageView
+    private var selectedImageUri: android.net.Uri? = null
+    
+    // Image Picker Launcher
+    private val pickImageLauncher = registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.GetContent()) { uri ->
+        uri?.let {
+            selectedImageUri = it
+            ivPreview.setImageURI(it)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_bhojanshala)
+
+        // Initialize Views
+        ivPreview = findViewById(R.id.ivBhojanshalaImagePreview)
+        val btnSelectImage = findViewById<Button>(R.id.btnSelectImage)
 
         val etName = findViewById<EditText>(R.id.etName)
         val etCity = findViewById<EditText>(R.id.etCity)
@@ -27,6 +42,10 @@ class AddBhojanshalaActivity : AppCompatActivity() {
         val etContact = findViewById<EditText>(R.id.etContact)
         val etDescription = findViewById<EditText>(R.id.etDescription)
         val btnSubmit = findViewById<Button>(R.id.btnSubmit)
+
+        btnSelectImage.setOnClickListener {
+            pickImageLauncher.launch("image/*")
+        }
 
         btnSubmit.setOnClickListener {
             val name = etName.text.toString().trim()
@@ -40,7 +59,8 @@ class AddBhojanshalaActivity : AppCompatActivity() {
             val token = sharedPref.getString("jwt_token", null)
 
             if (token != null && name.isNotEmpty() && city.isNotEmpty() && address.isNotEmpty()) {
-                viewModel.submitNewBhojanshala(token, name, city, address, timings, contact, description)
+                val file = selectedImageUri?.let { getFileFromUri(it) }
+                viewModel.submitNewBhojanshala(token, name, city, address, timings, contact, description, file)
             } else {
                 Toast.makeText(this, "Please fill required fields (Name, City, Address)", Toast.LENGTH_SHORT).show()
             }
@@ -54,5 +74,17 @@ class AddBhojanshalaActivity : AppCompatActivity() {
                 Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    // Helper to get File from URI
+    private fun getFileFromUri(uri: android.net.Uri): java.io.File? {
+        val inputStream = contentResolver.openInputStream(uri)
+        val tempFile = java.io.File(cacheDir, "temp_image_${System.currentTimeMillis()}.jpg")
+        inputStream?.use { input ->
+            java.io.FileOutputStream(tempFile).use { output ->
+                input.copyTo(output)
+            }
+        }
+        return tempFile
     }
 }

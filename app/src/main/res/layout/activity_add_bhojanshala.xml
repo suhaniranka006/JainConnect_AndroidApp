@@ -22,6 +22,31 @@
             android:layout_marginBottom="20dp"
             android:layout_gravity="center_horizontal"/>
 
+        <!-- Image Selection Area -->
+        <FrameLayout
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp">
+
+            <ImageView
+                android:id="@+id/ivBhojanshalaImagePreview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@android:drawable/ic_menu_gallery"
+                android:scaleType="centerCrop"
+                android:background="#E0E0E0" />
+
+        </FrameLayout>
+
+        <Button
+            android:id="@+id/btnSelectImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Photo (Small)"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"/>
+
         <EditText
             android:id="@+id/etName"
             android:layout_width="match_parent"

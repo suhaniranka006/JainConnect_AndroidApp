@@ -259,6 +259,22 @@ class JainRepository @Inject constructor(
         return api.submitBhojanshala("Bearer $token", request)
     }
 
+    suspend fun submitBhojanshalaWithImage(
+        token: String, name: String, city: String, address: String, timings: String, contact: String, description: String, imageFile: java.io.File
+    ): Response<ApiResponse> {
+        val namePart = name.toRequestBody("text/plain".toMediaTypeOrNull())
+        val cityPart = city.toRequestBody("text/plain".toMediaTypeOrNull())
+        val addressPart = address.toRequestBody("text/plain".toMediaTypeOrNull())
+        val timingsPart = timings.toRequestBody("text/plain".toMediaTypeOrNull())
+        val contactPart = contact.toRequestBody("text/plain".toMediaTypeOrNull())
+        val descPart = description.toRequestBody("text/plain".toMediaTypeOrNull())
+
+        val requestFile = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
+        val imagePart = MultipartBody.Part.createFormData("image", imageFile.name, requestFile)
+
+        return api.submitBhojanshalaWithImage("Bearer $token", imagePart, namePart, cityPart, addressPart, timingsPart, contactPart, descPart)
+    }
+
     suspend fun sendChatNotification(token: String, title: String, message: String): Response<ApiResponse> {
         val body = mapOf(
             "title" to title,

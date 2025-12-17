@@ -38,6 +38,8 @@ class BhojanshalaAdapter : RecyclerView.Adapter<BhojanshalaAdapter.BhojanshalaVi
         private val tvContact: TextView = itemView.findViewById(R.id.tvContact)
         private val tvDescription: TextView = itemView.findViewById(R.id.tvDescription)
 
+        private val ivImage: android.widget.ImageView = itemView.findViewById(R.id.ivBhojanshalaImage)
+
         fun bind(bhojanshala: Bhojanshala) {
             tvName.text = bhojanshala.name
             tvCity.text = bhojanshala.city
@@ -45,6 +47,16 @@ class BhojanshalaAdapter : RecyclerView.Adapter<BhojanshalaAdapter.BhojanshalaVi
             tvTimings.text = "Timings: ${bhojanshala.timings ?: "N/A"}"
             tvContact.text = bhojanshala.contact?.let { "Contact: $it" } ?: ""
             tvDescription.text = bhojanshala.description ?: ""
+
+            if (!bhojanshala.image.isNullOrEmpty()) {
+                ivImage.visibility = View.VISIBLE
+                com.bumptech.glide.Glide.with(itemView.context)
+                    .load(bhojanshala.image)
+                    .placeholder(R.drawable.jainconnect_app_logo)
+                    .into(ivImage)
+            } else {
+                ivImage.visibility = View.GONE
+            }
         }
     }
 }

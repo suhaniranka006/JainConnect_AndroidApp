@@ -167,7 +167,20 @@ interface ApiService {
     @POST("api/bhojanshalas")
     suspend fun submitBhojanshala(
         @Header("Authorization") token: String,
-        @Body data: BhojanshalaSubmissionRequest
+        @Body request: BhojanshalaSubmissionRequest
+    ): Response<ApiResponse>
+
+    @POST("api/bhojanshalas/with-image")
+    @Multipart
+    suspend fun submitBhojanshalaWithImage(
+        @Header("Authorization") token: String,
+        @Part image: MultipartBody.Part,
+        @Part("name") name: RequestBody,
+        @Part("city") city: RequestBody,
+        @Part("address") address: RequestBody,
+        @Part("timings") timings: RequestBody,
+        @Part("contact") contact: RequestBody,
+        @Part("description") description: RequestBody
     ): Response<ApiResponse>
 
     // New Endpoint for Chat Notifications
