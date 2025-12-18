@@ -262,8 +262,29 @@ interface ApiService {
     @POST("api/tirthyatra/{id}/join")
     suspend fun joinYatra(
         @Header("Authorization") token: String,
+        @Path("id") id: String,
+        @Body body: Map<String, String> // message, contactNumber
+    ): Response<ApiResponse>
+
+    @POST("api/tirthyatra/{id}/cancel-request")
+    suspend fun cancelRequest(
+        @Header("Authorization") token: String,
         @Path("id") id: String
     ): Response<ApiResponse>
+
+    @PUT("api/tirthyatra/{id}/companionship")
+    suspend fun toggleCompanionship(
+        @Header("Authorization") token: String,
+        @Path("id") id: String,
+        @Body body: Map<String, Boolean> // { enable: true/false }
+    ): Response<SingleYatraResponse>
+
+    @PUT("api/tirthyatra/{id}/members")
+    suspend fun manageMember(
+        @Header("Authorization") token: String,
+        @Path("id") id: String,
+        @Body body: Map<String, String> // targetUserId, action
+    ): Response<SingleYatraResponse>
 
     @DELETE("api/tirthyatra/{id}")
     suspend fun deleteYatra(@Header("Authorization") token: String, @Path("id") id: String): Response<ApiResponse>

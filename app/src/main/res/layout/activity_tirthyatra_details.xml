@@ -80,6 +80,38 @@
                 android:textColor="@android:color/darker_gray"
                 android:textSize="14sp" />
 
+            <!-- Actions Section -->
+            <LinearLayout
+                android:id="@+id/llActions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="16dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCompanionship"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="I want Companionship"
+                    android:visibility="gone"
+                    android:textAllCaps="false"
+                    android:backgroundTint="@color/saffron"
+                    android:textColor="@color/white" />
+
+                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnManageRequests"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="View Pending Requests"
+                    android:visibility="gone"
+                    android:textAllCaps="false"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    app:strokeColor="@color/saffron"
+                    app:strokeWidth="1dp"
+                    android:textColor="@color/saffron" />
+
+            </LinearLayout>
+
             <!-- Members Section (No Tabs) -->
             <TextView
                 android:layout_width="match_parent"

@@ -34,13 +34,30 @@ class TirthyatraRepository @Inject constructor(
         return handleApi { apiService.getYatraDetails("Bearer $token", id) }
     }
 
-    suspend fun joinYatra(token: String, id: String): NetworkResult<ApiResponse> {
-        return handleApi { apiService.joinYatra("Bearer $token", id) }
+    suspend fun joinYatra(token: String, id: String, message: String, contactNumber: String): NetworkResult<ApiResponse> {
+        val body = mapOf("message" to message, "contactNumber" to contactNumber)
+        return handleApi { apiService.joinYatra("Bearer $token", id, body) }
+    }
+
+    suspend fun cancelRequest(token: String, id: String): NetworkResult<ApiResponse> {
+        return handleApi { apiService.cancelRequest("Bearer $token", id) }
+    }
+
+    suspend fun toggleCompanionship(token: String, id: String, enable: Boolean): NetworkResult<SingleYatraResponse> {
+        val body = mapOf("enable" to enable)
+        return handleApi { apiService.toggleCompanionship("Bearer $token", id, body) }
+    }
+
+    suspend fun manageMember(token: String, id: String, targetUserId: String, action: String): NetworkResult<SingleYatraResponse> {
+        val body = mapOf("targetUserId" to targetUserId, "action" to action)
+        return handleApi { apiService.manageMember("Bearer $token", id, body) }
     }
 
     suspend fun deleteYatra(token: String, id: String): NetworkResult<ApiResponse> {
         return handleApi { apiService.deleteYatra("Bearer $token", id) }
     }
+
+
 
     private suspend fun <T> handleApi(
         execute: suspend () -> Response<T>

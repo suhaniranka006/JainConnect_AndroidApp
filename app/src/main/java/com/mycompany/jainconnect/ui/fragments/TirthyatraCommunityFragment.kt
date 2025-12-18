@@ -42,11 +42,16 @@ class TirthyatraCommunityFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
 
         // Using same adapter for now. In future, maybe different actions.
-        adapter = MyYatraAdapter(emptyList()) { yatra ->
-             val intent = android.content.Intent(context, com.mycompany.jainconnect.ui.activities.TirthyatraDetailsActivity::class.java)
-             intent.putExtra("YATRA_DATA", yatra)
-             startActivity(intent)
-        }
+        // Using same adapter with default params (user list)
+        adapter = MyYatraAdapter(
+            yatras = emptyList(),
+            onItemClick = { yatra ->
+                val intent = android.content.Intent(context, com.mycompany.jainconnect.ui.activities.TirthyatraDetailsActivity::class.java)
+                intent.putExtra("YATRA_DATA", yatra)
+                startActivity(intent)
+            },
+            showDeleteButton = false // Hide delete button for public list
+        )
         recyclerView.adapter = adapter
 
         viewModel.publicYatras.observe(viewLifecycleOwner) { yatras ->

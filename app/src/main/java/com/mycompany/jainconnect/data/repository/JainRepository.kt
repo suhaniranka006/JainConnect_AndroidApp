@@ -29,6 +29,10 @@ import com.mycompany.jainconnect.data.models.MaharajSubmissionRequest
 import com.mycompany.jainconnect.data.models.BhojanshalaSubmissionRequest
 import com.mycompany.jainconnect.data.models.RsvpResponse
 import com.mycompany.jainconnect.data.models.SunResponse
+import com.mycompany.jainconnect.data.models.Tirthyatra
+import com.mycompany.jainconnect.data.models.TemplateListResponse
+import com.mycompany.jainconnect.data.models.SingleYatraResponse
+import com.mycompany.jainconnect.data.models.YatraListResponse
 
 
 
@@ -309,11 +313,47 @@ class JainRepository @Inject constructor(
     }
 
     // --- Jain Legacy ---
-    // --- Jain Legacy ---
-    suspend fun getStories(token: String): List<Story> = api.getStories(token)
+    suspend fun getStories(token: String): List<Story> {
+        return api.getStories("Bearer $token")
+    }
 
     suspend fun likeStory(token: String, id: String): Response<Map<String, Any>> {
-        return api.likeStory(token, id)
+        return api.likeStory("Bearer $token", id)
+    }
+
+    // --- Tirthyatra Planner ---
+    suspend fun getTirthyatraTemplates(isPopular: Boolean? = null): Response<TemplateListResponse> {
+        return api.getTirthyatraTemplates(isPopular)
+    }
+
+    suspend fun createYatra(token: String, yatra: Tirthyatra): Response<SingleYatraResponse> {
+        return api.createYatra("Bearer $token", yatra)
+    }
+
+    suspend fun getMyYatras(token: String, type: String? = null): Response<YatraListResponse> {
+        return api.getMyYatras("Bearer $token", type)
+    }
+
+    suspend fun getYatraDetails(token: String, id: String): Response<SingleYatraResponse> {
+        return api.getYatraDetails("Bearer $token", id)
+    }
+
+    suspend fun joinYatra(token: String, id: String, message: String, contactNumber: String): Response<ApiResponse> {
+        val body = mapOf("message" to message, "contactNumber" to contactNumber)
+        return api.joinYatra("Bearer $token", id, body)
+    }
+
+    suspend fun cancelRequest(token: String, id: String): Response<ApiResponse> {
+        return api.cancelRequest("Bearer $token", id)
+    }
+
+    suspend fun toggleCompanionship(token: String, id: String, enable: Boolean): Response<SingleYatraResponse> {
+        val body = mapOf("enable" to enable)
+        return api.toggleCompanionship("Bearer $token", id, body)
+    }
+
+    suspend fun deleteYatra(token: String, id: String): Response<ApiResponse> {
+        return api.deleteYatra("Bearer $token", id)
     }
 }
 

@@ -14,7 +14,9 @@ import java.util.concurrent.TimeUnit
 
 class MyYatraAdapter(
     private var yatras: List<Tirthyatra>,
-    private val onItemClick: (Tirthyatra) -> Unit
+    private val onItemClick: (Tirthyatra) -> Unit,
+    private val onDeleteClick: ((Tirthyatra) -> Unit)? = null,
+    private val showDeleteButton: Boolean = true
 ) : RecyclerView.Adapter<MyYatraAdapter.YatraViewHolder>() {
 
     class YatraViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -23,6 +25,7 @@ class MyYatraAdapter(
         val tvDaysLeft: TextView = itemView.findViewById(R.id.tvDaysLeft)
         val statusStrip: View = itemView.findViewById(R.id.viewStatusStrip)
         val ivYatraImage: android.widget.ImageView = itemView.findViewById(R.id.ivYatraImage)
+        val ivDelete: View = itemView.findViewById(R.id.ivDelete)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): YatraViewHolder {
@@ -79,6 +82,15 @@ class MyYatraAdapter(
         
         holder.itemView.setOnClickListener {
             onItemClick(yatra)
+        }
+
+        if (showDeleteButton && onDeleteClick != null) {
+            holder.ivDelete.visibility = View.VISIBLE
+            holder.ivDelete.setOnClickListener {
+                onDeleteClick.invoke(yatra)
+            }
+        } else {
+            holder.ivDelete.visibility = View.GONE
         }
     }
 

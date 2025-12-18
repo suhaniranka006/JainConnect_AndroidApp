@@ -86,6 +86,9 @@ class JainViewModel @Inject constructor(
     private val _yatraOperationResult = MutableLiveData<String>()
     val yatraOperationResult: LiveData<String> = _yatraOperationResult
 
+    private val _yatraDetails = MutableLiveData<com.mycompany.jainconnect.data.models.Tirthyatra?>()
+    val yatraDetails: LiveData<com.mycompany.jainconnect.data.models.Tirthyatra?> = _yatraDetails
+
     fun fetchTirthyatraTemplates(isPopular: Boolean? = null) {
         viewModelScope.launch {
             val result = tirthyatraRepository.getTemplates(isPopular)
@@ -135,9 +138,9 @@ class JainViewModel @Inject constructor(
         }
     }
 
-    fun joinYatra(token: String, yatraId: String) {
+    fun joinYatra(token: String, yatraId: String, message: String, contactNumber: String) {
         viewModelScope.launch {
-             val result = tirthyatraRepository.joinYatra(token, yatraId)
+             val result = tirthyatraRepository.joinYatra(token, yatraId, message, contactNumber)
              if (result is NetworkResult.Success) {
                  _yatraOperationResult.value = "Joined"
                  fetchPublicYatras(token) // Refresh public list
@@ -145,6 +148,44 @@ class JainViewModel @Inject constructor(
              } else {
                  _yatraOperationResult.value = result.message ?: "Failed to join"
              }
+        }
+    }
+
+    fun cancelRequest(token: String, yatraId: String) {
+        viewModelScope.launch {
+            val result = tirthyatraRepository.cancelRequest(token, yatraId)
+            if (result is NetworkResult.Success) {
+                _yatraOperationResult.value = "Request Cancelled"
+                fetchMyYatras(token)
+                fetchPublicYatras(token) // Refresh statuses
+            } else {
+                _yatraOperationResult.value = result.message ?: "Failed to cancel request"
+            }
+        }
+    }
+
+    fun toggleCompanionship(token: String, yatraId: String, enable: Boolean) {
+        viewModelScope.launch {
+            val result = tirthyatraRepository.toggleCompanionship(token, yatraId, enable)
+            if (result is NetworkResult.Success) {
+                _yatraOperationResult.value = if (enable) "Companionship Enabled" else "Companionship Disabled"
+                // Refresh details? The activity observing this should fetch details or update UI.
+                loadYatraDetails(token, yatraId)
+            } else {
+                _yatraOperationResult.value = result.message ?: "Failed to toggle"
+            }
+        }
+    }
+
+    fun manageMember(token: String, yatraId: String, targetUserId: String, action: String) {
+        viewModelScope.launch {
+            val result = tirthyatraRepository.manageMember(token, yatraId, targetUserId, action)
+            if (result is NetworkResult.Success) {
+                _yatraOperationResult.value = "Action Successful: $action"
+                loadYatraDetails(token, yatraId)
+            } else {
+                _yatraOperationResult.value = result.message ?: "Action Failed"
+            }
         }
     }
 
@@ -156,6 +197,17 @@ class JainViewModel @Inject constructor(
                  fetchMyYatras(token) // Refresh list to remove deleted item
              } else {
                  _yatraOperationResult.value = result.message ?: "Failed to delete"
+             }
+        }
+    }
+
+    fun loadYatraDetails(token: String, yatraId: String) {
+        viewModelScope.launch {
+            val result = tirthyatraRepository.getYatraDetails(token, yatraId)
+             if (result is NetworkResult.Success && result.data != null) {
+                 _yatraDetails.value = result.data.data
+             } else {
+                 // handle error?
              }
         }
     }

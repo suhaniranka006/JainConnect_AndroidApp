@@ -99,90 +99,239 @@ class TirthyatraDetailsActivity : AppCompatActivity() {
             checkJoinStatus()
         }
 
+        // Observe single yatra details
+        viewModel.yatraDetails.observe(this) { yatra ->
+            if (yatra != null) {
+                this.tirthyatra = yatra
+                // Update UI elements that might change
+                binding.collapsingToolbar.title = yatra.title
+                
+                // Update header image if changed (optional, but good practice)
+                if (!yatra.imageUrl.isNullOrEmpty()) {
+                     var url = yatra.imageUrl
+                     if (!url.startsWith("http")) {
+                         val baseUrl = "https://jainconnect-backened-2.onrender.com/"
+                         url = url.replace("\\", "/")
+                         url = "$baseUrl$url"
+                     }
+                     Glide.with(this).load(url).placeholder(R.drawable.ic_tirthyatra).into(binding.ivHeaderImage)
+                }
+                
+                // Refresh members fragment if needed (might need to detach/attach)
+                // For now, assuming list might be stale in fragment until resume.
+                // Better to just update status buttons.
+                checkJoinStatus()
+            }
+        }
+
         viewModel.yatraOperationResult.observe(this) { result ->
             if (result == "Joined") {
-                Toast.makeText(this, "Joined successfully!", Toast.LENGTH_SHORT).show()
-                binding.btnJoinYatra.visibility = View.GONE
+                Toast.makeText(this, "Request Sents / Joined successfully!", Toast.LENGTH_SHORT).show()
+                refreshYatraDetails()
             } else if (result == "Deleted") {
                 Toast.makeText(this, "Yatra deleted successfully", Toast.LENGTH_SHORT).show()
                 setResult(RESULT_OK)
-                finish() // Close details and go back
+                finish()
+            } else if (result == "Request Cancelled" || result.startsWith("Companionship")) {
+                Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
+                refreshYatraDetails()
             } else if (result.startsWith("Failed")) {
                  Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    override fun onCreateOptionsMenu(menu: android.view.Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_yatra_details, menu)
-        
-        // Visibility check
-        val deleteItem = menu?.findItem(R.id.action_delete)
-        if (currentUserId != null && tirthyatra?.creatorId?.id == currentUserId) {
-            deleteItem?.isVisible = true
-        } else {
-            deleteItem?.isVisible = false
-        }
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: android.view.MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_delete -> {
-                showDeleteConfirmation()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    private fun showDeleteConfirmation() {
-        androidx.appcompat.app.AlertDialog.Builder(this)
-            .setTitle("Delete Yatra")
-            .setMessage("Are you sure you want to delete this yatra? This action cannot be undone.")
-            .setPositiveButton("Delete") { _, _ ->
-                val token = getToken()
-                tirthyatra?.id?.let { id ->
-                    viewModel.deleteYatra(token, id)
-                }
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
+    private fun refreshYatraDetails() {
+         val token = getToken()
+         tirthyatra?.id?.let { id ->
+             viewModel.loadYatraDetails(token, id)
+         }
     }
 
     // Existing checkJoinStatus (updated to invalidate menu)
     private fun checkJoinStatus() {
-        // Invalidate menu to trigger onCreateOptionsMenu visibility check
         invalidateOptionsMenu()
         
         tirthyatra?.let { yatra ->
             if (currentUserId != null) {
-                // Check if already a participant (participants is List<TirthyatraUser>)
+                val isCreator = yatra.creatorId?.id == currentUserId
                 val isParticipant = yatra.participants.any { it.id == currentUserId }
-                
-                // Show button ONLY if:
-                // 1. Not a participant
-                // 2. Yatra is Public (assuming Visibility field, default Private)
-                // 3. (Optional) Not creator (creator is always participant usually)
-                
-                if (!isParticipant && yatra.visibility == "Public") {
-                    binding.btnJoinYatra.visibility = View.VISIBLE
-                } else {
+                // Pending check: pendingRequests is List<JoinRequest>. Check if ANY request has userId == currentUserId
+                // Note: JoinRequest.userId is TirthyatraUser object.
+                val isPending = yatra.pendingRequests.any { it.userId?.id == currentUserId }
+
+                if (isCreator) {
+                    // Creator View
+                    binding.llActions.visibility = View.VISIBLE
                     binding.btnJoinYatra.visibility = View.GONE
+                    
+                    binding.btnCompanionship.visibility = View.VISIBLE
+                    if (yatra.visibility == "Public") {
+                        binding.btnCompanionship.text = "Disable Companionship"
+                        binding.btnCompanionship.setBackgroundColor(getColor(android.R.color.darker_gray))
+                    } else {
+                        binding.btnCompanionship.text = "I want Companionship"
+                        binding.btnCompanionship.setBackgroundColor(getColor(R.color.saffron))
+                    }
+                    
+                    if (yatra.pendingRequests.isNotEmpty()) {
+                        binding.btnManageRequests.visibility = View.VISIBLE
+                        binding.btnManageRequests.text = "Pending Requests (${yatra.pendingRequests.size})"
+                    } else {
+                        binding.btnManageRequests.visibility = View.GONE
+                    }
+                    
+                    // Click Listeners
+                    binding.btnCompanionship.setOnClickListener {
+                        val enable = yatra.visibility != "Public"
+                        viewModel.toggleCompanionship(getToken(), yatra.id!!, enable)
+                    }
+                    
+                    binding.btnManageRequests.setOnClickListener {
+                        showManageRequestsDialog()
+                    }
+
+                } else {
+                    // Public / Participant View
+                    binding.llActions.visibility = View.GONE // Hide admin actions
+                    
+                    if (isParticipant) {
+                        binding.btnJoinYatra.visibility = View.GONE
+                    } else if (isPending) {
+                        binding.btnJoinYatra.visibility = View.VISIBLE
+                        binding.btnJoinYatra.text = "Cancel Request"
+                        binding.btnJoinYatra.setBackgroundColor(getColor(android.R.color.holo_red_light))
+                        binding.btnJoinYatra.setOnClickListener {
+                            viewModel.cancelRequest(getToken(), yatra.id!!)
+                        }
+                    } else if (yatra.visibility == "Public") {
+                         binding.btnJoinYatra.visibility = View.VISIBLE
+                         binding.btnJoinYatra.text = "Wanna Join?"
+                         binding.btnJoinYatra.setBackgroundColor(getColor(R.color.saffron))
+                         binding.btnJoinYatra.setOnClickListener {
+                             showJoinDialog()
+                         }
+                    } else {
+                        binding.btnJoinYatra.visibility = View.GONE
+                    }
                 }
             }
         }
     }
 
-    private fun joinYatra() {
-        val token = getToken()
-        if (token.isEmpty()) {
-            Toast.makeText(this, "Please Login", Toast.LENGTH_SHORT).show()
+    private fun showManageRequestsDialog() {
+        if (tirthyatra?.pendingRequests.isNullOrEmpty()) {
+            Toast.makeText(this, "No pending requests", Toast.LENGTH_SHORT).show()
             return
         }
-        tirthyatra?.id?.let { id ->
-            viewModel.joinYatra(token, id)
+
+        val requests = tirthyatra?.pendingRequests!!
+        
+        // Optimization: If only one request, show details/actions directly
+        if (requests.size == 1) {
+            showRequestDetailsDialog(requests[0])
+            return
         }
+
+        val items = requests.map { req -> 
+             "${req.userId?.name ?: "Unknown"} \nMessage: ${req.message ?: "No message"}" 
+        }.toTypedArray()
+
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Pending Requests (Tap to Manage)")
+            .setItems(items) { _, which ->
+                showRequestDetailsDialog(requests[which])
+            }
+            .setNegativeButton("Close", null)
+            .show()
+    }
+
+    private fun showRequestDetailsDialog(request: com.mycompany.jainconnect.data.models.JoinRequest) {
+        val user = request.userId
+        val userName = user?.name ?: "Unknown User"
+        val userDob = user?.dob ?: "N/A"
+        val userGender = user?.gender ?: "N/A"
+        val userPhone = user?.phone ?: "N/A"
+        val reqContact = request.contactNumber ?: userPhone
+        
+        val message = "Name: $userName\n" +
+                      "Age/Gender: $userDob / $userGender\n" +
+                      "Contact: $reqContact\n\n" +
+                      "Message:\n${request.message ?: "No message"}"
+
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Request Details")
+            .setMessage(message)
+            .setPositiveButton("Accept") { _, _ ->
+                user?.id?.let { userId ->
+                    tirthyatra?.id?.let { yatraId ->
+                        viewModel.manageMember(getToken(), yatraId, userId, "approve")
+                    }
+                }
+            }
+            .setNegativeButton("Reject") { _, _ ->
+                 user?.id?.let { userId ->
+                    tirthyatra?.id?.let { yatraId ->
+                        viewModel.manageMember(getToken(), yatraId, userId, "reject")
+                    }
+                }
+            }
+            .setNeutralButton("Cancel", null)
+            .show()
+    }
+
+    private fun showJoinDialog() {
+
+        // Fallback to code layout if XML doesn't exist yet, but better to create XML.
+        // Let's build layout dynamically for speed or create XML next.
+        // Valid approach: Create AlertDialog with View.
+        
+        // I will create a simple LinearLayout programmatically here to avoid blocking on XML creation step immediately.
+        val context = this
+        val layout = android.widget.LinearLayout(context)
+        layout.orientation = android.widget.LinearLayout.VERTICAL
+        layout.setPadding(50, 40, 50, 10)
+
+        val etMessage = android.widget.EditText(context)
+        etMessage.hint = "Message for Creator (e.g. I am alone...)"
+        layout.addView(etMessage)
+        
+        val etContact = android.widget.EditText(context)
+        etContact.hint = "Contact Number"
+        etContact.inputType = android.text.InputType.TYPE_CLASS_PHONE
+        // Prefill contact if available? 
+        // We don't have current user phone in 'userProfile' LiveData details easily here unless we store it.
+        // User profile IS in 'viewModel.userProfile'.
+        viewModel.userProfile.value?.let { 
+            // etContact.setText(it.phone) // Assuming User model has phone accessible
+            // User model in Android 'User' might need check.
+        }
+        layout.addView(etContact)
+
+        androidx.appcompat.app.AlertDialog.Builder(context)
+            .setTitle("Join Request")
+            .setView(layout)
+            .setPositiveButton("Send") { _, _ ->
+                val message = etMessage.text.toString()
+                val contact = etContact.text.toString()
+                if (contact.isEmpty()) {
+                    Toast.makeText(context, "Contact number is required", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+                viewModel.joinYatra(getToken(), tirthyatra?.id!!, message, contact)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+    
+    // override fun onResume() ... to fetch details?
+    override fun onResume() {
+        super.onResume()
+        refreshYatraDetails()
+    }
+
+    private fun joinYatra() {
+        // Deprecated, using specific listeners in checkJoinStatus
     }
 
     private fun getToken(): String {

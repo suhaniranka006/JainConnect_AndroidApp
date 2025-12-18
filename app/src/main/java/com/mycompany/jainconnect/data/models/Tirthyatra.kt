@@ -20,11 +20,20 @@ data class Tirthyatra(
     val joinMode: String = "Open", // "Open" or "Approval"
     val itinerary: List<ItineraryDay> = emptyList(),
     val checklist: List<ChecklistItem> = emptyList(),
-    val pendingRequests: List<String> = emptyList(),
+    val pendingRequests: List<JoinRequest> = emptyList(), // Updated to Object List
     val chatId: String? = null,
     val notes: String? = null,
     val durationDays: Int = 1,
     val templateId: String? = null
+) : Parcelable
+
+@Parcelize
+data class JoinRequest(
+    @SerializedName("_id") val id: String? = null, // Request ID if any (or just user object)
+    val userId: TirthyatraUser? = null, // Populated User
+    val message: String? = null,
+    val contactNumber: String? = null,
+    val status: String = "Pending"
 ) : Parcelable
 
 @Parcelize
@@ -33,7 +42,9 @@ data class TirthyatraUser(
     val name: String,
     val profileImage: String? = null,
     val gender: String? = null,
-    val dob: String? = null
+    val dob: String? = null,
+    val phone: String? = null,
+    val mobileNumber: String? = null // Backend sometimes uses mobileNumber or phone? Stick to backend response. Controller sends 'phone' and 'mobileNumber'.
 ) : Parcelable
 
 @Parcelize

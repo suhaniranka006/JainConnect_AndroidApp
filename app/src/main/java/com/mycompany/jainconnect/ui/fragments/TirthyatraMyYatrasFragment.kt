@@ -40,12 +40,28 @@ class TirthyatraMyYatrasFragment : Fragment() {
         val recyclerView = view.findViewById<RecyclerView>(R.id.rvMyYatras)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        adapter = MyYatraAdapter(emptyList()) { yatra ->
-            // Open Yatra Details
-            val intent = android.content.Intent(context, com.mycompany.jainconnect.ui.activities.TirthyatraDetailsActivity::class.java)
-            intent.putExtra("YATRA_DATA", yatra)
-            startActivity(intent)
-        }
+        adapter = MyYatraAdapter(emptyList(),
+            onItemClick = { yatra ->
+                val intent = android.content.Intent(context, com.mycompany.jainconnect.ui.activities.TirthyatraDetailsActivity::class.java)
+                intent.putExtra("YATRA_DATA", yatra)
+                startActivity(intent)
+            },
+            onDeleteClick = { yatra ->
+                val sharedPreferences = requireActivity().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                val token = sharedPreferences.getString("jwt_token", "") ?: ""
+                if (token.isNotEmpty() && yatra.id != null) {
+                    // Confirm Dialog
+                    androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                        .setTitle("Delete Yatra")
+                        .setMessage("Are you sure you want to delete this trip?")
+                        .setPositiveButton("Yes") { _, _ ->
+                            viewModel.deleteYatra(token, yatra.id)
+                        }
+                        .setNegativeButton("No", null)
+                        .show()
+                }
+            }
+        )
         recyclerView.adapter = adapter
 
         // Observer
@@ -57,6 +73,14 @@ class TirthyatraMyYatrasFragment : Fragment() {
             } else {
                 tvEmptyState.visibility = View.GONE
                 adapter.updateData(yatras)
+            }
+        }
+
+        viewModel.yatraOperationResult.observe(viewLifecycleOwner) { result ->
+            if (result == "Deleted") {
+                 Toast.makeText(context, "Yatra deleted successfully", Toast.LENGTH_SHORT).show()
+            } else if (result.startsWith("Failed")) {
+                 Toast.makeText(context, result, Toast.LENGTH_SHORT).show()
             }
         }
 
