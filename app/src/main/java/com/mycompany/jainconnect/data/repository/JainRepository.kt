@@ -338,8 +338,15 @@ class JainRepository @Inject constructor(
         return api.getYatraDetails("Bearer $token", id)
     }
 
-    suspend fun joinYatra(token: String, id: String, message: String, contactNumber: String): Response<ApiResponse> {
-        val body = mapOf("message" to message, "contactNumber" to contactNumber)
+    suspend fun joinYatra(token: String, id: String, message: String, contactNumber: String, peopleCount: Int, name: String, age: String, gender: String): Response<ApiResponse> {
+        val body: Map<String, Any> = mapOf(
+            "message" to message, 
+            "contactNumber" to contactNumber, 
+            "peopleCount" to peopleCount,
+            "name" to name,
+            "age" to age,
+            "gender" to gender
+        )
         return api.joinYatra("Bearer $token", id, body)
     }
 
@@ -347,9 +354,14 @@ class JainRepository @Inject constructor(
         return api.cancelRequest("Bearer $token", id)
     }
 
-    suspend fun toggleCompanionship(token: String, id: String, enable: Boolean): Response<SingleYatraResponse> {
-        val body = mapOf("enable" to enable)
-        return api.toggleCompanionship("Bearer $token", id, body)
+    suspend fun toggleCompanionship(token: String, id: String, enable: Boolean, name: String? = null, age: String? = null, gender: String? = null, contact: String? = null): Response<SingleYatraResponse> {
+        val body = mutableMapOf<String, Any>("enable" to enable)
+        if (name != null) body["name"] = name
+        if (age != null) body["age"] = age
+        if (gender != null) body["gender"] = gender
+        if (contact != null) body["contact"] = contact
+        
+        return api.toggleCompanionship(token = "Bearer $token", id, body)
     }
 
     suspend fun deleteYatra(token: String, id: String): Response<ApiResponse> {

@@ -43,8 +43,12 @@ class TirthyatraCommunityFragment : Fragment() {
 
         // Using same adapter for now. In future, maybe different actions.
         // Using same adapter with default params (user list)
+        // Ensure we have User ID for permissions (optional for public view but good for consistancy)
+        val userId = viewModel.userProfile.value?.id
+
         adapter = MyYatraAdapter(
             yatras = emptyList(),
+            currentUserId = userId,
             onItemClick = { yatra ->
                 val intent = android.content.Intent(context, com.mycompany.jainconnect.ui.activities.TirthyatraDetailsActivity::class.java)
                 intent.putExtra("YATRA_DATA", yatra)

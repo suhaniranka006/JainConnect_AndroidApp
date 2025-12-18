@@ -14,6 +14,7 @@ data class Tirthyatra(
 
     val admins: List<String> = emptyList(), // List of Admin User IDs - Keeping as String for now or update? Admins are subset of participants usually.
     val participants: List<TirthyatraUser> = emptyList(), // Changed to Object List
+    val participantDetails: List<ParticipantDetail>? = null, // New
     val startDate: Date? = null,
     val endDate: Date? = null,
     val visibility: String = "Private", // "Public" or "Private"
@@ -24,7 +25,16 @@ data class Tirthyatra(
     val chatId: String? = null,
     val notes: String? = null,
     val durationDays: Int = 1,
-    val templateId: String? = null
+    val templateId: String? = null,
+    val creatorDetails: CreatorDetails? = null // New
+) : Parcelable
+
+@Parcelize
+data class CreatorDetails(
+    val name: String? = null,
+    val age: String? = null,
+    val gender: String? = null,
+    val contact: String? = null // New
 ) : Parcelable
 
 @Parcelize
@@ -33,7 +43,12 @@ data class JoinRequest(
     val userId: TirthyatraUser? = null, // Populated User
     val message: String? = null,
     val contactNumber: String? = null,
-    val status: String = "Pending"
+    val peopleCount: Int = 1,
+    val status: String = "Pending",
+    // Manual details
+    val name: String? = null,
+    val age: String? = null,
+    val gender: String? = null
 ) : Parcelable
 
 @Parcelize
@@ -71,4 +86,13 @@ data class ChecklistItem(
     val item: String,
     var isChecked: Boolean = false,
     val assignedTo: String? = null
+) : Parcelable
+
+@Parcelize
+data class ParticipantDetail(
+    val userId: String? = null,
+    val name: String? = null,
+    val age: String? = null,
+    val gender: String? = null,
+    val contact: String? = null
 ) : Parcelable

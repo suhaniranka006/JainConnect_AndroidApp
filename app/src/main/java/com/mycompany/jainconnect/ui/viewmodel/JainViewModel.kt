@@ -138,9 +138,9 @@ class JainViewModel @Inject constructor(
         }
     }
 
-    fun joinYatra(token: String, yatraId: String, message: String, contactNumber: String) {
+    fun joinYatra(token: String, yatraId: String, message: String, contactNumber: String, peopleCount: Int, name: String, age: String, gender: String) {
         viewModelScope.launch {
-             val result = tirthyatraRepository.joinYatra(token, yatraId, message, contactNumber)
+             val result = tirthyatraRepository.joinYatra(token, yatraId, message, contactNumber, peopleCount, name, age, gender)
              if (result is NetworkResult.Success) {
                  _yatraOperationResult.value = "Joined"
                  fetchPublicYatras(token) // Refresh public list
@@ -164,9 +164,9 @@ class JainViewModel @Inject constructor(
         }
     }
 
-    fun toggleCompanionship(token: String, yatraId: String, enable: Boolean) {
+    fun toggleCompanionship(token: String, yatraId: String, enable: Boolean, name: String? = null, age: String? = null, gender: String? = null, contact: String? = null) {
         viewModelScope.launch {
-            val result = tirthyatraRepository.toggleCompanionship(token, yatraId, enable)
+            val result = tirthyatraRepository.toggleCompanionship(token, yatraId, enable, name, age, gender, contact)
             if (result is NetworkResult.Success) {
                 _yatraOperationResult.value = if (enable) "Companionship Enabled" else "Companionship Disabled"
                 // Refresh details? The activity observing this should fetch details or update UI.
@@ -198,6 +198,18 @@ class JainViewModel @Inject constructor(
              } else {
                  _yatraOperationResult.value = result.message ?: "Failed to delete"
              }
+        }
+    }
+
+    fun leaveYatra(token: String, yatraId: String) {
+        viewModelScope.launch {
+            val result = tirthyatraRepository.leaveYatra(token, yatraId)
+            if (result is NetworkResult.Success) {
+                _yatraOperationResult.value = "Left Yatra"
+                fetchMyYatras(token)
+            } else {
+                _yatraOperationResult.value = result.message ?: "Failed to leave"
+            }
         }
     }
 

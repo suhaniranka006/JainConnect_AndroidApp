@@ -263,7 +263,7 @@ interface ApiService {
     suspend fun joinYatra(
         @Header("Authorization") token: String,
         @Path("id") id: String,
-        @Body body: Map<String, String> // message, contactNumber
+        @Body body: Map<String, @JvmSuppressWildcards Any> // message, contactNumber, peopleCount
     ): Response<ApiResponse>
 
     @POST("api/tirthyatra/{id}/cancel-request")
@@ -272,11 +272,17 @@ interface ApiService {
         @Path("id") id: String
     ): Response<ApiResponse>
 
+    @POST("api/tirthyatra/{id}/leave")
+    suspend fun leaveYatra(
+        @Header("Authorization") token: String,
+        @Path("id") id: String
+    ): Response<ApiResponse>
+
     @PUT("api/tirthyatra/{id}/companionship")
     suspend fun toggleCompanionship(
         @Header("Authorization") token: String,
         @Path("id") id: String,
-        @Body body: Map<String, Boolean> // { enable: true/false }
+        @Body body: Map<String, @JvmSuppressWildcards Any> // { enable: true/false, name, age, gender, contact }
     ): Response<SingleYatraResponse>
 
     @PUT("api/tirthyatra/{id}/members")

@@ -117,9 +117,12 @@ class TirthyatraDetailsActivity : AppCompatActivity() {
                      Glide.with(this).load(url).placeholder(R.drawable.ic_tirthyatra).into(binding.ivHeaderImage)
                 }
                 
-                // Refresh members fragment if needed (might need to detach/attach)
-                // For now, assuming list might be stale in fragment until resume.
-                // Better to just update status buttons.
+                // Refresh members fragment
+                val fragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+                if (fragment is com.mycompany.jainconnect.ui.fragments.YatraMembersFragment) {
+                    fragment.updateData(yatra)
+                }
+                
                 checkJoinStatus()
             }
         }
@@ -184,7 +187,12 @@ class TirthyatraDetailsActivity : AppCompatActivity() {
                     // Click Listeners
                     binding.btnCompanionship.setOnClickListener {
                         val enable = yatra.visibility != "Public"
-                        viewModel.toggleCompanionship(getToken(), yatra.id!!, enable)
+                        if (enable) {
+                            // Show Dialog to collect details
+                            showCompanionshipDetailsDialog(yatra.id!!)
+                        } else {
+                            viewModel.toggleCompanionship(getToken(), yatra.id!!, false)
+                        }
                     }
                     
                     binding.btnManageRequests.setOnClickListener {
@@ -248,15 +256,24 @@ class TirthyatraDetailsActivity : AppCompatActivity() {
 
     private fun showRequestDetailsDialog(request: com.mycompany.jainconnect.data.models.JoinRequest) {
         val user = request.userId
-        val userName = user?.name ?: "Unknown User"
-        val userDob = user?.dob ?: "N/A"
-        val userGender = user?.gender ?: "N/A"
-        val userPhone = user?.phone ?: "N/A"
-        val reqContact = request.contactNumber ?: userPhone
+        // Prefer manual details if available, else user object
+        // Prefer manual details if available, else user object fallback
+        val nameToDisplay = request.name ?: user?.name ?: "Unknown User"
+        // request.age might be "25" OR null. user.dob might be ISO Date String.
+        // Use AgeUtils to handle both cases efficiently.
+        val rawAgeSource = request.age ?: user?.dob
+        val ageToDisplay = com.mycompany.jainconnect.utils.AgeUtils.calculateAge(rawAgeSource)
         
-        val message = "Name: $userName\n" +
-                      "Age/Gender: $userDob / $userGender\n" +
-                      "Contact: $reqContact\n\n" +
+        val genderToDisplay = request.gender ?: user?.gender ?: "N/A"
+        
+        val reqContact = request.contactNumber ?: user?.phone ?: "N/A"
+        val peopleCount = request.peopleCount // Default 1 if null? Model has default.
+        
+        val message = "Name: $nameToDisplay\n" +
+                      "Age: $ageToDisplay\n" +
+                      "Gender: $genderToDisplay\n" +
+                      "Contact: $reqContact\n" +
+                      "People: $peopleCount\n\n" +
                       "Message:\n${request.message ?: "No message"}"
 
         androidx.appcompat.app.AlertDialog.Builder(this)
@@ -307,6 +324,27 @@ class TirthyatraDetailsActivity : AppCompatActivity() {
             // User model in Android 'User' might need check.
         }
         layout.addView(etContact)
+        
+        val etPeopleCount = android.widget.EditText(context)
+        etPeopleCount.hint = "Number of People (e.g., 2)"
+        etPeopleCount.inputType = android.text.InputType.TYPE_CLASS_NUMBER
+        etPeopleCount.setText("1")
+        layout.addView(etPeopleCount)
+
+        val etName = android.widget.EditText(context)
+        etName.hint = "My Name"
+         viewModel.userProfile.value?.let { etName.setText(it.name) }
+        layout.addView(etName)
+        
+        val etAge = android.widget.EditText(context)
+        etAge.hint = "My Age"
+        etAge.inputType = android.text.InputType.TYPE_CLASS_NUMBER
+        layout.addView(etAge)
+        
+        val etGender = android.widget.EditText(context)
+        etGender.hint = "My Gender"
+         viewModel.userProfile.value?.let { etGender.setText(it.gender) }
+        layout.addView(etGender)
 
         androidx.appcompat.app.AlertDialog.Builder(context)
             .setTitle("Join Request")
@@ -314,11 +352,18 @@ class TirthyatraDetailsActivity : AppCompatActivity() {
             .setPositiveButton("Send") { _, _ ->
                 val message = etMessage.text.toString()
                 val contact = etContact.text.toString()
-                if (contact.isEmpty()) {
-                    Toast.makeText(context, "Contact number is required", Toast.LENGTH_SHORT).show()
+                val countStr = etPeopleCount.text.toString()
+                val name = etName.text.toString()
+                val age = etAge.text.toString()
+                val gender = etGender.text.toString()
+                
+                if (contact.isEmpty() || name.isEmpty() || age.isEmpty() || gender.isEmpty()) {
+                    Toast.makeText(context, "All fields are required", Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }
-                viewModel.joinYatra(getToken(), tirthyatra?.id!!, message, contact)
+                
+                val peopleCount = if (countStr.isNotEmpty()) countStr.toIntOrNull() ?: 1 else 1
+                viewModel.joinYatra(getToken(), tirthyatra?.id!!, message, contact, peopleCount, name, age, gender)
             }
             .setNegativeButton("Cancel", null)
             .show()
@@ -332,6 +377,55 @@ class TirthyatraDetailsActivity : AppCompatActivity() {
 
     private fun joinYatra() {
         // Deprecated, using specific listeners in checkJoinStatus
+    }
+
+    private fun showCompanionshipDetailsDialog(yatraId: String) {
+        val context = this
+        val layout = android.widget.LinearLayout(context)
+        layout.orientation = android.widget.LinearLayout.VERTICAL
+        layout.setPadding(50, 40, 50, 10)
+
+        val etName = android.widget.EditText(context)
+        etName.hint = "Your Name"
+        viewModel.userProfile.value?.let { etName.setText(it.name) } // Prefill
+        layout.addView(etName)
+        
+        val etAge = android.widget.EditText(context)
+        etAge.hint = "Age"
+        etAge.inputType = android.text.InputType.TYPE_CLASS_NUMBER
+        layout.addView(etAge)
+        
+        val etGender = android.widget.EditText(context)
+        etGender.hint = "Gender (Male/Female)"
+        viewModel.userProfile.value?.let { etGender.setText(it.gender) } // Prefill
+        layout.addView(etGender)
+
+        val etContact = android.widget.EditText(context)
+        etContact.hint = "Contact Number"
+        etContact.inputType = android.text.InputType.TYPE_CLASS_PHONE
+        // Try to prefill from user profile phone/mobileNumber if available? 
+        // viewModel.userProfile.value?.phone ...
+        layout.addView(etContact)
+
+        androidx.appcompat.app.AlertDialog.Builder(context)
+            .setTitle("Companionship Details")
+            .setMessage("Share details for potential companions:")
+            .setView(layout)
+            .setPositiveButton("Enable") { _, _ ->
+                val name = etName.text.toString()
+                val age = etAge.text.toString()
+                val gender = etGender.text.toString()
+                val contact = etContact.text.toString()
+                
+                if (name.isEmpty() || age.isEmpty() || gender.isEmpty() || contact.isEmpty()) {
+                    Toast.makeText(context, "All fields are required", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+                
+                viewModel.toggleCompanionship(getToken(), yatraId, true, name, age, gender, contact)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun getToken(): String {

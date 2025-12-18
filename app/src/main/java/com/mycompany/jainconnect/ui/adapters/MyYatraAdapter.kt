@@ -14,18 +14,21 @@ import java.util.concurrent.TimeUnit
 
 class MyYatraAdapter(
     private var yatras: List<Tirthyatra>,
+    private val currentUserId: String?,
     private val onItemClick: (Tirthyatra) -> Unit,
     private val onDeleteClick: ((Tirthyatra) -> Unit)? = null,
+    private val onLeaveClick: ((Tirthyatra) -> Unit)? = null,
     private val showDeleteButton: Boolean = true
 ) : RecyclerView.Adapter<MyYatraAdapter.YatraViewHolder>() {
 
     class YatraViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvTitle: TextView = itemView.findViewById(R.id.tvYatraTitle)
         val tvDates: TextView = itemView.findViewById(R.id.tvDates)
+        val tvCreatorInfo: TextView = itemView.findViewById(R.id.tvCreatorInfo) // New
         val tvDaysLeft: TextView = itemView.findViewById(R.id.tvDaysLeft)
         val statusStrip: View = itemView.findViewById(R.id.viewStatusStrip)
         val ivYatraImage: android.widget.ImageView = itemView.findViewById(R.id.ivYatraImage)
-        val ivDelete: View = itemView.findViewById(R.id.ivDelete)
+        val ivDelete: android.widget.ImageView = itemView.findViewById(R.id.ivDelete)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): YatraViewHolder {
@@ -80,14 +83,38 @@ class MyYatraAdapter(
             holder.tvDaysLeft.visibility = View.GONE
         }
         
+        // Show Creator Details if available (For Public/Community View)
+        if (yatra.creatorDetails != null && !yatra.creatorDetails!!.name.isNullOrEmpty()) {
+            val details = yatra.creatorDetails!!
+            val contactInfo = if (!details.contact.isNullOrEmpty()) " | ${details.contact}" else ""
+            val info = "Organizer: ${details.name} (${details.gender}, ${details.age})$contactInfo"
+            holder.tvCreatorInfo.text = info
+            holder.tvCreatorInfo.visibility = View.VISIBLE
+        } else {
+            holder.tvCreatorInfo.visibility = View.GONE
+        }
+        
         holder.itemView.setOnClickListener {
             onItemClick(yatra)
         }
 
-        if (showDeleteButton && onDeleteClick != null) {
-            holder.ivDelete.visibility = View.VISIBLE
-            holder.ivDelete.setOnClickListener {
-                onDeleteClick.invoke(yatra)
+        if (showDeleteButton) {
+            val isCreator = yatra.creatorId?.id == currentUserId
+            
+            if (isCreator) {
+                // Show Delete for Creator
+                holder.ivDelete.visibility = View.VISIBLE
+                holder.ivDelete.setImageResource(R.drawable.ic_delete) 
+                 holder.ivDelete.setOnClickListener {
+                    onDeleteClick?.invoke(yatra)
+                }
+            } else {
+                // Show Leave for Participant
+                holder.ivDelete.visibility = View.VISIBLE
+                holder.ivDelete.setImageResource(R.drawable.ic_delete) // Use delete icon for leave too (remove from list)
+                holder.ivDelete.setOnClickListener {
+                    onLeaveClick?.invoke(yatra)
+                }
             }
         } else {
             holder.ivDelete.visibility = View.GONE

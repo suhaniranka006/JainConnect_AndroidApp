@@ -34,8 +34,15 @@ class TirthyatraRepository @Inject constructor(
         return handleApi { apiService.getYatraDetails("Bearer $token", id) }
     }
 
-    suspend fun joinYatra(token: String, id: String, message: String, contactNumber: String): NetworkResult<ApiResponse> {
-        val body = mapOf("message" to message, "contactNumber" to contactNumber)
+    suspend fun joinYatra(token: String, id: String, message: String, contactNumber: String, peopleCount: Int, name: String, age: String, gender: String): NetworkResult<ApiResponse> {
+        val body: Map<String, Any> = mapOf(
+            "message" to message, 
+            "contactNumber" to contactNumber, 
+            "peopleCount" to peopleCount,
+            "name" to name,
+            "age" to age,
+            "gender" to gender
+        )
         return handleApi { apiService.joinYatra("Bearer $token", id, body) }
     }
 
@@ -43,14 +50,23 @@ class TirthyatraRepository @Inject constructor(
         return handleApi { apiService.cancelRequest("Bearer $token", id) }
     }
 
-    suspend fun toggleCompanionship(token: String, id: String, enable: Boolean): NetworkResult<SingleYatraResponse> {
-        val body = mapOf("enable" to enable)
+    suspend fun toggleCompanionship(token: String, id: String, enable: Boolean, name: String? = null, age: String? = null, gender: String? = null, contact: String? = null): NetworkResult<SingleYatraResponse> {
+        val body = mutableMapOf<String, Any>("enable" to enable)
+        if (name != null) body["name"] = name
+        if (age != null) body["age"] = age
+        if (gender != null) body["gender"] = gender
+        if (contact != null) body["contact"] = contact
+        
         return handleApi { apiService.toggleCompanionship("Bearer $token", id, body) }
     }
 
     suspend fun manageMember(token: String, id: String, targetUserId: String, action: String): NetworkResult<SingleYatraResponse> {
         val body = mapOf("targetUserId" to targetUserId, "action" to action)
         return handleApi { apiService.manageMember("Bearer $token", id, body) }
+    }
+
+    suspend fun leaveYatra(token: String, id: String): NetworkResult<ApiResponse> {
+        return handleApi { apiService.leaveYatra("Bearer $token", id) }
     }
 
     suspend fun deleteYatra(token: String, id: String): NetworkResult<ApiResponse> {
