@@ -64,8 +64,62 @@ import com.mycompany.jainconnect.data.models.ApiResponse
  */
 @HiltViewModel
 class JainViewModel @Inject constructor(
-    private val repository: JainRepository
+    private val repository: JainRepository,
+    private val tirthyatraRepository: com.mycompany.jainconnect.data.repository.TirthyatraRepository
 ) : ViewModel() {
+
+    // ... (Existing Auth Logic)
+
+    // ===================================
+    //       TIRTHYATRA PLANNER
+    // ===================================
+
+    private val _tirthyatraTemplates = MutableLiveData<List<com.mycompany.jainconnect.data.models.TirthyatraTemplate>>()
+    val tirthyatraTemplates: LiveData<List<com.mycompany.jainconnect.data.models.TirthyatraTemplate>> = _tirthyatraTemplates
+
+    private val _myYatras = MutableLiveData<List<com.mycompany.jainconnect.data.models.Tirthyatra>>()
+    val myYatras: LiveData<List<com.mycompany.jainconnect.data.models.Tirthyatra>> = _myYatras
+
+    private val _publicYatras = MutableLiveData<List<com.mycompany.jainconnect.data.models.Tirthyatra>>()
+    val publicYatras: LiveData<List<com.mycompany.jainconnect.data.models.Tirthyatra>> = _publicYatras
+
+    private val _yatraOperationResult = MutableLiveData<String>()
+    val yatraOperationResult: LiveData<String> = _yatraOperationResult
+
+    fun fetchTirthyatraTemplates(isPopular: Boolean? = null) {
+        viewModelScope.launch {
+            val result = tirthyatraRepository.getTemplates(isPopular)
+            if (result is NetworkResult.Success && result.data != null) {
+                 // Sort: Popular first
+                 val sortedList = result.data.data.sortedByDescending { it.isPopular }
+                 _tirthyatraTemplates.value = sortedList
+            } else {
+                 _tirthyatraTemplates.value = emptyList()
+            }
+        }
+    }
+
+    fun createYatra(token: String, yatra: com.mycompany.jainconnect.data.models.Tirthyatra) {
+        viewModelScope.launch {
+            val result = tirthyatraRepository.createYatra(token, yatra)
+             if (result is NetworkResult.Success) {
+                 _yatraOperationResult.value = "Success"
+                 fetchMyYatras(token) // Refresh list
+             } else {
+                 _yatraOperationResult.value = result.message ?: "Failed"
+             }
+        }
+    }
+
+    fun fetchMyYatras(token: String) {
+        viewModelScope.launch {
+            val result = tirthyatraRepository.getMyYatras(token)
+             if (result is NetworkResult.Success && result.data != null) {
+                 _myYatras.value = result.data.data
+             }
+        }
+    }
+
 
     //
     //                                  USER AUTHENTICATION

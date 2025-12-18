@@ -796,13 +796,12 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Inspiring Stories"
                         android:textColor="#D32F2F"
                         android:textSize="10sp"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- 9. Tirthyatra (Indigo) -->
+            <!-- 10. Tirthyatra Planner (Deep Orange/Amber) -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/btnTirthyatra"
                 android:layout_width="0dp"
@@ -810,10 +809,10 @@
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
                 android:layout_margin="4dp"
-                app:cardBackgroundColor="#E8EAF6"
+                app:cardBackgroundColor="#FFF8E1"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
-                app:strokeColor="#C5CAE9"
+                app:strokeColor="#FFECB3"
                 app:strokeWidth="0dp">
 
                 <LinearLayout
@@ -825,21 +824,21 @@
                     <ImageView
                         android:layout_width="32dp"
                         android:layout_height="32dp"
-                        android:src="@drawable/ic_tirthyatra"
-                        app:tint="#3949AB" />
+                        android:src="@drawable/ic_temple"
+                        app:tint="#FF8F00" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="Tirthyatra"
-                        android:textColor="#3949AB"
+                        android:textColor="#FF8F00"
                         android:textSize="14sp"
                         android:textStyle="bold"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Planner"
-                        android:textColor="#3949AB"
+                        android:text="Plan Your Trip"
+                        android:textColor="#FF8F00"
                         android:textSize="10sp"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

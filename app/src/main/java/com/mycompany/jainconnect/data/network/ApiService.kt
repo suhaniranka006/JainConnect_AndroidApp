@@ -33,6 +33,11 @@ import com.mycompany.jainconnect.data.models.Bhojanshala
 import com.mycompany.jainconnect.data.models.Temple
 import com.mycompany.jainconnect.data.models.BhojanshalaSubmissionRequest
 import com.mycompany.jainconnect.data.models.Story
+import com.mycompany.jainconnect.data.models.Tirthyatra
+import com.mycompany.jainconnect.data.models.TirthyatraTemplate
+import com.mycompany.jainconnect.data.models.TemplateListResponse
+import com.mycompany.jainconnect.data.models.YatraListResponse
+import com.mycompany.jainconnect.data.models.SingleYatraResponse
 import retrofit2.http.DELETE
 
 /**
@@ -228,5 +233,35 @@ interface ApiService {
     suspend fun likeStory(
         @Header("Authorization") token: String,
         @Path("id") id: String
-    ): Response<Map<String, Any>> // Backend returns { success: true, likes: 10 }
+    ): Response<Map<String, Any>>
+
+    // --- Tirthyatra Planner ---
+    @GET("api/tirthyatra/templates")
+    suspend fun getTirthyatraTemplates(
+        @Query("isPopular") isPopular: Boolean? = null
+    ): Response<TemplateListResponse>
+
+    @POST("api/tirthyatra")
+    suspend fun createYatra(
+        @Header("Authorization") token: String,
+        @Body yatra: Tirthyatra
+    ): Response<SingleYatraResponse>
+
+    @GET("api/tirthyatra")
+    suspend fun getMyYatras(
+        @Header("Authorization") token: String,
+        @Query("type") type: String? = null // "public" or null for my
+    ): Response<YatraListResponse>
+
+    @GET("api/tirthyatra/{id}")
+    suspend fun getYatraDetails(
+        @Header("Authorization") token: String,
+        @Path("id") id: String
+    ): Response<SingleYatraResponse>
+
+    @POST("api/tirthyatra/{id}/join")
+    suspend fun joinYatra(
+        @Header("Authorization") token: String,
+        @Path("id") id: String
+    ): Response<ApiResponse>
 }
