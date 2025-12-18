@@ -264,4 +264,7 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Path("id") id: String
     ): Response<ApiResponse>
+
+    @DELETE("api/tirthyatra/{id}")
+    suspend fun deleteYatra(@Header("Authorization") token: String, @Path("id") id: String): Response<ApiResponse>
 }

@@ -76,6 +76,19 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.activities.CreateYatraActivity"
+            android:exported="false"
+            android:theme="@style/Theme.JainConnect.NoActionBar" />
+        <activity
+            android:name=".ui.activities.TirthyatraDetailsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.JainConnect.NoActionBar" />
+        <activity
+            android:name=".ui.activities.TirthyatraActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
+        <activity
             android:name=".ui.activities.LegacyActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
@@ -103,16 +116,7 @@
         <activity
             android:name=".ui.activities.MembersActivity"
             android:exported="false" />
-        <activity
-            android:name=".ui.activities.CreateYatraActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
-        <activity
-            android:name=".ui.activities.TirthyatraActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
+
     </application>
 
 </manifest>

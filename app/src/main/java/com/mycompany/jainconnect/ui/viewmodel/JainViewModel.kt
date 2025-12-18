@@ -116,6 +116,46 @@ class JainViewModel @Inject constructor(
             val result = tirthyatraRepository.getMyYatras(token)
              if (result is NetworkResult.Success && result.data != null) {
                  _myYatras.value = result.data.data
+             } else {
+                 Log.e("JainViewModel", "fetchMyYatras failed: ${result.message}")
+                 _myYatras.value = emptyList()
+             }
+        }
+    }
+
+    fun fetchPublicYatras(token: String) {
+        viewModelScope.launch {
+            val result = tirthyatraRepository.getPublicYatras(token)
+             if (result is NetworkResult.Success && result.data != null) {
+                 _publicYatras.value = result.data.data
+             } else {
+                 Log.e("JainViewModel", "fetchPublicYatras failed: ${result.message}")
+                 _publicYatras.value = emptyList()
+             }
+        }
+    }
+
+    fun joinYatra(token: String, yatraId: String) {
+        viewModelScope.launch {
+             val result = tirthyatraRepository.joinYatra(token, yatraId)
+             if (result is NetworkResult.Success) {
+                 _yatraOperationResult.value = "Joined"
+                 fetchPublicYatras(token) // Refresh public list
+                 fetchMyYatras(token) // Refresh my list
+             } else {
+                 _yatraOperationResult.value = result.message ?: "Failed to join"
+             }
+        }
+    }
+
+    fun deleteYatra(token: String, yatraId: String) {
+        viewModelScope.launch {
+             val result = tirthyatraRepository.deleteYatra(token, yatraId)
+             if (result is NetworkResult.Success) {
+                 _yatraOperationResult.value = "Deleted"
+                 fetchMyYatras(token) // Refresh list to remove deleted item
+             } else {
+                 _yatraOperationResult.value = result.message ?: "Failed to delete"
              }
         }
     }

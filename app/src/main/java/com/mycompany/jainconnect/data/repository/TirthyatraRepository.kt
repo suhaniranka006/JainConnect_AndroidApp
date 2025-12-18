@@ -38,6 +38,10 @@ class TirthyatraRepository @Inject constructor(
         return handleApi { apiService.joinYatra("Bearer $token", id) }
     }
 
+    suspend fun deleteYatra(token: String, id: String): NetworkResult<ApiResponse> {
+        return handleApi { apiService.deleteYatra("Bearer $token", id) }
+    }
+
     private suspend fun <T> handleApi(
         execute: suspend () -> Response<T>
     ): NetworkResult<T> {

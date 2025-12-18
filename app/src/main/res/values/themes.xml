@@ -20,4 +20,10 @@
 
     <!-- Main app theme -->
     <style name="Theme.JainConnect" parent="Base.Theme.JainConnect" />
+    <style name="Theme.JainConnect.NoActionBar" parent="Theme.JainConnect" />
+
+    <style name="RoundedImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
 </resources>

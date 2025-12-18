@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    app:strokeWidth="0dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Status Strip -->
+        <View
+            android:id="@+id/viewStatusStrip"
+            android:layout_width="8dp"
+            android:layout_height="0dp"
+            android:background="@color/saffron"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cvImageContainer"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_margin="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/viewStatusStrip"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/ivYatraImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/light_gray"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_tirthyatra" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/tvYatraTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="16dp"
+            android:text="Shikharji Yatra 2024"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/cvImageContainer"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvDates"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="14 Oct - 20 Oct"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@id/tvYatraTitle"
+            app:layout_constraintStart_toStartOf="@id/tvYatraTitle"
+            app:layout_constraintTop_toBottomOf="@id/tvYatraTitle" />
+
+        <TextView
+            android:id="@+id/tvDaysLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/bg_chip_transparent"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="4dp"
+            android:text="12 Days Left"
+            android:textColor="@color/saffron"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/tvDates"
+            app:layout_constraintTop_toBottomOf="@id/tvDates" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_arrow_forward"
+            app:tint="@android:color/darker_gray"
+            app:layout_constraintBottom_toBottomOf="@id/tvDaysLeft"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvDaysLeft" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

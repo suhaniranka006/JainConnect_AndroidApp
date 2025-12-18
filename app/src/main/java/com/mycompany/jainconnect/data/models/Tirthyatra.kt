@@ -1,14 +1,19 @@
 package com.mycompany.jainconnect.data.models
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 import java.util.Date
 
+@Parcelize
 data class Tirthyatra(
     @SerializedName("_id") val id: String? = null,
     val title: String,
-    val creatorId: String, // ID of the creator
-    val admins: List<String> = emptyList(), // List of Admin User IDs
-    val participants: List<String> = emptyList(), // List of Participant User IDs
+    val imageUrl: String? = null,
+    val creatorId: TirthyatraUser? = null, // Changed from String
+
+    val admins: List<String> = emptyList(), // List of Admin User IDs - Keeping as String for now or update? Admins are subset of participants usually.
+    val participants: List<TirthyatraUser> = emptyList(), // Changed to Object List
     val startDate: Date? = null,
     val endDate: Date? = null,
     val visibility: String = "Private", // "Public" or "Private"
@@ -17,16 +22,29 @@ data class Tirthyatra(
     val checklist: List<ChecklistItem> = emptyList(),
     val pendingRequests: List<String> = emptyList(),
     val chatId: String? = null,
-    val notes: String? = null
-)
+    val notes: String? = null,
+    val durationDays: Int = 1,
+    val templateId: String? = null
+) : Parcelable
 
+@Parcelize
+data class TirthyatraUser(
+    @SerializedName("_id") val id: String,
+    val name: String,
+    val profileImage: String? = null,
+    val gender: String? = null,
+    val dob: String? = null
+) : Parcelable
+
+@Parcelize
 data class ItineraryDay(
     val day: Int,
     val date: Date? = null,
     val title: String? = null,
     val activities: List<Activity> = emptyList()
-)
+) : Parcelable
 
+@Parcelize
 data class Activity(
     val type: String, // 'Temple', 'Dharamshala', 'Travel', 'Custom'
     val time: String? = null,
@@ -35,10 +53,11 @@ data class Activity(
     val locationId: String? = null,
     val locationModel: String? = null,
     val notes: String? = null
-)
+) : Parcelable
 
+@Parcelize
 data class ChecklistItem(
     val item: String,
     var isChecked: Boolean = false,
     val assignedTo: String? = null
-)
+) : Parcelable

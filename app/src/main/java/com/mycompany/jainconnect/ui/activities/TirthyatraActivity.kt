@@ -32,8 +32,10 @@ class TirthyatraActivity : AppCompatActivity() {
         
         val btnAdd = findViewById<ImageView>(R.id.btnAddYatra)
         btnAdd.setOnClickListener {
-            // Navigate to Create Yatra Screen (To be implemented)
-            Toast.makeText(this, "Create Yatra coming soon", Toast.LENGTH_SHORT).show()
+            // Redirect to Explore Tab to pick a template
+            val viewPager = findViewById<ViewPager2>(R.id.viewPager)
+            viewPager.currentItem = 0
+            Toast.makeText(this, "Select a template from Explore to plan your trip", Toast.LENGTH_LONG).show()
         }
 
         val tabLayout = findViewById<TabLayout>(R.id.tabLayout)

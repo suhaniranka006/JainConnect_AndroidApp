@@ -40,8 +40,7 @@ class TirthyatraExploreFragment : Fragment() {
         adapter = TirthyatraTemplateAdapter(emptyList()) { template ->
             // Handle "Plan Trip" click
             val intent = Intent(requireContext(), CreateYatraActivity::class.java)
-            intent.putExtra("TEMPLATE_ID", template.id)
-            intent.putExtra("TEMPLATE_TITLE", template.title)
+            intent.putExtra("TEMPLATE_DATA", template)
             startActivity(intent)
         }
         recyclerView.adapter = adapter
