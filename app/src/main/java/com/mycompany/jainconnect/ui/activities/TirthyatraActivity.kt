@@ -32,10 +32,10 @@ class TirthyatraActivity : AppCompatActivity() {
         
         val btnAdd = findViewById<ImageView>(R.id.btnAddYatra)
         btnAdd.setOnClickListener {
-            // Redirect to Explore Tab to pick a template
-            val viewPager = findViewById<ViewPager2>(R.id.viewPager)
-            viewPager.currentItem = 0
-            Toast.makeText(this, "Select a template from Explore to plan your trip", Toast.LENGTH_LONG).show()
+            // Launch Custom Yatra Creation
+            val intent = android.content.Intent(this, CreateYatraActivity::class.java)
+            intent.putExtra("IS_CUSTOM", true)
+            startActivity(intent)
         }
 
         val tabLayout = findViewById<TabLayout>(R.id.tabLayout)

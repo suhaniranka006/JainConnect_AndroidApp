@@ -294,4 +294,11 @@ interface ApiService {
 
     @DELETE("api/tirthyatra/{id}")
     suspend fun deleteYatra(@Header("Authorization") token: String, @Path("id") id: String): Response<ApiResponse>
+
+    @Multipart
+    @POST("api/tirthyatra/upload")
+    suspend fun uploadTirthyatraImage(
+        @Header("Authorization") token: String,
+        @Part image: MultipartBody.Part
+    ): Response<com.mycompany.jainconnect.data.models.UploadResponse>
 }

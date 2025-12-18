@@ -114,6 +114,26 @@ class JainViewModel @Inject constructor(
         }
     }
 
+    private val _uploadedImageUrl = MutableLiveData<String?>()
+    val uploadedImageUrl: LiveData<String?> = _uploadedImageUrl
+
+    fun uploadYatraImage(token: String, file: File) {
+        viewModelScope.launch {
+            // Note: Using the main repository for this generic upload or create a specific one
+            // We added it to JainRepository, so using 'repository'
+            try {
+                val response = repository.uploadTirthyatraImage(token, file)
+                if (response.isSuccessful && response.body()?.success == true) {
+                    _uploadedImageUrl.value = response.body()!!.imageUrl
+                } else {
+                    _yatraOperationResult.value = "Image Upload Failed"
+                }
+            } catch (e: Exception) {
+                 _yatraOperationResult.value = "Image Upload Error: ${e.message}"
+            }
+        }
+    }
+
     fun fetchMyYatras(token: String) {
         viewModelScope.launch {
             val result = tirthyatraRepository.getMyYatras(token)

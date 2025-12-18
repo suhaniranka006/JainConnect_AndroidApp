@@ -367,6 +367,12 @@ class JainRepository @Inject constructor(
     suspend fun deleteYatra(token: String, id: String): Response<ApiResponse> {
         return api.deleteYatra("Bearer $token", id)
     }
+
+    suspend fun uploadTirthyatraImage(token: String, file: File): Response<com.mycompany.jainconnect.data.models.UploadResponse> {
+        val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+        val body = MultipartBody.Part.createFormData("image", file.name, requestFile)
+        return api.uploadTirthyatraImage("Bearer $token", body)
+    }
 }
 
 

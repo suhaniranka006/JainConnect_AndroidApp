@@ -57,30 +57,28 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Title & Duration -->
-            <TextView
-                android:id="@+id/tvTemplateTitle"
-                android:layout_width="wrap_content"
+            <!-- Editable Title (For Custom Yatra) -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilTitle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Shikharji Yatra"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="@color/black" />
+                android:layout_marginBottom="8dp"
+                android:hint="Trip Title"
+                android:visibility="gone"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-            <TextView
-                android:id="@+id/tvDuration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Duration: 7 Days"
-                android:textSize="14sp"
-                android:textColor="@android:color/darker_gray" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapWords" />
+            </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Uneditable Description (About Place) -->
             <TextView
                 android:id="@+id/tvDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
                 android:text="Full description of the yatra template goes here..."
                 android:textSize="14sp"
                 android:textColor="@color/dark_charcoal"
@@ -96,16 +94,34 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Plan Your Dates"
+                android:text="Plan Your Trip"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/black" />
 
+            <!-- Editable Duration -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilDuration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="Duration (Days)"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etDuration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:text="7" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Start Date -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilStartDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="12dp"
                 android:hint="Start Date"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
@@ -120,15 +136,43 @@
                     android:text="Select Start Date" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:id="@+id/tvEndDate"
+            <!-- End Date -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilEndDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:text="Estimated End Date: --"
-                android:textSize="14sp"
-                android:textColor="@color/saffron"
-                android:textStyle="bold" />
+                android:hint="End Date"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etEndDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_calendar_check"
+                    android:drawablePadding="12dp"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:text="Select End Date" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Editable Description (Notes) -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilNotes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="Description (e.g. Family Trip Details)"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etNotes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:minLines="3"
+                    android:inputType="textMultiLine|textCapSentences" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCreateYatra"
