@@ -17,18 +17,16 @@ interface OnRsvpButtonClickListener {
 
 class EventAdapter(
     private var eventList: List<Event>,
-    // === STEP 2: Pass the listener to the adapter's constructor ===
     private val rsvpClickListener: OnRsvpButtonClickListener
 ) : RecyclerView.Adapter<EventAdapter.EventViewHolder>() {
 
-    // === STEP 3: ViewHolder for Event items ===
     class EventViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val ivEventImage: android.widget.ImageView = itemView.findViewById(R.id.ivEventImage)
+        val tvDateDay: TextView = itemView.findViewById(R.id.tvDateDay)
+        val tvDateMonth: TextView = itemView.findViewById(R.id.tvDateMonth)
         val tvEventName: TextView = itemView.findViewById(R.id.tvEventName)
-        val tvEventDateTime: TextView = itemView.findViewById(R.id.tvEventDateTime)
         val tvEventTime: TextView = itemView.findViewById(R.id.tvEventTime)
         val tvEventLocation: TextView = itemView.findViewById(R.id.tvEventLocation)
-        val tvEventContact: TextView = itemView.findViewById(R.id.tvEventContact)
         val tvEventDescription: TextView = itemView.findViewById(R.id.tvEventDescription)
         val tvRsvpCount: TextView = itemView.findViewById(R.id.tvRsvpCount)
         val btnRsvp: MaterialButton = itemView.findViewById(R.id.btnRsvp)
@@ -36,41 +34,55 @@ class EventAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_event, parent, false) // Match your item_event.xml
+            .inflate(R.layout.item_event, parent, false)
         return EventViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: EventViewHolder, position: Int) {
         val event = eventList[position]
 
-        // === STEP 4: Bind event data ===
-        holder.tvEventName.text = event.name
-        holder.tvEventDateTime.text = event.date
-        holder.tvEventTime.text = event.time ?: "Time not available"
-        holder.tvEventLocation.text = event.location
-
-        // Bind Contact
-        if (!event.contact.isNullOrEmpty()) {
-            holder.tvEventContact.text = "Contact: ${event.contact}"
-            holder.tvEventContact.visibility = View.VISIBLE
-        } else {
-            holder.tvEventContact.visibility = View.GONE
-        }
-
-        // Image Binding (Glide)
-        // Ensure you add 'ivEventImage' to EventViewHolder class first!
+        // Load Image (Banner)
         if (!event.image.isNullOrEmpty()) {
              holder.ivEventImage.visibility = View.VISIBLE
              com.bumptech.glide.Glide.with(holder.itemView.context)
                  .load(event.image)
                  .centerCrop()
-                 .placeholder(R.drawable.ic_launcher_background)
+                 .placeholder(R.drawable.bg_gradient_header) // Placeholder
                  .into(holder.ivEventImage)
         } else {
              holder.ivEventImage.visibility = View.GONE
         }
 
-        // Handle optional description
+        holder.tvEventName.text = event.name
+        holder.tvEventTime.text = event.time ?: "--:--"
+        holder.tvEventLocation.text = event.location
+
+        // Parse Date for Date Box (Format YYYY-MM-DD)
+        try {
+            val parts = event.date.split("-", " ", "/")
+            if (parts.size >= 3) {
+                 var day = parts[2]
+                 var month = parts[1]
+                 
+                 if (parts[0].length == 4) { // YYYY-MM-DD
+                     day = parts[2]
+                     month = getMonthName(parts[1].toIntOrNull() ?: 1)
+                 } else { // DD-MM-YYYY
+                     day = parts[0]
+                     month = getMonthName(parts[1].toIntOrNull() ?: 1)
+                 }
+                 
+                 holder.tvDateDay.text = day
+                 holder.tvDateMonth.text = month
+            } else {
+                holder.tvDateDay.text = "--"
+                holder.tvDateMonth.text = "DATE"
+            }
+        } catch (e: Exception) {
+            holder.tvDateDay.text = "Evt"
+            holder.tvDateMonth.text = "DATE"
+        }
+
         if (!event.description.isNullOrEmpty()) {
             holder.tvEventDescription.text = event.description
             holder.tvEventDescription.visibility = View.VISIBLE
@@ -78,21 +90,25 @@ class EventAdapter(
             holder.tvEventDescription.visibility = View.GONE
         }
 
-        // RSVP count: assumes Event.kt has rsvpCount property
-        holder.tvRsvpCount.text = "${event.rsvpCount} people are going"
+        holder.tvRsvpCount.text = "${event.rsvpCount} Going"
 
-        // RSVP button
         holder.btnRsvp.setOnClickListener {
             rsvpClickListener.onRsvpClick(event)
         }
     }
 
+    private fun getMonthName(month: Int): String {
+        return when (month) {
+            1 -> "JAN" 2 -> "FEB" 3 -> "MAR" 4 -> "APR" 5 -> "MAY" 6 -> "JUN"
+            7 -> "JUL" 8 -> "AUG" 9 -> "SEP" 10 -> "OCT" 11 -> "NOV" 12 -> "DEC"
+            else -> "MTH"
+        }
+    }
+
     override fun getItemCount(): Int = eventList.size
 
-    // === STEP 5: Update the adapter data ===
     fun updateData(newEventList: List<Event>) {
         this.eventList = newEventList
         notifyDataSetChanged()
-        // For smoother updates, consider using DiffUtil
     }
 }
