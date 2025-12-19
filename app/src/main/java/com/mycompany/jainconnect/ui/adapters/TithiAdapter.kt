@@ -16,78 +16,81 @@ import com.mycompany.jainconnect.data.models.Tithi
 class TithiAdapter(private var tithiList: List<Tithi>) :
     RecyclerView.Adapter<TithiAdapter.TithiViewHolder>() {
 
-    private val TAG = "TithiAdapter_Debug" // Tag for logs
+    private val TAG = "TithiAdapter_Debug"
 
-    /**
-     * ViewHolder class for Tithi items.
-     * Holds references to the views for each item in the RecyclerView.
-     */
     class TithiViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvTithiName: TextView = itemView.findViewById(R.id.tvTithiName)
-        val tvTithiDate: TextView = itemView.findViewById(R.id.tvTithiDate)
         val tvTithiDetails: TextView = itemView.findViewById(R.id.tvTithiDescription)
+        val tvDateDay: TextView = itemView.findViewById(R.id.tvDateDay)
+        val tvDateMonth: TextView = itemView.findViewById(R.id.tvDateMonth)
+        // val tvSunrise: TextView = itemView.findViewById(R.id.tvSunrise) // Data missing
+        // val tvSunset: TextView = itemView.findViewById(R.id.tvSunset)   // Data missing
     }
 
-    /**
-     * Called when RecyclerView needs a new ViewHolder of the given type to represent an item.
-     */
-    //called when new row needs to be created
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TithiViewHolder {
-        Log.d(TAG, "onCreateViewHolder called")
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_tithi, parent, false) // Inflate layout
+            .inflate(R.layout.item_tithi, parent, false)
         return TithiViewHolder(view)
     }
 
-    /**
-     * Called by RecyclerView to display the data at the specified position.
-     */
     override fun onBindViewHolder(holder: TithiViewHolder, position: Int) {
-        // Defensive logging
-        if (tithiList.isEmpty()) {
-            Log.w(TAG, "onBindViewHolder called but tithiList is empty! Position: $position")
-            return
-        }
-        if (position >= tithiList.size) {
-            Log.e(TAG, "onBindViewHolder called with invalid position: $position, size: ${tithiList.size}")
-            return
-        }
+        val tithi = tithiList[position]
 
-        val tithi = tithiList[position] // Get the data model for this position
-        Log.d(TAG, "onBindViewHolder called for position: $position, Tithi: ${tithi.name}, Date: ${tithi.date}")
-
-        // Bind data to views
         holder.tvTithiName.text = tithi.name
-        holder.tvTithiDate.text = tithi.date
-
-        // Handle optional details field
+        
+        // Handle Description
         if (!tithi.details.isNullOrEmpty()) {
             holder.tvTithiDetails.text = tithi.details
             holder.tvTithiDetails.visibility = View.VISIBLE
-            Log.d(TAG, "Details for ${tithi.name}: VISIBLE, Content: ${tithi.details}")
         } else {
             holder.tvTithiDetails.visibility = View.GONE
-            Log.d(TAG, "Details for ${tithi.name}: GONE")
+        }
+
+        // Parse Date for Date Box (Assuming format "YYYY-MM-DD" or "DD-MM-YYYY")
+        try {
+            // Attempt to parse standard formats
+            val parts = tithi.date.split("-", " ", "/")
+            if (parts.size >= 3) {
+                 // Try to guess Day vs Year. Usually Day is 1-31.
+                 // Heuristic: If part[0] is > 31, it's Year (YYYY-MM-DD). Day is last.
+                 // If part[0] <= 31, it's Day (DD-MM-YYYY). Day is first.
+                 
+                 var day = parts[2]
+                 var month = parts[1] // Month is usually middle
+                 
+                 if (parts[0].length == 4) { // YYYY-MM-DD
+                     day = parts[2]
+                     month = getMonthName(parts[1].toIntOrNull() ?: 1)
+                 } else { // DD-MM-YYYY
+                     day = parts[0]
+                     month = getMonthName(parts[1].toIntOrNull() ?: 1)
+                 }
+                 
+                 holder.tvDateDay.text = day
+                 holder.tvDateMonth.text = month
+            } else {
+                // Fallback
+                holder.tvDateDay.text = "--"
+                holder.tvDateMonth.text = "DATE"
+            }
+        } catch (e: Exception) {
+            holder.tvDateDay.text = "Tithi"
+            holder.tvDateMonth.text = "DATE"
         }
     }
 
-    /**
-     * Returns the total number of items in the data set held by the adapter.
-     */
-    override fun getItemCount(): Int {
-        val count = tithiList.size
-        Log.d(TAG, "getItemCount called, returning: $count")
-        return count
+    private fun getMonthName(month: Int): String {
+        return when (month) {
+            1 -> "JAN" 2 -> "FEB" 3 -> "MAR" 4 -> "APR" 5 -> "MAY" 6 -> "JUN"
+            7 -> "JUL" 8 -> "AUG" 9 -> "SEP" 10 -> "OCT" 11 -> "NOV" 12 -> "DEC"
+            else -> "MTH"
+        }
     }
 
-    /**
-     * Updates the list of Tithis in the adapter and notifies the RecyclerView to refresh.
-     * @param newTithiList The new list of Tithis to display.
-     */
+    override fun getItemCount(): Int = tithiList.size
+
     fun updateData(newTithiList: List<Tithi>) {
-        Log.d(TAG, "updateData called. New list size: ${newTithiList.size}. Current list size: ${this.tithiList.size}")
         this.tithiList = newTithiList
-        notifyDataSetChanged() // Consider DiffUtil for better performance on large lists
-        Log.d(TAG, "notifyDataSetChanged() called. Current list size after update: ${this.tithiList.size}")
+        notifyDataSetChanged()
     }
 }

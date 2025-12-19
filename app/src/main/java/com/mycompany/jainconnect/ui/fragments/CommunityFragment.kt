@@ -283,8 +283,9 @@ class CommunityFragment : Fragment() {
                     chatAdapter.submitList(messages)
                     if (messages.isNotEmpty()) {
                         rvChat.smoothScrollToPosition(messages.size - 1)
-                        (activity as? com.mycompany.jainconnect.ui.activities.MainActivity)?.markChatAsRead(messages.size)
                     }
+                    // Always mark as read based on SERVER count, even if local list is empty/filtered
+                    (activity as? com.mycompany.jainconnect.ui.activities.MainActivity)?.markChatAsRead(snapshot.size())
                 }
             }
     }

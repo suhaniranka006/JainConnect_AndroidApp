@@ -1,53 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="4dp"
-    android:layout_marginVertical="6dp"
-
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="8dp"
     app:cardBackgroundColor="@android:color/white"
     app:cardCornerRadius="16dp"
-    app:cardElevation="0dp"
-    app:strokeColor="@color/bright_saffron"
-    app:strokeWidth="1.5dp">
+    app:cardElevation="6dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:background="?android:attr/selectableItemBackground">
+        android:padding="12dp">
 
-        <TextView
-            android:id="@+id/tvTithiName"
-            android:layout_width="wrap_content"
+        <!-- Date Box (Left Side) -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardDateBox"
+            android:layout_width="60dp"
+            android:layout_height="70dp"
+            app:cardBackgroundColor="#FFE0B2"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvDateDay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="24"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="#E64A19"/>
+
+                <TextView
+                    android:id="@+id/tvDateMonth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="OCT"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#E64A19"
+                    android:textAllCaps="true"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Vertical Divider -->
+        <View
+            android:id="@+id/viewDivider"
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:background="#EEE"
+            android:layout_marginStart="12dp"
+            app:layout_constraintStart_toEndOf="@id/cardDateBox"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <!-- Tithi Details (Right Side) -->
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/dark_charcoal"
-            tools:text="Tithi Name/Title"/>
+            android:orientation="vertical"
+            android:layout_marginStart="12dp"
+            app:layout_constraintStart_toEndOf="@id/viewDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-        <TextView
-            android:id="@+id/tvTithiDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            tools:text="Date"
-            android:textColor="@color/black"
-            android:layout_marginTop="4dp"/>
+            <TextView
+                android:id="@+id/tvTithiName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Kartik Krishna Amavasya"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:ellipsize="end"
+                android:maxLines="2"/>
 
-        <TextView
-            android:id="@+id/tvTithiDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            tools:text="Tithi Description or Details"
-            android:textColor="@color/black"
-            android:layout_marginTop="4dp" />
+            <TextView
+                android:id="@+id/tvTithiDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Diwali Festival"
+                android:textSize="13sp"
+                android:textColor="#757575"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:maxLines="1"/>
+            
+            <!-- Hidden Date for Adapter Compatibility lookup if needed, but we use box now -->
+             <TextView
+                android:id="@+id/tvTithiDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
 
-    </LinearLayout>
+            <!-- Sun Times Row REMOVED -->
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>
