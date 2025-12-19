@@ -14,6 +14,10 @@ import com.mycompany.jainconnect.R
 import com.mycompany.jainconnect.ui.adapters.CarpoolAdapter
 import com.mycompany.jainconnect.ui.viewmodel.JainViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import android.content.Context
+import android.view.View
 
 @AndroidEntryPoint
 class CarpoolActivity : AppCompatActivity() {
@@ -39,9 +43,31 @@ class CarpoolActivity : AppCompatActivity() {
         rvCarpools.layoutManager = LinearLayoutManager(this)
         rvCarpools.adapter = adapter
 
+        // --- CACHE LOAD ---
+        val sharedPref = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+        val gson = Gson()
+        val cachedData = sharedPref.getString("cached_carpools", null)
+        if (cachedData != null) {
+            val type = object : TypeToken<List<com.mycompany.jainconnect.data.models.Carpool>>() {}.type
+            val list: List<com.mycompany.jainconnect.data.models.Carpool> = gson.fromJson(cachedData, type)
+            if (list.isNotEmpty()) {
+                adapter.updateList(list)
+            }
+        }
+        // ------------------
+
         // Observe Data
         viewModel.carpoolList.observe(this) { carpools ->
             adapter.updateList(carpools)
+
+            // --- CACHE SAVE ---
+            if (carpools.isNotEmpty()) {
+                val sharedPref = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                val gson = Gson()
+                val json = gson.toJson(carpools)
+                sharedPref.edit().putString("cached_carpools", json).apply()
+            }
+            // ------------------
         }
 
         // Fetch Data

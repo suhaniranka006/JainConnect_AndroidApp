@@ -11,6 +11,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import com.mycompany.jainconnect.R
 import com.mycompany.jainconnect.ui.adapters.TempleAdapter
 import com.mycompany.jainconnect.ui.viewmodel.JainViewModel
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import android.content.Context
 
 @AndroidEntryPoint
 class TempleActivity : AppCompatActivity() {
@@ -29,7 +32,22 @@ class TempleActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerViewTemples)
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = TempleAdapter()
+        adapter = TempleAdapter()
         recyclerView.adapter = adapter
+
+        // --- CACHE LOAD ---
+        val sharedPref = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+        val gson = Gson()
+        val cachedData = sharedPref.getString("cached_temples", null)
+        if (cachedData != null) {
+            val type = object : TypeToken<List<com.mycompany.jainconnect.data.models.Temple>>() {}.type
+            val list: List<com.mycompany.jainconnect.data.models.Temple> = gson.fromJson(cachedData, type)
+            if (list.isNotEmpty()) {
+                adapter.submitList(list)
+                progressBar.visibility = View.GONE
+            }
+        }
+        // ------------------
 
         val etSearch = findViewById<android.widget.EditText>(R.id.etSearchTemple)
         etSearch.addTextChangedListener(object : android.text.TextWatcher {
@@ -43,6 +61,15 @@ class TempleActivity : AppCompatActivity() {
         viewModel.templeList.observe(this) { list ->
             progressBar.visibility = View.GONE
             adapter.submitList(list)
+
+            // --- CACHE SAVE ---
+            if (list.isNotEmpty()) {
+                val sharedPref = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                val gson = Gson()
+                val json = gson.toJson(list)
+                sharedPref.edit().putString("cached_temples", json).apply()
+            }
+            // ------------------
         }
 
         findViewById<com.google.android.material.floatingactionbutton.FloatingActionButton>(R.id.fabAddTemple).setOnClickListener {

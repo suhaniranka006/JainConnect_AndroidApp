@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 1. Base Gradient Background (Soft Saffron to White) -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="135"
+                android:startColor="#FFF3E0"
+                android:centerColor="#FFFFFF"
+                android:endColor="#FAFAFA"
+                android:type="linear" />
+        </shape>
+    </item>
+
+    <!-- 2. Top-Right Decorative Circle (Large, Soft Orange) -->
+    <item
+        android:top="-100dp"
+        android:right="-100dp">
+        <shape android:shape="oval">
+            <size android:width="300dp" android:height="300dp"/>
+            <solid android:color="#1AFF9800"/> <!-- 10% Alpha Orange -->
+        </shape>
+    </item>
+
+    <!-- 3. Bottom-Left Decorative Circle (Medium, Soft Saffron) -->
+    <item
+        android:bottom="-50dp"
+        android:left="-50dp">
+        <shape android:shape="oval">
+            <size android:width="200dp" android:height="200dp"/>
+            <solid android:color="#1AFF7518"/> <!-- 10% Alpha Saffron -->
+        </shape>
+    </item>
+
+    <!-- 4. Subtle Jain Flag Watermark (Centered, very faint) -->
+    <item>
+        <bitmap
+            android:src="@drawable/jain_flag"
+            android:alpha="0.08" />
+    </item>
+
+</layer-list>

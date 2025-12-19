@@ -15,6 +15,10 @@ import com.google.android.material.button.MaterialButton
 import com.mycompany.jainconnect.R
 import com.mycompany.jainconnect.ui.adapters.TithiAdapter
 import com.mycompany.jainconnect.ui.viewmodel.JainViewModel
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import android.content.Context
+import android.view.View
 
 
 /**
@@ -47,7 +51,28 @@ class TithiActivity : AppCompatActivity() {
         Log.d(TAG, "ViewModel initialized")
 
         val shimmerViewContainer = findViewById<com.facebook.shimmer.ShimmerFrameLayout>(R.id.shimmerViewContainer)
+
         shimmerViewContainer.startShimmer()
+
+        // --- CACHE LOAD ---
+        val sharedPref = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+        val gson = Gson()
+        val cachedData = sharedPref.getString("cached_tithis", null)
+        if (cachedData != null) {
+            val type = object : TypeToken<List<com.mycompany.jainconnect.data.models.Tithi>>() {}.type
+            try {
+                val list: List<com.mycompany.jainconnect.data.models.Tithi> = gson.fromJson(cachedData, type)
+                if (list.isNotEmpty()) {
+                    tithiAdapter.updateData(list)
+                    shimmerViewContainer.stopShimmer()
+                    shimmerViewContainer.visibility = View.GONE
+                    recyclerViewTithi.visibility = View.VISIBLE
+                }
+            } catch (e: Exception) {
+               Log.e(TAG, "Cache Load Failed", e)
+            }
+        }
+        // ------------------
 
         // Observe FULL tithiList for logging/debugging
         viewModel.tithiList.observe(this) { tithis ->
@@ -64,6 +89,15 @@ class TithiActivity : AppCompatActivity() {
 
             tithiAdapter.updateData(filteredList)                // Update adapter
             Log.d(TAG, "Filtered list observed, count = ${filteredList.size}")
+
+             // --- CACHE SAVE ---
+            if (filteredList.isNotEmpty()) {
+                val sharedPref = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                val gson = Gson()
+                val json = gson.toJson(filteredList)
+                sharedPref.edit().putString("cached_tithis", json).apply()
+            }
+            // ------------------
         }
 
         // -------------------- SearchView Setup --------------------

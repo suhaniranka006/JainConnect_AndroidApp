@@ -6,47 +6,51 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_my_profile"
-            android:icon="@drawable/ic_circle_orange"
+            android:icon="@drawable/ic_nav_profile"
             android:title="My Profile" />
         <item
             android:id="@+id/nav_members"
-            android:icon="@drawable/ic_circle_orange"
+            android:icon="@drawable/ic_nav_members"
             android:title="Members" />
         <item
             android:id="@+id/nav_mentors"
-            android:icon="@drawable/ic_circle_orange"
+            android:icon="@drawable/ic_nav_mentors"
             android:title="Our Mentors" />
         <item
             android:id="@+id/nav_rate"
-            android:icon="@drawable/ic_circle_orange"
+            android:icon="@drawable/ic_nav_rate"
             android:title="Rate Us" />
         <item
             android:id="@+id/nav_feedback"
-            android:icon="@drawable/ic_circle_orange"
+            android:icon="@drawable/ic_nav_feedback"
             android:title="Feedback Us" />
         <item
             android:id="@+id/nav_about"
-            android:icon="@drawable/ic_circle_orange"
+            android:icon="@drawable/ic_nav_about"
             android:title="About" />
         <item
             android:id="@+id/nav_help"
-            android:icon="@drawable/ic_circle_orange"
-            android:title="Help / Policy" />
+            android:icon="@drawable/ic_nav_help"
+            android:title="Help" />
+        <item
+            android:id="@+id/nav_policy"
+            android:icon="@drawable/ic_nav_policy"
+            android:title="Privacy Policy" />
     </group>
 
     <item android:title="--------------------------------">
         <menu>
              <item
                 android:id="@+id/nav_share"
-                android:icon="@drawable/ic_call"
+                android:icon="@drawable/ic_share"
                 android:title="Share App" />
             <item
                 android:id="@+id/nav_logout"
-                android:icon="@drawable/ic_circle_orange"
+                android:icon="@drawable/ic_nav_logout"
                 android:title="Logout" />
             <item
                 android:id="@+id/nav_delete_account"
-                android:icon="@drawable/ic_circle_orange"
+                android:icon="@drawable/ic_delete"
                 android:title="Delete Account" />
         </menu>
     </item>

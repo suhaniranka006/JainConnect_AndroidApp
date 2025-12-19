@@ -17,6 +17,10 @@ import com.mycompany.jainconnect.R
 import com.mycompany.jainconnect.data.models.Maharaj
 import com.mycompany.jainconnect.ui.adapters.MaharajAdapter
 import com.mycompany.jainconnect.ui.viewmodel.JainViewModel
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import android.content.Context
+import android.view.View
 
 /**
  * Activity to display Maharaj locations in a RecyclerView.
@@ -50,12 +54,37 @@ class MaharajLocationActivity : AppCompatActivity() {
         val shimmerViewContainer = findViewById<com.facebook.shimmer.ShimmerFrameLayout>(R.id.shimmerViewContainer)
         shimmerViewContainer.startShimmer()
 
+        // --- CACHE LOAD ---
+        val sharedPref = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+        val gson = Gson()
+        val cachedData = sharedPref.getString("cached_maharaj", null)
+        if (cachedData != null) {
+            val type = object : TypeToken<List<Maharaj>>() {}.type
+            val list: List<Maharaj> = gson.fromJson(cachedData, type)
+            if (list.isNotEmpty()) {
+                maharajAdapter.updateData(list)
+                shimmerViewContainer.stopShimmer()
+                shimmerViewContainer.visibility = View.GONE
+                recyclerViewMaharaj.visibility = View.VISIBLE
+            }
+        }
+        // ------------------
+
         viewModel.filteredMaharaj.observe(this) {
             shimmerViewContainer.stopShimmer()
             shimmerViewContainer.visibility = android.view.View.GONE
             recyclerViewMaharaj.visibility = android.view.View.VISIBLE
 
             maharajAdapter.updateData(it ?: emptyList())
+
+            // --- CACHE SAVE ---
+            if (!it.isNullOrEmpty()) {
+                val sharedPref = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                val gson = Gson()
+                val json = gson.toJson(it)
+                sharedPref.edit().putString("cached_maharaj", json).apply()
+            }
+            // ------------------
         }
 
         viewModel.fetchMaharaj()

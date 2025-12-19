@@ -471,6 +471,9 @@ class JainViewModel @Inject constructor(
     // Inside JainViewModel.kt
 
     fun fetchSunData(lat: Double = 26.9124, lng: Double = 75.7873) {
+        // Cache Check: If we already have data, don't re-fetch
+        if (!_horizonList.value.isNullOrEmpty()) return
+
         viewModelScope.launch {
             try {
                 val response = repository.getSunTimings(lat, lng)
@@ -531,6 +534,9 @@ class JainViewModel @Inject constructor(
 
     //fetch use profile after authorization
     fun fetchUserProfile(token: String) {
+        // Cache Check: If profile is already loaded, skip
+        if (_userProfile.value != null) return
+
         viewModelScope.launch {
             try {
 
@@ -585,6 +591,9 @@ class JainViewModel @Inject constructor(
 
     // Fetches tithi data from the repository
     fun fetchTithis() {
+        // Cache Check: Use existing list if available
+        if (!_tithiList.value.isNullOrEmpty()) return
+
         viewModelScope.launch {
             try {
                 val tithisFromRepo = repository.getTithis()
@@ -822,6 +831,8 @@ class JainViewModel @Inject constructor(
 
     //fetch monks data on background thread
     fun fetchMaharaj() {
+        if (_maharajList.value.isNullOrEmpty().not()) return // Cache check
+
         viewModelScope.launch {
             try {
                 val list = repository.getMaharaj()
@@ -873,6 +884,8 @@ class JainViewModel @Inject constructor(
     val addBhojanshalaResult: LiveData<String> = _addBhojanshalaResult
 
     fun fetchBhojanshalas() {
+        if (_bhojanshalaList.value.isNullOrEmpty().not()) return // Cache check
+
         viewModelScope.launch {
             try {
                 val list = repository.getBhojanshalas()
@@ -958,6 +971,8 @@ class JainViewModel @Inject constructor(
     val addTempleResult: LiveData<String> = _addTempleResult
 
     fun fetchTemples() {
+        if (_templeList.value.isNullOrEmpty().not()) return // Cache check
+
         viewModelScope.launch {
             try {
                 val list = repository.getTemples()
@@ -1034,6 +1049,8 @@ class JainViewModel @Inject constructor(
     val addCarpoolResult: LiveData<String> = _addCarpoolResult
 
     fun fetchCarpools() {
+        if (_carpoolList.value.isNullOrEmpty().not()) return // Cache check
+
         viewModelScope.launch {
             try {
                 val list = repository.getCarpools()
@@ -1069,6 +1086,8 @@ class JainViewModel @Inject constructor(
     val storyList: LiveData<List<Story>> = _storyList
 
     fun fetchStories(context: Context) {
+        if (_storyList.value.isNullOrEmpty().not()) return // Cache check
+
         viewModelScope.launch {
             try {
                 val prefs = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)

@@ -12,6 +12,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mycompany.jainconnect.R
 import com.mycompany.jainconnect.ui.adapters.StoryAdapter
 import com.mycompany.jainconnect.ui.viewmodel.JainViewModel
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import android.content.Context
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -57,6 +60,20 @@ class LegacyActivity : AppCompatActivity() {
             }
         )
         rvStories.adapter = adapter
+
+        // --- CACHE LOAD ---
+        val sharedPref = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+        val gson = Gson()
+        val cachedData = sharedPref.getString("cached_stories", null)
+        if (cachedData != null) {
+            val type = object : TypeToken<List<com.mycompany.jainconnect.data.models.Story>>() {}.type
+            val list: List<com.mycompany.jainconnect.data.models.Story> = gson.fromJson(cachedData, type)
+            if (list.isNotEmpty()) {
+                adapter.updateList(list)
+                findViewById<ProgressBar>(R.id.progressBar).visibility = View.GONE
+            }
+        }
+        // ------------------
     }
 
     private fun observeViewModel() {
@@ -64,9 +81,19 @@ class LegacyActivity : AppCompatActivity() {
 
         viewModel.storyList.observe(this) { stories ->
             adapter.updateList(stories)
-            progressBar.visibility = if (stories.isEmpty()) View.VISIBLE else View.GONE
-            // If empty list is returned after loading, hide progress bar anyway (simple logic for now)
-            if (stories.isEmpty()) progressBar.visibility = View.GONE
+            
+            if (stories.isNotEmpty()) {
+                progressBar.visibility = View.GONE
+                
+                // --- CACHE SAVE ---
+                val sharedPref = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                val gson = Gson()
+                val json = gson.toJson(stories)
+                sharedPref.edit().putString("cached_stories", json).apply()
+                // ------------------
+            } else {
+                 if (adapter.itemCount == 0) progressBar.visibility = View.VISIBLE else progressBar.visibility = View.GONE
+            }
         }
     }
 

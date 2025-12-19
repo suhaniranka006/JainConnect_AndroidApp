@@ -45,6 +45,33 @@ class SplashActivity : AppCompatActivity() {
 
         Log.d(TAG, "SplashActivity Started!")
 
+        // Initialize Views for Animation
+        val cardLogo = findViewById<View>(R.id.cardLogo)
+        val tvTagline = findViewById<View>(R.id.tvTagline)
+
+        // 1. Logo Animation (Fade In + Scale Up)
+        cardLogo.alpha = 0f
+        cardLogo.scaleX = 0.5f
+        cardLogo.scaleY = 0.5f
+        cardLogo.animate()
+            .alpha(1f)
+            .scaleX(1f)
+            .scaleY(1f)
+            .setDuration(1200)
+            .setInterpolator(android.view.animation.OvershootInterpolator())
+            .start()
+
+        // 2. Tagline Animation (Slide Up + Fade In)
+        tvTagline.alpha = 0f
+        tvTagline.translationY = 50f
+        tvTagline.animate()
+            .alpha(1f)
+            .translationY(0f)
+            .setDuration(1000)
+            .setStartDelay(500) // Wait for logo to start
+            .setInterpolator(android.view.animation.DecelerateInterpolator())
+            .start()
+
         // --- Naya Code: Permission Maangein ---
         askNotificationPermission()
         // -------------------------------------
@@ -53,10 +80,10 @@ class SplashActivity : AppCompatActivity() {
         subscribeToTithiUpdates()
         // -----------------------------------------
 
-        // 2 second ka delay
+        // 2.5 second ka delay (Increased for animation)
         Handler(Looper.getMainLooper()).postDelayed({
             checkLoginAndProceed()
-        }, 2000) // 2000 milliseconds = 2 seconds
+        }, 2500)
     }
 
     private fun askNotificationPermission() {

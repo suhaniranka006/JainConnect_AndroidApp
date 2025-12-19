@@ -164,9 +164,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            app:cardBackgroundColor="@color/lightest_saffron"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="4dp"
+            app:cardBackgroundColor="#CCFFFFFF"
+            app:cardCornerRadius="24dp"
+            app:strokeColor="#FFFFFF"
+            app:strokeWidth="2dp"
+            app:cardElevation="0dp"
             android:visibility="invisible"
             tools:visibility="visible">
 
@@ -334,8 +336,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 app:cardBackgroundColor="#FFEBEE"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.JainConnect.QuickAction"
+                app:cardElevation="2dp"
                 app:strokeColor="#FFCDD2"
                 app:strokeWidth="0dp">
 
@@ -372,8 +374,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 app:cardBackgroundColor="#F3E5F5"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.JainConnect.QuickAction"
+                app:cardElevation="2dp"
                 app:strokeColor="#E1BEE7"
                 app:strokeWidth="0dp">
 
@@ -409,8 +411,8 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 app:cardBackgroundColor="#E0F2F1"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.JainConnect.QuickAction"
+                app:cardElevation="2dp"
                 app:strokeColor="#B2DFDB"
                 app:strokeWidth="0dp">
 
@@ -472,11 +474,11 @@
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
                 android:layout_margin="4dp"
-                app:cardBackgroundColor="#E3F2FD"
-                app:cardCornerRadius="16dp"
+                app:cardBackgroundColor="#B3E3F2FD"
+                app:cardCornerRadius="24dp"
                 app:cardElevation="0dp"
-                app:strokeColor="#BBDEFB"
-                app:strokeWidth="0dp">
+                app:strokeColor="#80FFFFFF"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -514,11 +516,11 @@
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
                 android:layout_margin="4dp"
-                app:cardBackgroundColor="#FCE4EC"
-                app:cardCornerRadius="16dp"
+                app:cardBackgroundColor="#B3FCE4EC"
+                app:cardCornerRadius="24dp"
                 app:cardElevation="0dp"
-                app:strokeColor="#F8BBD0"
-                app:strokeWidth="0dp">
+                app:strokeColor="#80FFFFFF"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -556,11 +558,11 @@
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
                 android:layout_margin="4dp"
-                app:cardBackgroundColor="#F3E5F5"
-                app:cardCornerRadius="16dp"
+                app:cardBackgroundColor="#B3F3E5F5"
+                app:cardCornerRadius="24dp"
                 app:cardElevation="0dp"
-                app:strokeColor="#E1BEE7"
-                app:strokeWidth="0dp">
+                app:strokeColor="#80FFFFFF"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -598,11 +600,11 @@
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
                 android:layout_margin="4dp"
-                app:cardBackgroundColor="#FFF3E0"
-                app:cardCornerRadius="16dp"
+                app:cardBackgroundColor="#B3FFF3E0"
+                app:cardCornerRadius="24dp"
                 app:cardElevation="0dp"
-                app:strokeColor="#FFE0B2"
-                app:strokeWidth="0dp">
+                app:strokeColor="#80FFFFFF"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -640,11 +642,11 @@
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
                 android:layout_margin="4dp"
-                app:cardBackgroundColor="#E8F5E9"
-                app:cardCornerRadius="16dp"
+                app:cardBackgroundColor="#B3E8F5E9"
+                app:cardCornerRadius="24dp"
                 app:cardElevation="0dp"
-                app:strokeColor="#C8E6C9"
-                app:strokeWidth="0dp">
+                app:strokeColor="#80FFFFFF"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -682,11 +684,11 @@
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
                 android:layout_margin="4dp"
-                app:cardBackgroundColor="#FFFDE7"
-                app:cardCornerRadius="16dp"
+                app:cardBackgroundColor="#B3FFFDE7"
+                app:cardCornerRadius="24dp"
                 app:cardElevation="0dp"
-                app:strokeColor="#FFF9C4"
-                app:strokeWidth="0dp">
+                app:strokeColor="#80FFFFFF"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -726,11 +728,11 @@
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
                 android:layout_margin="4dp"
-                app:cardBackgroundColor="#E0F2F1"
-                app:cardCornerRadius="16dp"
+                app:cardBackgroundColor="#B3E0F2F1"
+                app:cardCornerRadius="24dp"
                 app:cardElevation="0dp"
-                app:strokeColor="#B2DFDB"
-                app:strokeWidth="0dp">
+                app:strokeColor="#80FFFFFF"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -768,11 +770,11 @@
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
                 android:layout_margin="4dp"
-                app:cardBackgroundColor="#FFEBEE"
-                app:cardCornerRadius="16dp"
+                app:cardBackgroundColor="#B3FFEBEE"
+                app:cardCornerRadius="24dp"
                 app:cardElevation="0dp"
-                app:strokeColor="#FFCDD2"
-                app:strokeWidth="0dp">
+                app:strokeColor="#80FFFFFF"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"

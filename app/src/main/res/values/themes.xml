@@ -26,4 +26,19 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">12dp</item>
     </style>
+
+    <!-- NEW UNIQUE SHAPE FOR QUICK ACTIONS -->
+    <style name="ShapeAppearance.JainConnect.QuickAction" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+    <!-- Glassmorphism Card Style -->
+    <style name="Widget.JainConnect.GlassCard" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">#CCFFFFFF</item> <!-- 80% White transparent -->
+        <item name="cardCornerRadius">24dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">#80FFFFFF</item> <!-- 50% White border -->
+        <item name="android:layout_margin">8dp</item>
+    </style>
 </resources>

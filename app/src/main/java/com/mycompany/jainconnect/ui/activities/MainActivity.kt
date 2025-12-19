@@ -104,6 +104,11 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
                 R.id.nav_feedback -> Toast.makeText(this, "Feedback Coming Soon", Toast.LENGTH_SHORT).show()
                 R.id.nav_about -> Toast.makeText(this, "About JainConnect", Toast.LENGTH_SHORT).show()
                 R.id.nav_help -> startActivity(Intent(this, ContactActivity::class.java))
+                R.id.nav_policy -> {
+                     // Open Privacy Policy URL
+                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://sites.google.com/view/jainconnect-privacy/home"))
+                     startActivity(intent)
+                }
                 R.id.nav_share -> {
                     val sendIntent: Intent = Intent().apply {
                         action = Intent.ACTION_SEND

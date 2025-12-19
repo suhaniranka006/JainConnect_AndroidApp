@@ -150,6 +150,36 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
 
         // Default: No Data (Location Logic will decide)
         tvLocationName.text = "Location Off"
+
+        // LOAD CACHE IMMEDIATELY
+        loadFromCache()
+    }
+
+    private fun loadFromCache() {
+        val cachedName = sharedPreferences.getString("cached_user_name", null)
+        if (!cachedName.isNullOrEmpty()) {
+            tvGreeting.text = "Jai Jinendra $cachedName!"
+            isUserLoaded = true
+        } else if (sharedPreferences.getString("jwt_token", null) == null) {
+            // If no token (Guest), treat user as loaded
+             isUserLoaded = true
+        }
+
+        val cachedTithi = sharedPreferences.getString("cached_tithi_name", null)
+        if (!cachedTithi.isNullOrEmpty()) {
+            tvTithiName.text = cachedTithi
+            isTithiLoaded = true
+        }
+
+        val cachedSunrise = sharedPreferences.getString("cached_sunrise", null)
+        val cachedSunset = sharedPreferences.getString("cached_sunset", null)
+        if (!cachedSunrise.isNullOrEmpty() && !cachedSunset.isNullOrEmpty()) {
+            tvSunriseTime.text = cachedSunrise
+            tvSunsetTime.text = cachedSunset
+            isSunLoaded = true
+        }
+        
+        checkDataLoaded()
     }
 
     private fun setupNavigationButtons(view: View) {
@@ -171,31 +201,34 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
             dialog.show(childFragmentManager, "AmountDialog")
         }
 
-        // --- Explore Grid Buttons ---
-        view.findViewById<View>(R.id.btnTithi).setOnClickListener {
-            startActivity(Intent(requireContext(), TithiActivity::class.java))
-        }
-        view.findViewById<View>(R.id.btnEvents).setOnClickListener {
-            startActivity(Intent(requireContext(), EventActivity::class.java))
-        }
-        view.findViewById<View>(R.id.btnMonks).setOnClickListener {
-            startActivity(Intent(requireContext(), MaharajLocationActivity::class.java))
-        }
-        view.findViewById<View>(R.id.btnHorizons).setOnClickListener {
-            startActivity(Intent(requireContext(), HorizonsActivity::class.java))
-        }
-        view.findViewById<View>(R.id.btnBhojanshalas).setOnClickListener {
-            startActivity(Intent(requireContext(), BhojanshalaActivity::class.java))
-        }
-        view.findViewById<View>(R.id.btnTemples).setOnClickListener {
-            startActivity(Intent(requireContext(), TempleActivity::class.java))
-        }
-        view.findViewById<View>(R.id.btnCarpooling).setOnClickListener {
-            startActivity(Intent(requireContext(), CarpoolActivity::class.java))
-        }
-        view.findViewById<View>(R.id.btnLegacy).setOnClickListener {
-            startActivity(Intent(requireContext(), LegacyActivity::class.java))
-        }
+        // --- Explore Grid Buttons with Entry Animation ---
+        val btnTithi = view.findViewById<View>(R.id.btnTithi)
+        val btnEvents = view.findViewById<View>(R.id.btnEvents)
+        val btnMonks = view.findViewById<View>(R.id.btnMonks)
+        val btnHorizons = view.findViewById<View>(R.id.btnHorizons)
+        val btnBhojan = view.findViewById<View>(R.id.btnBhojanshalas)
+        val btnTemples = view.findViewById<View>(R.id.btnTemples)
+        val btnCarpool = view.findViewById<View>(R.id.btnCarpooling)
+        val btnLegacy = view.findViewById<View>(R.id.btnLegacy)
+
+        // Staggered Entry Animation
+        startEntryAnimation(btnTithi, 100L)
+        startEntryAnimation(btnEvents, 200L)
+        startEntryAnimation(btnMonks, 300L)
+        startEntryAnimation(btnHorizons, 400L)
+        startEntryAnimation(btnBhojan, 500L)
+        startEntryAnimation(btnTemples, 600L)
+        startEntryAnimation(btnCarpool, 700L)
+        startEntryAnimation(btnLegacy, 800L)
+
+        btnTithi.setOnClickListener { startActivity(Intent(requireContext(), TithiActivity::class.java)) }
+        btnEvents.setOnClickListener { startActivity(Intent(requireContext(), EventActivity::class.java)) }
+        btnMonks.setOnClickListener { startActivity(Intent(requireContext(), MaharajLocationActivity::class.java)) }
+        btnHorizons.setOnClickListener { startActivity(Intent(requireContext(), HorizonsActivity::class.java)) }
+        btnBhojan.setOnClickListener { startActivity(Intent(requireContext(), BhojanshalaActivity::class.java)) }
+        btnTemples.setOnClickListener { startActivity(Intent(requireContext(), TempleActivity::class.java)) }
+        btnCarpool.setOnClickListener { startActivity(Intent(requireContext(), CarpoolActivity::class.java)) }
+        btnLegacy.setOnClickListener { startActivity(Intent(requireContext(), LegacyActivity::class.java)) }
         view.findViewById<View>(R.id.btnTirthyatra).setOnClickListener {
             startActivity(Intent(requireContext(), TirthyatraActivity::class.java))
         }
@@ -211,15 +244,49 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
             }
         }
 
-        // --- Quick Actions ---
-        view.findViewById<View>(R.id.cardQuickNotifications)?.setOnClickListener {
+        // --- Quick Actions with Animation ---
+        val cardNotif = view.findViewById<View>(R.id.cardQuickNotifications)
+        val cardPachkhan = view.findViewById<View>(R.id.cardQuickPachkhan)
+        val cardMonksQuick = view.findViewById<View>(R.id.cardQuickMonks)
+
+        // Apply Subtle Floating Animation
+        startFloatingAnimation(cardNotif, 0L)
+        startFloatingAnimation(cardPachkhan, 200L) // Staggered start
+        startFloatingAnimation(cardMonksQuick, 400L)
+
+        cardNotif?.setOnClickListener {
             Toast.makeText(requireContext(), "Notifications", Toast.LENGTH_SHORT).show()
         }
-        view.findViewById<View>(R.id.cardQuickPachkhan)?.setOnClickListener {
+        cardPachkhan?.setOnClickListener {
             startActivity(Intent(requireContext(), PachkhanActivity::class.java))
         }
-        view.findViewById<View>(R.id.cardQuickMonks)?.setOnClickListener {
+        cardMonksQuick?.setOnClickListener {
             startActivity(Intent(requireContext(), MaharajLocationActivity::class.java))
+        }
+    }
+
+    // Helper for entry fade-in/slide-up animation
+    private fun startEntryAnimation(view: View?, delay: Long) {
+        view?.alpha = 0f
+        view?.translationY = 50f
+        view?.animate()
+            ?.alpha(1f)
+            ?.translationY(0f)
+            ?.setDuration(600)
+            ?.setStartDelay(delay)
+            ?.setInterpolator(android.view.animation.DecelerateInterpolator())
+            ?.start()
+    }
+
+    // Helper for subtle floating animation
+    private fun startFloatingAnimation(view: View?, delay: Long) {
+        view?.let {
+            val animator = android.animation.ObjectAnimator.ofFloat(it, "translationY", 0f, -10f, 0f)
+            animator.duration = 2000 // 2 seconds per cycle
+            animator.repeatCount = android.animation.ObjectAnimator.INFINITE
+            animator.repeatMode = android.animation.ObjectAnimator.REVERSE
+            animator.startDelay = delay
+            animator.start()
         }
     }
 
@@ -303,6 +370,7 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
             checkDataLoaded()
             if (user != null) {
                 tvGreeting.text = "Jai Jinendra ${user.name}!"
+                sharedPreferences.edit().putString("cached_user_name", user.name).apply()
             }
         }
 
@@ -317,6 +385,7 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
 
                 if (todayTithi != null) {
                     tvTithiName.text = todayTithi.name
+                    sharedPreferences.edit().putString("cached_tithi_name", todayTithi.name).apply()
                 } else {
                     tvTithiName.text = "No Data"
                 }
@@ -335,6 +404,10 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
                 if (todayHorizon != null) {
                     tvSunriseTime.text = todayHorizon.sunrise
                     tvSunsetTime.text = todayHorizon.sunset
+                    sharedPreferences.edit()
+                        .putString("cached_sunrise", todayHorizon.sunrise)
+                        .putString("cached_sunset", todayHorizon.sunset)
+                        .apply()
                 } else {
                     tvSunriseTime.text = horizonList[0].sunrise
                     tvSunsetTime.text = horizonList[0].sunset

@@ -23,6 +23,8 @@ import com.mycompany.jainconnect.data.models.Event
 import com.mycompany.jainconnect.ui.adapters.EventAdapter
 import com.mycompany.jainconnect.ui.viewmodel.JainViewModel
 import com.mycompany.jainconnect.ui.adapters.OnRsvpButtonClickListener
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 @AndroidEntryPoint
 class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
@@ -47,6 +49,28 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
         eventAdapter = EventAdapter(emptyList(), this)
         recyclerViewEvents.adapter = eventAdapter
 
+        // --- CACHE LOAD ---
+        val sharedPref = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+        val gson = Gson()
+        val cachedEvents = sharedPref.getString("cached_events", null)
+        if (cachedEvents != null) {
+            val type = object : TypeToken<List<Event>>() {}.type
+            try {
+                val list: List<Event> = gson.fromJson(cachedEvents, type)
+                if (list.isNotEmpty()) {
+                    eventAdapter.updateData(list)
+                    shimmerViewContainer.stopShimmer()
+                    shimmerViewContainer.visibility = android.view.View.GONE
+                    recyclerViewEvents.visibility = android.view.View.VISIBLE
+                    // DEBUG TOAST
+                    // Toast.makeText(this, "Loaded from Cache", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+               Log.e("EventActivity", "Cache Load Failed", e)
+            }
+        }
+        // ------------------
+
         // --- ADDED: Floating Action Button Logic ---
         val fabAddEvent = findViewById<FloatingActionButton>(R.id.fabAddEvent)
         fabAddEvent.setOnClickListener {
@@ -62,6 +86,16 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
             recyclerViewEvents.visibility = android.view.View.VISIBLE
 
             eventAdapter.updateData(events)
+
+            // --- CACHE SAVE ---
+            if (events.isNotEmpty()) {
+                val sharedPref = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                val gson = Gson()
+                val json = gson.toJson(events)
+                sharedPref.edit().putString("cached_events", json).apply()
+                // Toast.makeText(this, "Cache Saved", Toast.LENGTH_SHORT).show()
+            }
+            // ------------------
         }
 
         viewModel.rsvpResult.observe(this) { success ->
