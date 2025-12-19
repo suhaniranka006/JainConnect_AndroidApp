@@ -34,7 +34,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.LocationServices
 import com.mycompany.jainconnect.databinding.FragmentHomeBinding // Ensure binding is imported if used, otherwise direct IDs
-import androidx.appcompat.widget.SwitchCompat // For Switch
 
 // ⭐ CLASS DEFINITION: Implements PaymentResultListener AND the custom AmountDialogListener
 @AndroidEntryPoint
@@ -67,7 +66,7 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
             setupLocationListener()
         } else {
             // Permission denied
-            view?.findViewById<SwitchCompat>(R.id.switchLocation)?.isChecked = false
+            // view?.findViewById<SwitchCompat>(R.id.switchLocation)?.isChecked = false // Removed
             Toast.makeText(context, "Location permission required.", Toast.LENGTH_SHORT).show()
         }
     }
@@ -96,7 +95,10 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
 
         initializeViews(view)
         setupNavigationButtons(view)
-        setupLocationToggle(view) 
+        initializeViews(view)
+        setupNavigationButtons(view)
+        setupLocationHeader(view) 
+        shimmerDashboard.startShimmer() 
         shimmerDashboard.startShimmer()
         observeData()
         loadDashboardData()
@@ -184,12 +186,17 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
 
     private fun setupNavigationButtons(view: View) {
         // --- Header Buttons ---
-        view.findViewById<View>(R.id.btnProfile).setOnClickListener {
-            // Updated to Open Drawer
-            if (activity is MainActivity) {
-                (activity as MainActivity).openDrawer()
-            }
+        
+        // Profile Image -> Open Drawer
+        view.findViewById<View>(R.id.ivProfile).setOnClickListener {
+             if (activity is MainActivity) (activity as MainActivity).openDrawer()
         }
+
+        // Menu Icon -> Open Drawer
+        view.findViewById<View>(R.id.btnMenu).setOnClickListener {
+             if (activity is MainActivity) (activity as MainActivity).openDrawer()
+        }
+
         view.findViewById<View>(R.id.btnHelp).setOnClickListener {
             startActivity(Intent(requireContext(), ContactActivity::class.java))
         }
@@ -425,63 +432,52 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
         Toast.makeText(requireContext(), "Donation Failed. Error Code: $code", Toast.LENGTH_LONG).show()
     }
 
-    // --- Location Logic ---
+    // --- Location Logic (Updated for New Header) ---
 
-    private fun setupLocationToggle(view: View) {
-        val switchLocation = view.findViewById<SwitchCompat>(R.id.switchLocation)
-        val tvToggleLabel = view.findViewById<TextView>(R.id.tvToggleLocationLabel)
-
-        // Helper to update colors
-        fun updateSwitchColor(isChecked: Boolean) {
-            if (isChecked) {
-                val green = android.graphics.Color.parseColor("#4CAF50")
-                val lightGreen = android.graphics.Color.parseColor("#A5D6A7")
-                switchLocation.thumbTintList = android.content.res.ColorStateList.valueOf(green)
-                switchLocation.trackTintList = android.content.res.ColorStateList.valueOf(lightGreen)
-            } else {
-                val gray = android.graphics.Color.GRAY
-                val lightGray = android.graphics.Color.LTGRAY
-                switchLocation.thumbTintList = android.content.res.ColorStateList.valueOf(gray)
-                switchLocation.trackTintList = android.content.res.ColorStateList.valueOf(lightGray)
-            }
-        }
+    private fun setupLocationHeader(view: View) {
+        val layoutLocation = view.findViewById<View>(R.id.layoutLocationData)
+        val tvLocationHeader = view.findViewById<TextView>(R.id.tvHeaderLocationName) // In Header
 
         // Load saved state
-        // Load state: If permission is granted, force ON. Else rely on pref.
         val hasPermission = ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
         val isLocationOn = hasPermission || sharedPreferences.getBoolean("is_location_on", false)
         
-        switchLocation.isChecked = isLocationOn
-        updateSwitchColor(isLocationOn)
-
         if (isLocationOn) {
-            tvToggleLabel.visibility = View.VISIBLE
-            tvToggleLabel.text = "Locating..."
-            tvToggleLabel.setTextColor(android.graphics.Color.BLACK)
-            // Save state as true if permission exists
+            tvLocationHeader.text = "Locating..."
             if(hasPermission) sharedPreferences.edit().putBoolean("is_location_on", true).apply()
             checkAndRequestLocation()
         } else {
-            tvToggleLabel.visibility = View.GONE
+            tvLocationHeader.text = "Location Off"
             clearLocationData()
         }
 
-        switchLocation.setOnCheckedChangeListener { _, isChecked ->
-            updateSwitchColor(isChecked)
-            if (isChecked) {
-                // User turned ON
-                tvToggleLabel.visibility = View.VISIBLE
-                tvToggleLabel.text = "Locating..."
-                tvToggleLabel.setTextColor(android.graphics.Color.BLACK)
-                sharedPreferences.edit().putBoolean("is_location_on", true).apply()
-                checkAndRequestLocation()
-            } else {
-                // User turned OFF
-                tvToggleLabel.visibility = View.GONE
-                sharedPreferences.edit().putBoolean("is_location_on", false).apply()
-                clearLocationData()
-            }
+        layoutLocation.setOnClickListener {
+             showLocationDialog()
         }
+    }
+
+    private fun showLocationDialog() {
+        val isCurrentlyOn = sharedPreferences.getBoolean("is_location_on", false)
+        val title = if (isCurrentlyOn) "Turn Location OFF?" else "Turn Location ON?"
+        val message = if (isCurrentlyOn) "Do you want to stop getting location updates?" else "Enable location to see sunrise/sunset and city info?"
+
+        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(if (isCurrentlyOn) "Turn Off" else "Enable") { _, _ ->
+                if (isCurrentlyOn) {
+                    // Turn Off
+                    sharedPreferences.edit().putBoolean("is_location_on", false).apply()
+                    clearLocationData()
+                    Toast.makeText(requireContext(), "Location Disabled", Toast.LENGTH_SHORT).show()
+                } else {
+                    // Turn On
+                    sharedPreferences.edit().putBoolean("is_location_on", true).apply()
+                    checkAndRequestLocation()
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
     
     // ... existing permission methods ...
@@ -549,10 +545,10 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
         if(::tvLocationName.isInitialized) {
              tvLocationName.text = cityName
         }
-        
-        // Update Toggle Label (Under Switch)
-        val tvToggleLabel = view?.findViewById<TextView>(R.id.tvToggleLocationLabel)
-        tvToggleLabel?.text = cityName
+
+        // Update Header Location Text
+        val tvHeader = view?.findViewById<TextView>(R.id.tvHeaderLocationName)
+        tvHeader?.text = cityName
 
         // Calculate Sun Times using new Coords
         val sunTimes = calculateSunTimes(lat, long)
