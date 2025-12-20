@@ -17,6 +17,12 @@ data class Event(
     @SerializedName("date")
     val date: String,
 
+    @SerializedName("startDate")
+    val startDate: String?,
+
+    @SerializedName("endDate")
+    val endDate: String?,
+
     @SerializedName("time")
     val time: String? = null,
 
@@ -43,7 +49,7 @@ data class Event(
 
     @SerializedName("contact")
     val contact: String?
-)
+) : java.io.Serializable
 
 // Moved from JainRepository
 data class RsvpResponse(
@@ -61,6 +67,8 @@ data class EventSubmissionRequest(
     val title: String, // Was 'name'
     val city: String,  // Was 'location'
     val date: String,
+    val startDate: String,
+    val endDate: String,
     val time: String,  // ✅ Added
     val contact: String,
     val description: String

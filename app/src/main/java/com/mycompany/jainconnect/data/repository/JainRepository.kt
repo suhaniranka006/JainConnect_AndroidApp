@@ -175,12 +175,14 @@ class JainRepository @Inject constructor(
         title: String,
         city: String,
         date: String,
+        startDate: String,
+        endDate: String,
         time: String,
         desc: String,
         contact: String
     ): Response<ApiResponse> {
         // Map the function args to the Data Class
-        val request = EventSubmissionRequest(title, city, date, time, contact, desc)
+        val request = EventSubmissionRequest(title, city, date, startDate, endDate, time, contact, desc)
         return api.submitEvent("Bearer $token", request)
     }
 
@@ -189,6 +191,8 @@ class JainRepository @Inject constructor(
         title: String,
         city: String,
         date: String,
+        startDate: String,
+        endDate: String,
         time: String,
         desc: String,
         contact: String,
@@ -198,6 +202,8 @@ class JainRepository @Inject constructor(
         partsMap["title"] = title.toRequestBody("text/plain".toMediaTypeOrNull()) // Note: Backend expects 'title'
         partsMap["city"] = city.toRequestBody("text/plain".toMediaTypeOrNull())  // Backend expects 'city'
         partsMap["date"] = date.toRequestBody("text/plain".toMediaTypeOrNull())
+        partsMap["startDate"] = startDate.toRequestBody("text/plain".toMediaTypeOrNull())
+        partsMap["endDate"] = endDate.toRequestBody("text/plain".toMediaTypeOrNull())
         partsMap["time"] = time.toRequestBody("text/plain".toMediaTypeOrNull())
         partsMap["contact"] = contact.toRequestBody("text/plain".toMediaTypeOrNull())
         partsMap["description"] = desc.toRequestBody("text/plain".toMediaTypeOrNull())
@@ -218,7 +224,9 @@ class JainRepository @Inject constructor(
         city: String,
         date: String,
         contact: String,
-
+        arrivalDate: String,
+        viharDate: String,
+        description: String
     ): Response<ApiResponse> {
 
         val request = MaharajSubmissionRequest(
@@ -226,8 +234,10 @@ class JainRepository @Inject constructor(
             title,
             city,
             date,
-            contact
-
+            contact,
+            arrivalDate,
+            viharDate,
+            description
         )
         return api.submitMaharaj("Bearer $token", request)
     }
@@ -239,6 +249,9 @@ class JainRepository @Inject constructor(
         city: String,
         date: String,
         contact: String,
+        arrivalDate: String,
+        viharDate: String,
+        description: String,
         imageFile: File?
     ): Response<ApiResponse> {
         val partsMap = mutableMapOf<String, RequestBody>()
@@ -247,6 +260,9 @@ class JainRepository @Inject constructor(
         partsMap["city"] = city.toRequestBody("text/plain".toMediaTypeOrNull())
         partsMap["date"] = date.toRequestBody("text/plain".toMediaTypeOrNull())
         partsMap["contactInfo"] = contact.toRequestBody("text/plain".toMediaTypeOrNull())
+        partsMap["arrivalDate"] = arrivalDate.toRequestBody("text/plain".toMediaTypeOrNull())
+        partsMap["viharDate"] = viharDate.toRequestBody("text/plain".toMediaTypeOrNull())
+        partsMap["description"] = description.toRequestBody("text/plain".toMediaTypeOrNull())
 
         val imagePart: MultipartBody.Part? = imageFile?.let {
             val requestFile = it.asRequestBody("image/*".toMediaTypeOrNull())

@@ -12,13 +12,13 @@
     <View
         android:id="@+id/viewHeaderBg"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="130dp"
         android:background="@drawable/bg_gradient_header"
         app:layout_constraintTop_toTopOf="parent"/>
 
     <!-- Header Title -->
     <TextView
-        android:id="@+id/textViewTithiScreenTitle"
+        android:id="@+id/textViewTithiTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Tithis"
@@ -28,7 +28,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="48dp"/>
+        android:layout_marginTop="32dp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -36,8 +36,8 @@
         android:text="Track important dates efficiently."
         android:textSize="14sp"
         android:textColor="#DDFFFFFF"
-        app:layout_constraintStart_toStartOf="@id/textViewTithiScreenTitle"
-        app:layout_constraintTop_toBottomOf="@id/textViewTithiScreenTitle"/>
+        app:layout_constraintStart_toStartOf="@id/textViewTithiTitle"
+        app:layout_constraintTop_toBottomOf="@id/textViewTithiTitle"/>
 
     <!-- Floating Search Bar -->
     <com.google.android.material.card.MaterialCardView

@@ -40,7 +40,9 @@ class AddEventActivity : AppCompatActivity() {
         
         val etTitle = findViewById<EditText>(R.id.etEventTitle)
         val etCity = findViewById<EditText>(R.id.etEventCity)
-        val etDate = findViewById<EditText>(R.id.etEventDate)
+        // val etDate = findViewById<EditText>(R.id.etEventDate) // Removed
+        val etStartDate = findViewById<EditText>(R.id.etStartDate)
+        val etEndDate = findViewById<EditText>(R.id.etEndDate)
         val etTime = findViewById<EditText>(R.id.etEventTime) 
         val etDesc = findViewById<EditText>(R.id.etEventDesc)
         val etContact = findViewById<EditText>(R.id.etEventContact)
@@ -54,7 +56,9 @@ class AddEventActivity : AppCompatActivity() {
             // Get Data
             val title = etTitle.text.toString().trim()
             val city = etCity.text.toString().trim()
-            val date = etDate.text.toString().trim()
+            val startDate = etStartDate.text.toString().trim()
+            val endDate = etEndDate.text.toString().trim()
+            val date = startDate // Legacy fallback
             val time = etTime.text.toString().trim()
             val desc = etDesc.text.toString().trim()
             val contact = etContact.text.toString().trim()
@@ -64,13 +68,13 @@ class AddEventActivity : AppCompatActivity() {
             val token = sharedPref.getString("jwt_token", null)
 
             // Validate
-            if (token != null && title.isNotEmpty() && city.isNotEmpty() && date.isNotEmpty() && time.isNotEmpty() && contact.isNotEmpty()) {
+            if (token != null && title.isNotEmpty() && city.isNotEmpty() && startDate.isNotEmpty() && endDate.isNotEmpty() && time.isNotEmpty() && contact.isNotEmpty()) {
                 val file = selectedImageUri?.let { getFileFromUri(it) }
                 
                 // Submit to ViewModel
-                viewModel.submitNewEvent(token, title, city, date, time, desc, contact, file)
+                viewModel.submitNewEvent(token, title, city, date, startDate, endDate, time, desc, contact, file)
             } else {
-                Toast.makeText(this, "Please fill all fields (include Contact)", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please fill all fields (dates, contact, etc.)", Toast.LENGTH_SHORT).show()
             }
         }
 

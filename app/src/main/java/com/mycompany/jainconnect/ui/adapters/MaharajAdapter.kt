@@ -30,7 +30,10 @@ class MaharajAdapter(private var maharajList: List<Maharaj>) :
         val tvMaharajCity: TextView = itemView.findViewById(R.id.tvMaharajCity)
         val tvMaharajDate: TextView = itemView.findViewById(R.id.tvMaharajDate)
         val tvMaharajSampraday: TextView = itemView.findViewById(R.id.tvMaharajSampraday)
+        
+        val layoutMaharajContact: View = itemView.findViewById(R.id.layoutMaharajContact)
         val tvMaharajContact: TextView = itemView.findViewById(R.id.tvMaharajContact)
+        val btnViewDetails: View = itemView.findViewById(R.id.btnViewDetails)
     }
 
     /**
@@ -52,33 +55,24 @@ class MaharajAdapter(private var maharajList: List<Maharaj>) :
         // Required fields
         holder.tvMaharajName.text = maharaj.name
         
-        // Image Binding (Glide)
+        // Image Binding (Square)
         if (!maharaj.image.isNullOrEmpty()) {
             holder.ivMaharajImage.visibility = View.VISIBLE
             com.bumptech.glide.Glide.with(holder.itemView.context)
                 .load(maharaj.image)
                 .centerCrop()
-                .placeholder(R.drawable.ic_launcher_background) // Placeholder
+                .placeholder(R.drawable.ic_launcher_background)
                 .into(holder.ivMaharajImage)
         } else {
-            holder.ivMaharajImage.visibility = View.GONE
+             holder.ivMaharajImage.visibility = View.VISIBLE
+             holder.ivMaharajImage.setImageResource(R.drawable.ic_launcher_background)
         }
 
         // Optional fields
-        holder.tvMaharajCity.apply {
-            if (!maharaj.city.isNullOrEmpty()) {
-                text = maharaj.city
-                visibility = View.VISIBLE
-            } else visibility = View.GONE
-        }
-
-        holder.tvMaharajDate.apply {
-            if (!maharaj.relevantDate.isNullOrEmpty()) {
-                text = maharaj.relevantDate
-                visibility = View.VISIBLE
-            } else visibility = View.GONE
-        }
-
+        holder.tvMaharajCity.text = maharaj.city ?: "City"
+        
+        holder.tvMaharajDate.text = maharaj.arrivalDate ?: maharaj.relevantDate ?: "Date N/A"
+        
         holder.tvMaharajSampraday.apply {
             if (!maharaj.sampraday.isNullOrEmpty()) {
                 text = maharaj.sampraday
@@ -86,17 +80,30 @@ class MaharajAdapter(private var maharajList: List<Maharaj>) :
             } else visibility = View.GONE
         }
 
-        holder.tvMaharajContact.apply {
-            if (!maharaj.contactInfo.isNullOrEmpty()) {
-                text = maharaj.contactInfo
-                visibility = View.VISIBLE
-            } else visibility = View.GONE
+        // Contact Binding (Layout Visibility & Click)
+        if (!maharaj.contactInfo.isNullOrEmpty()) {
+            holder.tvMaharajContact.text = maharaj.contactInfo
+            holder.layoutMaharajContact.visibility = View.VISIBLE
+            
+            holder.layoutMaharajContact.setOnClickListener {
+                val phone = maharaj.contactInfo
+                val intent = android.content.Intent(android.content.Intent.ACTION_DIAL)
+                intent.data = android.net.Uri.parse("tel:$phone")
+                holder.itemView.context.startActivity(intent)
+            }
+        } else {
+            holder.layoutMaharajContact.visibility = View.GONE
         }
 
-        // Optional click listener
-        holder.itemView.setOnClickListener {
-            Log.d(TAG, "Clicked on Maharaj: ${maharaj.name} at position $position")
+        // Click Listener -> Detail Activity (ONLY ON BUTTON)
+        holder.btnViewDetails.setOnClickListener {
+            val intent = android.content.Intent(holder.itemView.context, com.mycompany.jainconnect.ui.activities.MaharajDetailActivity::class.java)
+            intent.putExtra("EXTRA_MAHARAJ", maharaj)
+            holder.itemView.context.startActivity(intent)
         }
+        
+        // Remove item click listener if it was set
+        holder.itemView.setOnClickListener(null)
     }
 
     /**

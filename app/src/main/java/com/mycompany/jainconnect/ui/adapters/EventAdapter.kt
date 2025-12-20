@@ -22,11 +22,15 @@ class EventAdapter(
 
     class EventViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val ivEventImage: android.widget.ImageView = itemView.findViewById(R.id.ivEventImage)
-        val tvDateDay: TextView = itemView.findViewById(R.id.tvDateDay)
-        val tvDateMonth: TextView = itemView.findViewById(R.id.tvDateMonth)
         val tvEventName: TextView = itemView.findViewById(R.id.tvEventName)
         val tvEventTime: TextView = itemView.findViewById(R.id.tvEventTime)
         val tvEventLocation: TextView = itemView.findViewById(R.id.tvEventLocation)
+        val tvEventDateLinear: TextView? = itemView.findViewById(R.id.tvEventDateLinear) // Nullable as it might not be in all layouts
+        
+        // Old views (Keep ref if layout uses them, otherwise can remove)
+        val tvDateDay: TextView? = itemView.findViewById(R.id.tvDateDay)
+        val tvDateMonth: TextView? = itemView.findViewById(R.id.tvDateMonth)
+        
         val tvEventDescription: TextView = itemView.findViewById(R.id.tvEventDescription)
         val tvRsvpCount: TextView = itemView.findViewById(R.id.tvRsvpCount)
         val btnRsvp: MaterialButton = itemView.findViewById(R.id.btnRsvp)
@@ -41,59 +45,42 @@ class EventAdapter(
     override fun onBindViewHolder(holder: EventViewHolder, position: Int) {
         val event = eventList[position]
 
-        // Load Image (Banner)
+        // Load Image (Square)
         if (!event.image.isNullOrEmpty()) {
              holder.ivEventImage.visibility = View.VISIBLE
              com.bumptech.glide.Glide.with(holder.itemView.context)
                  .load(event.image)
-                 .centerCrop()
-                 .placeholder(R.drawable.bg_gradient_header) // Placeholder
+                 .centerCrop() // Back to centerCrop for square thumbnail
+                 .placeholder(R.drawable.bg_gradient_header)
                  .into(holder.ivEventImage)
         } else {
-             holder.ivEventImage.visibility = View.GONE
+             holder.ivEventImage.setImageResource(R.drawable.ic_launcher_background)
         }
 
         holder.tvEventName.text = event.name
         holder.tvEventTime.text = event.time ?: "--:--"
         holder.tvEventLocation.text = event.location
 
-        // Parse Date for Date Box (Format YYYY-MM-DD)
-        try {
-            val parts = event.date.split("-", " ", "/")
-            if (parts.size >= 3) {
-                 var day = parts[2]
-                 var month = parts[1]
-                 
-                 if (parts[0].length == 4) { // YYYY-MM-DD
-                     day = parts[2]
-                     month = getMonthName(parts[1].toIntOrNull() ?: 1)
-                 } else { // DD-MM-YYYY
-                     day = parts[0]
-                     month = getMonthName(parts[1].toIntOrNull() ?: 1)
-                 }
-                 
-                 holder.tvDateDay.text = day
-                 holder.tvDateMonth.text = month
-            } else {
-                holder.tvDateDay.text = "--"
-                holder.tvDateMonth.text = "DATE"
-            }
-        } catch (e: Exception) {
-            holder.tvDateDay.text = "Evt"
-            holder.tvDateMonth.text = "DATE"
+        // Bind Date (Start Date only as per request)
+        if (holder.tvEventDateLinear != null) {
+            val dateText = event.startDate ?: event.date ?: "Date N/A"
+            holder.tvEventDateLinear.text = dateText
         }
-
-        if (!event.description.isNullOrEmpty()) {
-            holder.tvEventDescription.text = event.description
-            holder.tvEventDescription.visibility = View.VISIBLE
-        } else {
-            holder.tvEventDescription.visibility = View.GONE
-        }
+        
+        // Hide/Show Description (Usually hidden in compact visual, but if layout has it gone, it's fine)
+        holder.tvEventDescription.visibility = View.GONE 
 
         holder.tvRsvpCount.text = "${event.rsvpCount} Going"
 
         holder.btnRsvp.setOnClickListener {
             rsvpClickListener.onRsvpClick(event)
+        }
+
+        // Open Detail Screen on Item Click
+        holder.itemView.setOnClickListener {
+            val intent = android.content.Intent(holder.itemView.context, com.mycompany.jainconnect.ui.activities.EventDetailActivity::class.java)
+            intent.putExtra("EXTRA_EVENT", event)
+            holder.itemView.context.startActivity(intent)
         }
     }
 

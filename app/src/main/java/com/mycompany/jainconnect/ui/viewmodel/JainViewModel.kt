@@ -346,12 +346,14 @@ class JainViewModel @Inject constructor(
         title: String,
         city: String,
         date: String,
-        contact: String
-
+        contact: String,
+        arrivalDate: String,
+        viharDate: String,
+        description: String
     ) {
         viewModelScope.launch {
             try {
-                val response = repository.submitMaharaj(token, name, title, city, date, contact)
+                val response = repository.submitMaharaj(token, name, title, city, date, contact, arrivalDate, viharDate, description)
                 if (response.isSuccessful && response.body()?.success == true) {
                     _addMaharajResult.value = "Success"
                 } else {
@@ -397,6 +399,9 @@ class JainViewModel @Inject constructor(
         city: String,
         date: String,
         contact: String,
+        arrivalDate: String,
+        viharDate: String,
+        description: String,
         imageFile: File?
     ) {
         viewModelScope.launch {
@@ -408,6 +413,9 @@ class JainViewModel @Inject constructor(
                     city,
                     date,
                     contact,
+                    arrivalDate,
+                    viharDate,
+                    description,
                     imageFile
                 )
                 if (response.isSuccessful && response.body()?.success == true) {
@@ -427,6 +435,8 @@ class JainViewModel @Inject constructor(
         title: String,
         city: String,
         date: String,
+        startDate: String,
+        endDate: String,
         time: String,
         desc: String,
         contact: String,
@@ -440,13 +450,15 @@ class JainViewModel @Inject constructor(
                         title,
                         city,
                         date,
+                        startDate,
+                        endDate,
                         time,
                         desc,
                         contact,
                         imageFile
                     )
                 } else {
-                    repository.submitEvent(token, title, city, date, time, desc, contact)
+                    repository.submitEvent(token, title, city, date, startDate, endDate, time, desc, contact)
                 }
 
                 if (response.isSuccessful && response.body()?.success == true) {

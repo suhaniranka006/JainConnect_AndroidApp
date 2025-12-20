@@ -62,10 +62,18 @@
             android:layout_marginBottom="12dp"/>
 
         <EditText
-            android:id="@+id/etEventDate"
+            android:id="@+id/etStartDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Date (YYYY-MM-DD)"
+            android:hint="Start Date (YYYY-MM-DD)"
+            android:inputType="date"
+            android:layout_marginBottom="12dp"/>
+
+        <EditText
+            android:id="@+id/etEndDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="End Date (YYYY-MM-DD)"
             android:inputType="date"
             android:layout_marginBottom="12dp"/>
 

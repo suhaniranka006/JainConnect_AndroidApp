@@ -45,18 +45,21 @@ class AddMaharajActivity : AppCompatActivity() {
         setContentView(R.layout.activity_add_maharaj)
 
         // 1. Bind Views (Matches IDs in activity_add_maharaj.xml)
+        // 1. Bind Views (Matches IDs in activity_add_maharaj.xml)
         val etName = findViewById<EditText>(R.id.etMaharajName)
         val etTitle = findViewById<EditText>(R.id.etMaharajTitle) 
         val etCity = findViewById<EditText>(R.id.etMaharajLocation)
-        val etDate = findViewById<EditText>(R.id.etMaharajDate)
+        val etArrivalDate = findViewById<EditText>(R.id.etArrivalDate)
+        val etViharDate = findViewById<EditText>(R.id.etViharDate)
+        val etDescription = findViewById<EditText>(R.id.etDescription)
         val etContact = findViewById<EditText>(R.id.etMaharajContact)
         ivMaharajImage = findViewById(R.id.ivMaharajImage)
         val btnSelectImage = findViewById<Button>(R.id.btnSelectImage)
         val btnSubmit = findViewById<Button>(R.id.btnSubmitMaharaj)
 
-        // Set today's date
+        // Set today's date as default Arrival
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        etDate.setText(dateFormat.format(Date()))
+        etArrivalDate.setText(dateFormat.format(Date()))
 
         btnSelectImage.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
@@ -68,7 +71,9 @@ class AddMaharajActivity : AppCompatActivity() {
             val name = etName.text.toString().trim()
             val title = etTitle.text.toString().trim()
             val city = etCity.text.toString().trim()
-            val date = etDate.text.toString().trim()
+            val arrivalDate = etArrivalDate.text.toString().trim()
+            val viharDate = etViharDate.text.toString().trim()
+            val description = etDescription.text.toString().trim()
             val contact = etContact.text.toString().trim()
 
             // 3. Get Auth Token
@@ -78,10 +83,11 @@ class AddMaharajActivity : AppCompatActivity() {
             // 4. Validate Input
             if (token != null && name.isNotEmpty() && city.isNotEmpty()) {
                 // 5. Submit Data
+                // Passing 'arrivalDate' as the legacy 'date' field as well for compatibility
                 if (selectedImageFile != null) {
-                    viewModel.submitNewMaharajWithImage(token, name, title, city, date, contact, selectedImageFile)
+                    viewModel.submitNewMaharajWithImage(token, name, title, city, arrivalDate, contact, arrivalDate, viharDate, description, selectedImageFile)
                 } else {
-                    viewModel.submitNewMaharaj(token, name, title, city, date, contact)
+                    viewModel.submitNewMaharaj(token, name, title, city, arrivalDate, contact, arrivalDate, viharDate, description)
                 }
             } else {
                 Toast.makeText(this, "Please fill at least Name and City (and login)", Toast.LENGTH_SHORT).show()

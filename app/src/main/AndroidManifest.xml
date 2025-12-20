@@ -26,6 +26,14 @@
             android:name=".ui.activities.AddMaharajActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.activities.EventDetailActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
+        <activity
+            android:name=".ui.activities.MaharajDetailActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
+        <activity
             android:name=".ui.activities.AddEventActivity"
             android:exported="false" />
         <activity

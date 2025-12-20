@@ -12,7 +12,7 @@
     <View
         android:id="@+id/viewHeaderBg"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="130dp"
         android:background="@drawable/bg_gradient_header"
         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -28,7 +28,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="48dp"/>
+        android:layout_marginTop="32dp"/>
 
     <TextView
         android:layout_width="wrap_content"

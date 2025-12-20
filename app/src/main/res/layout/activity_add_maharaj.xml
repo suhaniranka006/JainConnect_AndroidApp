@@ -103,12 +103,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- 4. Date Input -->
+        <!-- 4. Arrival Date Input -->
         <EditText
-            android:id="@+id/etMaharajDate"
+            android:id="@+id/etArrivalDate"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Date (YYYY-MM-DD)"
+            android:hint="Arrival Date (YYYY-MM-DD)"
             android:inputType="date"
             android:background="@android:drawable/edit_text"
             android:padding="12dp"
@@ -117,7 +117,37 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- 5. Contact Input -->
+        <!-- 5. Vihar Date Input -->
+        <EditText
+            android:id="@+id/etViharDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Vihar Date (YYYY-MM-DD)"
+            android:inputType="date"
+            android:background="@android:drawable/edit_text"
+            android:padding="12dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/etArrivalDate"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- 6. Description Input -->
+        <EditText
+            android:id="@+id/etDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Description (About Place/Event)"
+            android:inputType="textMultiLine"
+            android:lines="3"
+            android:gravity="top|start"
+            android:background="@android:drawable/edit_text"
+            android:padding="12dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/etViharDate"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- 7. Contact Input -->
         <EditText
             android:id="@+id/etMaharajContact"
             android:layout_width="0dp"
@@ -127,7 +157,7 @@
             android:background="@android:drawable/edit_text"
             android:padding="12dp"
             android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@id/etMaharajDate"
+            app:layout_constraintTop_toBottomOf="@id/etDescription"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
