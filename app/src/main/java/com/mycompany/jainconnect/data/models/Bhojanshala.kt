@@ -1,7 +1,10 @@
 package com.mycompany.jainconnect.data.models
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class Bhojanshala(
     @SerializedName("_id")
     val _id: String,
@@ -18,6 +21,12 @@ data class Bhojanshala(
     @SerializedName("timings")
     val timings: String?,
 
+    @SerializedName("openingTime")
+    val openingTime: String?,
+
+    @SerializedName("closingTime")
+    val closingTime: String?,
+
     @SerializedName("contact")
     val contact: String?,
 
@@ -26,4 +35,4 @@ data class Bhojanshala(
 
     @SerializedName("image")
     val image: String?
-)
+) : Parcelable

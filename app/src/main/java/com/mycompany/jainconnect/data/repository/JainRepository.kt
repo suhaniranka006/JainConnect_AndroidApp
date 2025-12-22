@@ -278,27 +278,31 @@ class JainRepository @Inject constructor(
         city: String,
         address: String,
         timings: String,
+        openingTime: String,
+        closingTime: String,
         contact: String,
         description: String
     ): Response<ApiResponse> {
-        val request = BhojanshalaSubmissionRequest(name, city, address, timings, contact, description)
+        val request = BhojanshalaSubmissionRequest(name, city, address, timings, openingTime, closingTime, contact, description)
         return api.submitBhojanshala("Bearer $token", request)
     }
 
     suspend fun submitBhojanshalaWithImage(
-        token: String, name: String, city: String, address: String, timings: String, contact: String, description: String, imageFile: java.io.File
+        token: String, name: String, city: String, address: String, timings: String, openingTime: String, closingTime: String, contact: String, description: String, imageFile: java.io.File
     ): Response<ApiResponse> {
         val namePart = name.toRequestBody("text/plain".toMediaTypeOrNull())
         val cityPart = city.toRequestBody("text/plain".toMediaTypeOrNull())
         val addressPart = address.toRequestBody("text/plain".toMediaTypeOrNull())
         val timingsPart = timings.toRequestBody("text/plain".toMediaTypeOrNull())
+        val openingTimePart = openingTime.toRequestBody("text/plain".toMediaTypeOrNull())
+        val closingTimePart = closingTime.toRequestBody("text/plain".toMediaTypeOrNull())
         val contactPart = contact.toRequestBody("text/plain".toMediaTypeOrNull())
         val descPart = description.toRequestBody("text/plain".toMediaTypeOrNull())
 
         val requestFile = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
         val imagePart = MultipartBody.Part.createFormData("image", imageFile.name, requestFile)
 
-        return api.submitBhojanshalaWithImage("Bearer $token", imagePart, namePart, cityPart, addressPart, timingsPart, contactPart, descPart)
+        return api.submitBhojanshalaWithImage("Bearer $token", imagePart, namePart, cityPart, addressPart, timingsPart, openingTimePart, closingTimePart, contactPart, descPart)
     }
 
     suspend fun submitTempleWithImage(

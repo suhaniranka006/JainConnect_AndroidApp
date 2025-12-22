@@ -3,8 +3,11 @@ package com.mycompany.jainconnect.ui.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.google.android.material.button.MaterialButton
 import com.mycompany.jainconnect.R
 import com.mycompany.jainconnect.data.models.Bhojanshala
 
@@ -24,8 +27,7 @@ class BhojanshalaAdapter : RecyclerView.Adapter<BhojanshalaAdapter.BhojanshalaVi
     }
 
     override fun onBindViewHolder(holder: BhojanshalaViewHolder, position: Int) {
-        val bhojanshala = bhojanshalaList[position]
-        holder.bind(bhojanshala)
+        holder.bind(bhojanshalaList[position])
     }
 
     override fun getItemCount(): Int = bhojanshalaList.size
@@ -34,28 +36,43 @@ class BhojanshalaAdapter : RecyclerView.Adapter<BhojanshalaAdapter.BhojanshalaVi
         private val tvName: TextView = itemView.findViewById(R.id.tvName)
         private val tvCity: TextView = itemView.findViewById(R.id.tvCity)
         private val tvAddress: TextView = itemView.findViewById(R.id.tvAddress)
-        private val tvTimings: TextView = itemView.findViewById(R.id.tvTimings)
-        private val tvContact: TextView = itemView.findViewById(R.id.tvContact)
-        private val tvDescription: TextView = itemView.findViewById(R.id.tvDescription)
-
-        private val ivImage: android.widget.ImageView = itemView.findViewById(R.id.ivBhojanshalaImage)
+        private val ivImage: ImageView = itemView.findViewById(R.id.ivBhojanshalaImage)
+        private val btnCall: MaterialButton = itemView.findViewById(R.id.btnCall)
+        private val btnViewDetails: MaterialButton = itemView.findViewById(R.id.btnViewDetails)
 
         fun bind(bhojanshala: Bhojanshala) {
             tvName.text = bhojanshala.name
             tvCity.text = bhojanshala.city
-            tvAddress.text = "Address: ${bhojanshala.address}"
-            tvTimings.text = "Timings: ${bhojanshala.timings ?: "N/A"}"
-            tvContact.text = bhojanshala.contact?.let { "Contact: $it" } ?: ""
-            tvDescription.text = bhojanshala.description ?: ""
+            tvAddress.text = bhojanshala.address ?: "Address not available"
 
             if (!bhojanshala.image.isNullOrEmpty()) {
-                ivImage.visibility = View.VISIBLE
-                com.bumptech.glide.Glide.with(itemView.context)
+                Glide.with(itemView.context)
                     .load(bhojanshala.image)
                     .placeholder(R.drawable.jainconnect_app_logo)
                     .into(ivImage)
             } else {
-                ivImage.visibility = View.GONE
+                ivImage.setImageResource(R.drawable.jainconnect_app_logo)
+            }
+
+            if (!bhojanshala.contact.isNullOrEmpty()) {
+                btnCall.visibility = View.VISIBLE
+                btnCall.setOnClickListener {
+                    try {
+                        val intent = android.content.Intent(android.content.Intent.ACTION_DIAL)
+                        intent.data = android.net.Uri.parse("tel:${bhojanshala.contact}")
+                        itemView.context.startActivity(intent)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            } else {
+                btnCall.visibility = View.GONE
+            }
+
+            btnViewDetails.setOnClickListener {
+                val intent = android.content.Intent(itemView.context, com.mycompany.jainconnect.ui.activities.BhojanshalaDetailActivity::class.java)
+                intent.putExtra("bhojanshala_data", bhojanshala)
+                itemView.context.startActivity(intent)
             }
         }
     }

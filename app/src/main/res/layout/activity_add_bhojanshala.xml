@@ -69,12 +69,27 @@
             android:minLines="2"
             android:layout_marginBottom="12dp"/>
 
-        <EditText
-            android:id="@+id/etTimings"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Timings (e.g., 10 AM - 2 PM)"
-            android:layout_marginBottom="12dp"/>
+            android:orientation="horizontal"
+            android:layout_marginBottom="12dp">
+
+            <EditText
+                android:id="@+id/etOpeningTime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Opening (e.g. 10 AM)"
+                android:layout_marginEnd="8dp"/>
+
+            <EditText
+                android:id="@+id/etClosingTime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Closing (e.g. 8 PM)"/>
+        </LinearLayout>
 
         <EditText
             android:id="@+id/etContact"

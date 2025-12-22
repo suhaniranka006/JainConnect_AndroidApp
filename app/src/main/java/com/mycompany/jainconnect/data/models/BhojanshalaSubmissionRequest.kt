@@ -5,6 +5,8 @@ data class BhojanshalaSubmissionRequest(
     val city: String,
     val address: String,
     val timings: String?,
+    val openingTime: String?,
+    val closingTime: String?,
     val contact: String?,
     val description: String?
 )

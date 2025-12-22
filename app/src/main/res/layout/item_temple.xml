@@ -5,86 +5,134 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="4dp"
-    android:layout_marginVertical="6dp"
-    app:cardBackgroundColor="@android:color/white"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
-    app:strokeColor="@color/bright_saffron"
-    app:strokeWidth="1dp">
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="10dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="@android:color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="0dp"
-        android:background="?android:attr/selectableItemBackground">
+        android:orientation="vertical">
 
+        <!-- Image Area -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp">
+            
+            <ImageView
+                android:id="@+id/ivTempleImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/jainconnect_app_logo"/>
+            
+            <!-- City Badge (Floating on Image Bottom-Left) -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|start"
+                android:layout_margin="12dp"
+                android:background="@drawable/bg_rounded_white_translucent"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:gravity="center_vertical">
+                
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/ic_location"
+                    app:tint="@color/black"/>
+                
+                <TextView
+                    android:id="@+id/tvCity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Udaipur"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_marginStart="4dp"/>
+            </LinearLayout>
+        </FrameLayout>
+
+        <!-- White Content Area -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
 
-            <ImageView
-                android:id="@+id/ivTempleImage"
-                android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/jainconnect_app_logo"
-                android:visibility="gone"
-                android:layout_marginBottom="12dp"
-                android:contentDescription="Temple Image"/>
-
+            <!-- Title -->
             <TextView
                 android:id="@+id/tvName"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
+                android:text="Shri Mahaveer Swami Temple"
+                android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="@color/dark_charcoal"
-                tools:text="Shri Mahaveer Swami Jain Temple"/>
-
-            <TextView
-                android:id="@+id/tvCity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="#757575"
-                tools:text="Udaipur"
-                android:layout_marginTop="4dp"/>
-
-            <TextView
-                android:id="@+id/tvAddress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="#424242"
-                tools:text="Sector 4, Hiran Magri"
-                android:layout_marginTop="4dp"/>
-
-            <TextView
-                android:id="@+id/tvContact"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="#3F51B5"
-                android:textStyle="bold"
-                tools:text="Contact: 9876543210"
-                android:layout_marginTop="2dp"/>
-
-            <TextView
-                android:id="@+id/tvDescription"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="#424242"
-                tools:text="A beautiful Digambar Jain temple."
-                android:layout_marginTop="8dp"
-                android:visibility="visible"
-                android:maxLines="3"
+                android:textColor="@color/black"
+                android:maxLines="2"
                 android:ellipsize="end"/>
 
+            <!-- Address -->
+            <TextView
+                android:id="@+id/tvAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sector 4, Hiran Magri"
+                android:textSize="14sp"
+                android:textColor="#757575"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:layout_marginTop="4dp"/>
+
+            <!-- Action Bar -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
+                android:gravity="center_vertical">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnViewDetails"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:text="EXPLORE"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    app:strokeColor="#E64A19"
+                    android:textColor="#E64A19"
+                    app:cornerRadius="22dp"
+                    android:layout_marginEnd="12dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCall"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    app:icon="@drawable/ic_call_filled"
+                    app:iconTint="@android:color/white"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp"
+                    android:padding="0dp"
+                    android:insetLeft="0dp"
+                    android:insetTop="0dp"
+                    android:insetRight="0dp"
+                    android:insetBottom="0dp"
+                    android:backgroundTint="#4CAF50"
+                    app:cornerRadius="12dp"/>
+
+            </LinearLayout>
+
         </LinearLayout>
+        
+        <!-- Compatibility Dummy -->
+        <View android:id="@+id/layoutContactRow" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+
     </LinearLayout>
+
 </com.google.android.material.card.MaterialCardView>

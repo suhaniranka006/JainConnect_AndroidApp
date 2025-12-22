@@ -928,11 +928,13 @@ class JainViewModel @Inject constructor(
         name: String,
         city: String,
         address: String,
-        timings: String,
+        openingTime: String,
+        closingTime: String,
         contact: String,
         description: String,
         imageFile: File? = null
     ) {
+        val timings = "$openingTime - $closingTime"
         viewModelScope.launch {
             try {
                 val response = if (imageFile != null) {
@@ -942,6 +944,8 @@ class JainViewModel @Inject constructor(
                         city,
                         address,
                         timings,
+                        openingTime,
+                        closingTime,
                         contact,
                         description,
                         imageFile
@@ -953,6 +957,8 @@ class JainViewModel @Inject constructor(
                         city,
                         address,
                         timings,
+                        openingTime,
+                        closingTime,
                         contact,
                         description
                     )

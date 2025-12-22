@@ -3,6 +3,7 @@
     package="com.mycompany.jainconnect">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
@@ -109,6 +110,10 @@
             android:name=".ui.activities.TempleActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.activities.TempleDetailActivity"
+            android:exported="false"
+            android:theme="@style/Theme.JainConnect.NoActionBar"/>
+        <activity
             android:name=".ui.activities.AddTempleActivity"
             android:exported="false" />
         <activity
@@ -124,6 +129,10 @@
         <activity
             android:name=".ui.activities.MembersActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.activities.BhojanshalaDetailActivity"
+            android:exported="false"
+            android:theme="@style/Theme.JainConnect.NoActionBar"/>
 
     </application>
 

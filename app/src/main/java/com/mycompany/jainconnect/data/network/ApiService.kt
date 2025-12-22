@@ -193,6 +193,8 @@ interface ApiService {
         @Part("city") city: RequestBody,
         @Part("address") address: RequestBody,
         @Part("timings") timings: RequestBody,
+        @Part("openingTime") openingTime: RequestBody,
+        @Part("closingTime") closingTime: RequestBody,
         @Part("contact") contact: RequestBody,
         @Part("description") description: RequestBody
     ): Response<ApiResponse>

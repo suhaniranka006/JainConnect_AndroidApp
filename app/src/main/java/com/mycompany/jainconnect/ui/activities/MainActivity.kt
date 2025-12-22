@@ -37,6 +37,10 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
     private lateinit var navigationView: NavigationView
     private val viewModel: JainViewModel by viewModels()
 
+    // Network Monitor
+    private var networkReceiver: com.mycompany.jainconnect.utils.NetworkChangeReceiver? = null
+    private var internetSnackbar: com.google.android.material.snackbar.Snackbar? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -87,6 +91,40 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
         // Re-check permissions when coming back (e.g. from Settings)
         if (!hasPermissions()) {
             checkAndRequestPermissions()
+        }
+        
+        // Register Network Receiver
+        if (networkReceiver == null) {
+            networkReceiver = com.mycompany.jainconnect.utils.NetworkChangeReceiver { isConnected ->
+                showNetworkStatus(isConnected)
+            }
+        }
+        val filter = android.content.IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION)
+        registerReceiver(networkReceiver, filter)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        try {
+            if (networkReceiver != null) unregisterReceiver(networkReceiver)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun showNetworkStatus(isConnected: Boolean) {
+        if (!isConnected) {
+            if (internetSnackbar == null) {
+                internetSnackbar = com.google.android.material.snackbar.Snackbar.make(
+                    drawerLayout,
+                    "No Internet Connection",
+                    com.google.android.material.snackbar.Snackbar.LENGTH_INDEFINITE
+                ).setBackgroundTint(ContextCompat.getColor(this, R.color.error_red))
+                 .setTextColor(ContextCompat.getColor(this, android.R.color.white))
+            }
+            internetSnackbar?.show()
+        } else {
+            internetSnackbar?.dismiss()
         }
     }
 

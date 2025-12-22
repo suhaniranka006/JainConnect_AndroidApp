@@ -31,8 +31,11 @@ class TempleActivity : AppCompatActivity() {
         progressBar = findViewById(R.id.progressBar)
         recyclerView = findViewById(R.id.recyclerViewTemples)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = TempleAdapter()
-        adapter = TempleAdapter()
+        adapter = TempleAdapter { temple ->
+            val intent = android.content.Intent(this, TempleDetailActivity::class.java)
+            intent.putExtra("TEMPLE_DATA", temple)
+            startActivity(intent)
+        }
         recyclerView.adapter = adapter
 
         // --- CACHE LOAD ---
