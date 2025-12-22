@@ -800,11 +800,11 @@
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
                 android:layout_margin="4dp"
-                app:cardBackgroundColor="#FFF8E1"
-                app:cardCornerRadius="16dp"
+                app:cardBackgroundColor="#B3FFECB3"
+                app:cardCornerRadius="24dp"
                 app:cardElevation="0dp"
-                app:strokeColor="#FFECB3"
-                app:strokeWidth="0dp">
+                app:strokeColor="#80FFFFFF"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -815,24 +815,67 @@
                     <ImageView
                         android:layout_width="32dp"
                         android:layout_height="32dp"
-                        android:src="@drawable/ic_temple"
-                        app:tint="#FF8F00" />
+                        android:src="@drawable/ic_bus_vector"
+                        app:tint="#FF6F00" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="Tirthyatra"
-                        android:textColor="#FF8F00"
+                        android:textColor="#FF6F00"
                         android:textSize="14sp"
                         android:textStyle="bold"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Plan Your Trip"
-                        android:textColor="#FF8F00"
+                        android:text="Plan Trip"
+                        android:textColor="#FF6F00"
                         android:textSize="10sp"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <!-- 11. Explore Map (Blue Grey) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/btnExploreMap"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_rowWeight="1"
+                android:layout_margin="4dp"
+                app:cardBackgroundColor="#B3CFD8DC"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="0dp"
+                app:strokeColor="#80FFFFFF"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="20dp">
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_location"
+                        app:tint="#455A64" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Explore Map"
+                        android:textColor="#455A64"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Nearby"
+                        android:textColor="#455A64"
+                        android:textSize="10sp"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
 
             <!-- 10. News (Lime) -->
             <com.google.android.material.card.MaterialCardView

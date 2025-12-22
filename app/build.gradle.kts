@@ -103,6 +103,7 @@ dependencies {
 
 
     implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("org.osmdroid:osmdroid-android:6.1.18")
 
     // Hilt
     implementation("com.google.dagger:hilt-android:2.51.1")

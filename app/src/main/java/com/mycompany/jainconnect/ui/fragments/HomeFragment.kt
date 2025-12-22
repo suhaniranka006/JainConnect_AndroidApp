@@ -239,6 +239,9 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
         view.findViewById<View>(R.id.btnTirthyatra).setOnClickListener {
             startActivity(Intent(requireContext(), TirthyatraActivity::class.java))
         }
+        view.findViewById<View>(R.id.btnExploreMap).setOnClickListener {
+            startActivity(Intent(requireContext(), ExploreMapActivity::class.java))
+        }
 
         // --- New Features (Placeholders) ---
         val newFeatures = mapOf(
