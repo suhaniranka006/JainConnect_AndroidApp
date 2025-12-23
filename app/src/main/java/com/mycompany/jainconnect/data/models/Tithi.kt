@@ -19,5 +19,8 @@ data class Tithi(
     val date: String,
 
     @SerializedName("description") // Maps JSON "description" to Kotlin "details"
-    val details: String?
+    val details: String?,
+
+    @SerializedName("isMajor")
+    val isMajor: Boolean = false
 )

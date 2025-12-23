@@ -23,8 +23,20 @@ class TithiAdapter(private var tithiList: List<Tithi>) :
         val tvTithiDetails: TextView = itemView.findViewById(R.id.tvTithiDescription)
         val tvDateDay: TextView = itemView.findViewById(R.id.tvDateDay)
         val tvDateMonth: TextView = itemView.findViewById(R.id.tvDateMonth)
-        // val tvSunrise: TextView = itemView.findViewById(R.id.tvSunrise) // Data missing
-        // val tvSunset: TextView = itemView.findViewById(R.id.tvSunset)   // Data missing
+        val btnSave: android.widget.ImageView = itemView.findViewById(R.id.btnSave)
+    }
+
+    // Callback for save
+    private var onSaveClickListener: ((Tithi) -> Unit)? = null
+    private var mSavedIds: Set<String> = emptySet()
+
+    fun setOnSaveClickListener(listener: (Tithi) -> Unit) {
+        onSaveClickListener = listener
+    }
+    
+    fun updateSavedIds(newSavedIds: Set<String>) {
+        this.mSavedIds = newSavedIds
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TithiViewHolder {
@@ -73,16 +85,59 @@ class TithiAdapter(private var tithiList: List<Tithi>) :
                 holder.tvDateDay.text = "--"
                 holder.tvDateMonth.text = "DATE"
             }
+            // Removed erroneous overwrites
         } catch (e: Exception) {
-            holder.tvDateDay.text = "Tithi"
+            e.printStackTrace()
+            holder.tvDateDay.text = "--"
             holder.tvDateMonth.text = "DATE"
+        }
+
+        // Save Button State
+        // Safety check for ID: Tithi ID might be null, use empty string if so, or better, don't show save if no ID
+        val tithiId = tithi.id
+        if (tithiId != null) {
+            holder.btnSave.visibility = View.VISIBLE
+            val isSaved = mSavedIds.contains(tithiId)
+            if (isSaved) {
+                holder.btnSave.setImageResource(R.drawable.ic_bookmark_filled)
+                holder.btnSave.setColorFilter(null)
+            } else {
+                holder.btnSave.setImageResource(R.drawable.ic_bookmark_border)
+                holder.btnSave.setColorFilter(null)
+            }
+            
+            holder.btnSave.setOnClickListener {
+                onSaveClickListener?.invoke(tithi)
+                
+                // Optimistic Update
+                val isCurrentlySaved = mSavedIds.contains(tithiId)
+                if (isCurrentlySaved) {
+                    mSavedIds = mSavedIds - tithiId
+                    holder.btnSave.setImageResource(R.drawable.ic_bookmark_border)
+                } else {
+                    mSavedIds = mSavedIds + tithiId
+                    holder.btnSave.setImageResource(R.drawable.ic_bookmark_filled)
+                }
+            }
+        } else {
+             holder.btnSave.visibility = View.GONE
         }
     }
 
     private fun getMonthName(month: Int): String {
         return when (month) {
-            1 -> "JAN" 2 -> "FEB" 3 -> "MAR" 4 -> "APR" 5 -> "MAY" 6 -> "JUN"
-            7 -> "JUL" 8 -> "AUG" 9 -> "SEP" 10 -> "OCT" 11 -> "NOV" 12 -> "DEC"
+            1 -> "JAN"
+            2 -> "FEB"
+            3 -> "MAR"
+            4 -> "APR"
+            5 -> "MAY"
+            6 -> "JUN"
+            7 -> "JUL"
+            8 -> "AUG"
+            9 -> "SEP"
+            10 -> "OCT"
+            11 -> "NOV"
+            12 -> "DEC"
             else -> "MTH"
         }
     }

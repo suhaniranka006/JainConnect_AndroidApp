@@ -328,8 +328,8 @@ class JainRepository @Inject constructor(
         return api.sendChatNotification("Bearer $token", body)
     }
 
-    suspend fun createCarpool(request: CarpoolRequest): Response<ApiResponse> {
-        return api.createCarpool(request)
+    suspend fun createCarpool(token: String, request: CarpoolRequest): Response<ApiResponse> {
+        return api.createCarpool("Bearer $token", request)
     }
 
     // --- Jain Legacy ---

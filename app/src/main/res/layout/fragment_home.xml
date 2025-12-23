@@ -315,6 +315,45 @@
             android:layout_marginTop="12dp"
             android:orientation="horizontal">
 
+            <!-- Explore Map Action (Moved here) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardQuickExploreMap"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                app:cardBackgroundColor="#E0F7FA"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.JainConnect.QuickAction"
+                app:cardElevation="2dp"
+                app:strokeColor="#B2EBF2"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="16dp">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_location"
+                        app:tint="#006064" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Explore Map"
+                        android:textColor="#006064"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:layout_gravity="center"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <!-- Notifications Action -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardQuickNotifications"
@@ -347,6 +386,44 @@
                         android:layout_marginTop="8dp"
                         android:text="Notifications"
                         android:textColor="#D32F2F"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_gravity="center"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Saved Action (New) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardQuickSaved"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                app:cardBackgroundColor="#E8F5E9"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.JainConnect.QuickAction"
+                app:cardElevation="2dp"
+                app:strokeColor="#C8E6C9"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="16dp">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_bookmark"
+                        app:tint="#2E7D32" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Saved"
+                        android:textColor="#2E7D32"
                         android:textSize="12sp"
                         android:textStyle="bold"
                         android:layout_gravity="center"/>
@@ -834,47 +911,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- 11. Explore Map (Blue Grey) -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/btnExploreMap"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_rowWeight="1"
-                android:layout_margin="4dp"
-                app:cardBackgroundColor="#B3CFD8DC"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="0dp"
-                app:strokeColor="#80FFFFFF"
-                app:strokeWidth="1dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="20dp">
-                    <ImageView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:src="@drawable/ic_location"
-                        app:tint="#455A64" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Explore Map"
-                        android:textColor="#455A64"
-                        android:textSize="14sp"
-                        android:textStyle="bold"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Nearby"
-                        android:textColor="#455A64"
-                        android:textSize="10sp"/>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
 
 
             <!-- 10. News (Lime) -->

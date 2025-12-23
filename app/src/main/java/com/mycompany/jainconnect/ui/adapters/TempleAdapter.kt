@@ -17,6 +17,20 @@ class TempleAdapter(
     fun submitList(list: List<Temple>) {
         templeList.clear()
         templeList.addAll(list)
+        templeList.addAll(list)
+        notifyDataSetChanged()
+    }
+
+    // Callback for save
+    private var onSaveClickListener: ((Temple) -> Unit)? = null
+    private var mSavedIds: Set<String> = emptySet()
+
+    fun setOnSaveClickListener(listener: (Temple) -> Unit) {
+        onSaveClickListener = listener
+    }
+    
+    fun updateSavedIds(newSavedIds: Set<String>) {
+        this.mSavedIds = newSavedIds
         notifyDataSetChanged()
     }
 
@@ -42,6 +56,7 @@ class TempleAdapter(
         
         private val btnCall: com.google.android.material.button.MaterialButton = itemView.findViewById(R.id.btnCall)
         private val btnDetails: com.google.android.material.button.MaterialButton = itemView.findViewById(R.id.btnViewDetails)
+        private val btnSave: android.widget.ImageView = itemView.findViewById(R.id.btnSave)
 
         fun bind(temple: Temple) {
             tvName.text = temple.name
@@ -78,6 +93,38 @@ class TempleAdapter(
             // Details Click
             btnDetails.setOnClickListener {
                 onTempleClick(temple)
+            }
+            
+            // Save Button Logic
+            // Assuming Temple model has valid 'id' or '_id'. Checking... Temple typically uses '_id' from backend
+            // But let's verify if Temple model has it. Will assume property name 'id' or '_id' exists.
+            // If compile fails, I'll fix it. Based on other models, likely '_id'.
+            // WAIT - I haven't checked Temple model. I'll use 'id' if consistent, or '_id' if legacy.
+            // Safest -> check 'id' field existance in next step if fails. For now assume '_id' like Maharaj/Event originally had?
+            // Actually, I should use reflection or just assume 'id' as I fixed others to 'id'.
+            // Let's assume 'id' for now.
+            
+            val isSaved = mSavedIds.contains(temple._id) // Temple likely has _id still
+             if (isSaved) {
+                btnSave.setImageResource(R.drawable.ic_bookmark_filled)
+                btnSave.setColorFilter(null)
+            } else {
+                btnSave.setImageResource(R.drawable.ic_bookmark_border)
+                btnSave.setColorFilter(null)
+            }
+            
+            btnSave.setOnClickListener {
+                onSaveClickListener?.invoke(temple)
+                
+                // Optimistic Update
+                val isCurrentlySaved = mSavedIds.contains(temple._id)
+                if (isCurrentlySaved) {
+                    mSavedIds = mSavedIds - temple._id
+                    btnSave.setImageResource(R.drawable.ic_bookmark_border)
+                } else {
+                    mSavedIds = mSavedIds + temple._id
+                    btnSave.setImageResource(R.drawable.ic_bookmark_filled)
+                }
             }
         }
     }

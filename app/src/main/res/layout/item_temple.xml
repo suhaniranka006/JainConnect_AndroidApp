@@ -55,6 +55,18 @@
                     android:textStyle="bold"
                     android:layout_marginStart="4dp"/>
             </LinearLayout>
+
+            <!-- Save Button Overlay -->
+            <ImageView
+                android:id="@+id/btnSave"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="top|end"
+                android:layout_margin="12dp"
+                android:background="@drawable/bg_rounded_white_translucent"
+                android:padding="10dp"
+                android:src="@drawable/ic_bookmark_border"
+                app:tint="#757575"/>
         </FrameLayout>
 
         <!-- White Content Area -->

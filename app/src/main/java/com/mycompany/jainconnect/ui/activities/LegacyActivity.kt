@@ -59,9 +59,15 @@ class LegacyActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         )
+        
+        // Handle Save Click
+        adapter.setOnSaveClickListener { story ->
+             viewModel.toggleSaveState(story.id, "saved_stories") // Matching SavedRepository key
+        }
+        
         rvStories.adapter = adapter
 
-        // --- CACHE LOAD ---
+        // --- CACHE LOAD STORIES ---
         val sharedPref = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
         val gson = Gson()
         val cachedData = sharedPref.getString("cached_stories", null)
@@ -73,6 +79,16 @@ class LegacyActivity : AppCompatActivity() {
                 findViewById<ProgressBar>(R.id.progressBar).visibility = View.GONE
             }
         }
+        
+        // --- LOAD SAVED STATE ---
+        // Manually reading for now as simpler than exposing Repo through VM
+        val savedPref = getSharedPreferences("jain_saved_items", Context.MODE_PRIVATE)
+        val savedJson = savedPref.getString("saved_stories", null) // KEY_STORIES
+        if (savedJson != null) {
+             val setType = object : TypeToken<Set<String>>() {}.type
+             val savedIds: Set<String> = gson.fromJson(savedJson, setType)
+             adapter.updateSavedIds(savedIds)
+        }
         // ------------------
     }
 
@@ -80,11 +96,10 @@ class LegacyActivity : AppCompatActivity() {
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
 
         viewModel.storyList.observe(this) { stories ->
+            progressBar.visibility = View.GONE // Hide immediately on any result
             adapter.updateList(stories)
             
             if (stories.isNotEmpty()) {
-                progressBar.visibility = View.GONE
-                
                 // --- CACHE SAVE ---
                 val sharedPref = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
                 val gson = Gson()
@@ -92,7 +107,7 @@ class LegacyActivity : AppCompatActivity() {
                 sharedPref.edit().putString("cached_stories", json).apply()
                 // ------------------
             } else {
-                 if (adapter.itemCount == 0) progressBar.visibility = View.VISIBLE else progressBar.visibility = View.GONE
+                 // Optional: Show "No Stories" text view if needed
             }
         }
     }

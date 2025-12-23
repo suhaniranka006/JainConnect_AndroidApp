@@ -19,6 +19,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import android.content.Context
 import android.view.View
+import javax.inject.Inject
 
 
 /**
@@ -34,6 +35,9 @@ class TithiActivity : AppCompatActivity() {
 
     private val TAG = "TithiActivity_UI"                 // Logging tag
 
+    @Inject
+    lateinit var savedRepository: com.mycompany.jainconnect.data.repository.SavedRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate started")
@@ -43,6 +47,13 @@ class TithiActivity : AppCompatActivity() {
         recyclerViewTithi = findViewById(R.id.recyclerViewTithi)
         recyclerViewTithi.layoutManager = LinearLayoutManager(this) // Vertical list
         tithiAdapter = TithiAdapter(emptyList())                   // Initially empty
+        
+        // --- SYNC LOADING OF SAVED STATE ---
+        // Load saved IDs immediately to prevent latency/flicker
+        val savedIds = savedRepository.getSavedIds(com.mycompany.jainconnect.data.repository.SavedRepository.KEY_TITHIS)
+        tithiAdapter.updateSavedIds(savedIds) // Set IDs before adapter is even populated fully if needed, or right here
+        // -----------------------------------
+        
         recyclerViewTithi.adapter = tithiAdapter
         Log.d(TAG, "RecyclerView + Adapter set")
 
@@ -99,6 +110,22 @@ class TithiActivity : AppCompatActivity() {
             }
             // ------------------
         }
+        
+        // --- SAVED TITHIS OBSERVATION (Kept for updates) ---
+        viewModel.savedTithis.observe(this) { savedList ->
+             val ids = savedList.mapNotNull { it.id }.toSet()
+             tithiAdapter.updateSavedIds(ids)
+        }
+        
+        // Setup Save Click Listener
+        tithiAdapter.setOnSaveClickListener { tithi ->
+             // Safe check for ID
+             val id = tithi.id ?: return@setOnSaveClickListener
+             viewModel.toggleSaveState(id, com.mycompany.jainconnect.data.repository.SavedRepository.KEY_TITHIS)
+        }
+        
+        // Fetch Saved Tithis initially (Async update)
+        viewModel.fetchSavedTithis()
 
         // -------------------- SearchView Setup --------------------
         val searchView = findViewById<SearchView>(R.id.searchViewTithi)
@@ -141,8 +168,14 @@ class TithiActivity : AppCompatActivity() {
         }
 
 // Next 15 Days
+// Next 15 Days
         findViewById<MaterialButton>(R.id.buttonNext15Days).setOnClickListener {
             viewModel.filterTithisByDays(15)
+        }
+
+// Major Parva
+        findViewById<MaterialButton>(R.id.buttonMajorParva).setOnClickListener {
+            viewModel.filterMajorParva()
         }
 
 // -------------------- Fetch Initial Data --------------------

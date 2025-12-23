@@ -239,9 +239,10 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
         view.findViewById<View>(R.id.btnTirthyatra).setOnClickListener {
             startActivity(Intent(requireContext(), TirthyatraActivity::class.java))
         }
-        view.findViewById<View>(R.id.btnExploreMap).setOnClickListener {
-            startActivity(Intent(requireContext(), ExploreMapActivity::class.java))
+        view.findViewById<View>(R.id.btnTirthyatra).setOnClickListener {
+            startActivity(Intent(requireContext(), TirthyatraActivity::class.java))
         }
+        // Removed btnExploreMap from here as it is now in Quick Actions
 
         // --- New Features (Placeholders) ---
         val newFeatures = mapOf(
@@ -255,17 +256,27 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
         }
 
         // --- Quick Actions with Animation ---
+        val cardExploreMapQuick = view.findViewById<View>(R.id.cardQuickExploreMap)
         val cardNotif = view.findViewById<View>(R.id.cardQuickNotifications)
+        val cardSaved = view.findViewById<View>(R.id.cardQuickSaved) // New
         val cardPachkhan = view.findViewById<View>(R.id.cardQuickPachkhan)
         val cardMonksQuick = view.findViewById<View>(R.id.cardQuickMonks)
 
         // Apply Subtle Floating Animation
-        startFloatingAnimation(cardNotif, 0L)
-        startFloatingAnimation(cardPachkhan, 200L) // Staggered start
-        startFloatingAnimation(cardMonksQuick, 400L)
+        startFloatingAnimation(cardExploreMapQuick, 0L)
+        startFloatingAnimation(cardNotif, 200L) 
+        startFloatingAnimation(cardSaved, 300L) // New
+        startFloatingAnimation(cardPachkhan, 400L)
+        startFloatingAnimation(cardMonksQuick, 600L)
 
+        cardExploreMapQuick?.setOnClickListener {
+            startActivity(Intent(requireContext(), ExploreMapActivity::class.java))
+        }
         cardNotif?.setOnClickListener {
-            Toast.makeText(requireContext(), "Notifications", Toast.LENGTH_SHORT).show()
+             Toast.makeText(requireContext(), "Notifications", Toast.LENGTH_SHORT).show()
+        }
+        cardSaved?.setOnClickListener {
+             startActivity(Intent(requireContext(), SavedActivity::class.java))
         }
         cardPachkhan?.setOnClickListener {
             startActivity(Intent(requireContext(), PachkhanActivity::class.java))

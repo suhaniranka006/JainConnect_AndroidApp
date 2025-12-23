@@ -21,6 +21,19 @@ class BhojanshalaAdapter : RecyclerView.Adapter<BhojanshalaAdapter.BhojanshalaVi
         notifyDataSetChanged()
     }
 
+    // Callback for save
+    private var onSaveClickListener: ((Bhojanshala) -> Unit)? = null
+    private var mSavedIds: Set<String> = emptySet()
+
+    fun setOnSaveClickListener(listener: (Bhojanshala) -> Unit) {
+        onSaveClickListener = listener
+    }
+    
+    fun updateSavedIds(newSavedIds: Set<String>) {
+        this.mSavedIds = newSavedIds
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BhojanshalaViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_bhojanshala, parent, false)
         return BhojanshalaViewHolder(view)
@@ -39,6 +52,7 @@ class BhojanshalaAdapter : RecyclerView.Adapter<BhojanshalaAdapter.BhojanshalaVi
         private val ivImage: ImageView = itemView.findViewById(R.id.ivBhojanshalaImage)
         private val btnCall: MaterialButton = itemView.findViewById(R.id.btnCall)
         private val btnViewDetails: MaterialButton = itemView.findViewById(R.id.btnViewDetails)
+        private val btnSave: ImageView = itemView.findViewById(R.id.btnSave)
 
         fun bind(bhojanshala: Bhojanshala) {
             tvName.text = bhojanshala.name
@@ -73,6 +87,30 @@ class BhojanshalaAdapter : RecyclerView.Adapter<BhojanshalaAdapter.BhojanshalaVi
                 val intent = android.content.Intent(itemView.context, com.mycompany.jainconnect.ui.activities.BhojanshalaDetailActivity::class.java)
                 intent.putExtra("bhojanshala_data", bhojanshala)
                 itemView.context.startActivity(intent)
+            }
+
+            // Save Logic
+            val isSaved = mSavedIds.contains(bhojanshala._id) // Assuming _id
+             if (isSaved) {
+                btnSave.setImageResource(R.drawable.ic_bookmark_filled)
+                btnSave.setColorFilter(null)
+            } else {
+                btnSave.setImageResource(R.drawable.ic_bookmark_border)
+                btnSave.setColorFilter(null)
+            }
+            
+            btnSave.setOnClickListener {
+                onSaveClickListener?.invoke(bhojanshala)
+
+                // Optimistic Update
+                val isCurrentlySaved = mSavedIds.contains(bhojanshala._id)
+                if (isCurrentlySaved) {
+                    mSavedIds = mSavedIds - bhojanshala._id
+                    btnSave.setImageResource(R.drawable.ic_bookmark_border)
+                } else {
+                    mSavedIds = mSavedIds + bhojanshala._id
+                    btnSave.setImageResource(R.drawable.ic_bookmark_filled)
+                }
             }
         }
     }

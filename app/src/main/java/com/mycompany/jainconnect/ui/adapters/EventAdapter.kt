@@ -20,6 +20,19 @@ class EventAdapter(
     private val rsvpClickListener: OnRsvpButtonClickListener
 ) : RecyclerView.Adapter<EventAdapter.EventViewHolder>() {
 
+    // Callback for save
+    private var onSaveClickListener: ((Event) -> Unit)? = null
+    private var savedIds: Set<String> = emptySet()
+
+    fun setOnSaveClickListener(listener: (Event) -> Unit) {
+        onSaveClickListener = listener
+    }
+    
+    fun updateSavedIds(newSavedIds: Set<String>) {
+        this.savedIds = newSavedIds
+        notifyDataSetChanged()
+    }
+
     class EventViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val ivEventImage: android.widget.ImageView = itemView.findViewById(R.id.ivEventImage)
         val tvEventName: TextView = itemView.findViewById(R.id.tvEventName)
@@ -34,6 +47,7 @@ class EventAdapter(
         val tvEventDescription: TextView = itemView.findViewById(R.id.tvEventDescription)
         val tvRsvpCount: TextView = itemView.findViewById(R.id.tvRsvpCount)
         val btnRsvp: MaterialButton = itemView.findViewById(R.id.btnRsvp)
+        val btnSave: android.widget.ImageView = itemView.findViewById(R.id.btnSave)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
@@ -75,6 +89,30 @@ class EventAdapter(
         holder.btnRsvp.setOnClickListener {
             rsvpClickListener.onRsvpClick(event)
         }
+        
+        // Save Button State
+        val isSaved = savedIds.contains(event._id)
+        if (isSaved) {
+            holder.btnSave.setImageResource(R.drawable.ic_bookmark_filled)
+            holder.btnSave.setColorFilter(null)
+        } else {
+            holder.btnSave.setImageResource(R.drawable.ic_bookmark_border)
+            holder.btnSave.setColorFilter(null)
+        }
+        
+        holder.btnSave.setOnClickListener {
+            onSaveClickListener?.invoke(event)
+            
+            // Optimistic Update
+            val isCurrentlySaved = savedIds.contains(event._id)
+            if (isCurrentlySaved) {
+                savedIds = savedIds - event._id
+                holder.btnSave.setImageResource(R.drawable.ic_bookmark_border)
+            } else {
+                savedIds = savedIds + event._id
+                holder.btnSave.setImageResource(R.drawable.ic_bookmark_filled)
+            }
+        }
 
         // Open Detail Screen on Item Click
         holder.itemView.setOnClickListener {
@@ -86,8 +124,18 @@ class EventAdapter(
 
     private fun getMonthName(month: Int): String {
         return when (month) {
-            1 -> "JAN" 2 -> "FEB" 3 -> "MAR" 4 -> "APR" 5 -> "MAY" 6 -> "JUN"
-            7 -> "JUL" 8 -> "AUG" 9 -> "SEP" 10 -> "OCT" 11 -> "NOV" 12 -> "DEC"
+            1 -> "JAN"
+            2 -> "FEB"
+            3 -> "MAR"
+            4 -> "APR"
+            5 -> "MAY"
+            6 -> "JUN"
+            7 -> "JUL"
+            8 -> "AUG"
+            9 -> "SEP"
+            10 -> "OCT"
+            11 -> "NOV"
+            12 -> "DEC"
             else -> "MTH"
         }
     }

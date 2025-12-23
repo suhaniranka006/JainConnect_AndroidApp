@@ -19,6 +19,19 @@ class MaharajAdapter(private var maharajList: List<Maharaj>) :
 
     private val TAG = "MaharajAdapter"
 
+    // Callback for save
+    private var onSaveClickListener: ((Maharaj) -> Unit)? = null
+    private var mSavedIds: Set<String> = emptySet()
+
+    fun setOnSaveClickListener(listener: (Maharaj) -> Unit) {
+        onSaveClickListener = listener
+    }
+    
+    fun updateSavedIds(newSavedIds: Set<String>) {
+        this.mSavedIds = newSavedIds
+        notifyDataSetChanged()
+    }
+
     /**
      * ViewHolder class for Maharaj items.
      * Holds references to the views for each item.
@@ -34,6 +47,7 @@ class MaharajAdapter(private var maharajList: List<Maharaj>) :
         val layoutMaharajContact: View = itemView.findViewById(R.id.layoutMaharajContact)
         val tvMaharajContact: TextView = itemView.findViewById(R.id.tvMaharajContact)
         val btnViewDetails: View = itemView.findViewById(R.id.btnViewDetails)
+        val btnSave: android.widget.ImageView = itemView.findViewById(R.id.btnSave)
     }
 
     /**
@@ -64,8 +78,8 @@ class MaharajAdapter(private var maharajList: List<Maharaj>) :
                 .placeholder(R.drawable.ic_launcher_background)
                 .into(holder.ivMaharajImage)
         } else {
-             holder.ivMaharajImage.visibility = View.VISIBLE
-             holder.ivMaharajImage.setImageResource(R.drawable.ic_launcher_background)
+            holder.ivMaharajImage.visibility = View.VISIBLE
+            holder.ivMaharajImage.setImageResource(R.drawable.ic_launcher_background)
         }
 
         // Optional fields
@@ -93,6 +107,30 @@ class MaharajAdapter(private var maharajList: List<Maharaj>) :
             }
         } else {
             holder.layoutMaharajContact.visibility = View.GONE
+        }
+        
+        // Save Button State
+        val isSaved = this.mSavedIds.contains(maharaj.id)
+        if (isSaved) {
+            holder.btnSave.setImageResource(R.drawable.ic_bookmark_filled)
+            holder.btnSave.setColorFilter(null)
+        } else {
+            holder.btnSave.setImageResource(R.drawable.ic_bookmark_border)
+            holder.btnSave.setColorFilter(null)
+        }
+        
+        holder.btnSave.setOnClickListener {
+            onSaveClickListener?.invoke(maharaj)
+            
+            // Optimistic Update
+            val isCurrentlySaved = mSavedIds.contains(maharaj.id)
+            if (isCurrentlySaved) {
+                mSavedIds = mSavedIds - (maharaj.id ?: "")
+                holder.btnSave.setImageResource(R.drawable.ic_bookmark_border)
+            } else {
+                mSavedIds = mSavedIds + (maharaj.id ?: "")
+                holder.btnSave.setImageResource(R.drawable.ic_bookmark_filled)
+            }
         }
 
         // Click Listener -> Detail Activity (ONLY ON BUTTON)

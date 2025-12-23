@@ -217,6 +217,7 @@ interface ApiService {
 
     @POST("api/carpool/create")
     suspend fun createCarpool(
+        @Header("Authorization") token: String,
         @Body request: CarpoolRequest
     ): Response<ApiResponse>
 

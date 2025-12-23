@@ -58,8 +58,16 @@ class AddCarpoolActivity : AppCompatActivity() {
             // Simple primitive validation
             val seats = seatsStr.toIntOrNull() ?: 1
 
-            btnSubmit.isEnabled = false
-            viewModel.submitNewCarpool(driver, source, dest, date, time, vehicle, seats, contact)
+            // Get Token
+            val sharedPref = getSharedPreferences("auth_prefs", android.content.Context.MODE_PRIVATE)
+            val token = sharedPref.getString("jwt_token", null)
+
+            if (token != null) {
+                btnSubmit.isEnabled = false
+                viewModel.submitNewCarpool(token, driver, source, dest, date, time, vehicle, seats, contact)
+            } else {
+                Toast.makeText(this, "You must be logged in to publish a ride", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }

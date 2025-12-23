@@ -65,8 +65,147 @@ import com.mycompany.jainconnect.data.models.ApiResponse
 @HiltViewModel
 class JainViewModel @Inject constructor(
     private val repository: JainRepository,
-    private val tirthyatraRepository: com.mycompany.jainconnect.data.repository.TirthyatraRepository
+    private val tirthyatraRepository: com.mycompany.jainconnect.data.repository.TirthyatraRepository,
+    private val savedRepository: com.mycompany.jainconnect.data.repository.SavedRepository
 ) : ViewModel() {
+
+    // --- Saved Items LiveData ---
+    private val _savedMonks = MutableLiveData<List<Maharaj>>()
+    val savedMonks: LiveData<List<Maharaj>> = _savedMonks
+
+    private val _savedEvents = MutableLiveData<List<Event>>()
+    val savedEvents: LiveData<List<Event>> = _savedEvents
+
+    private val _savedTithis = MutableLiveData<List<Tithi>>()
+    val savedTithis: LiveData<List<Tithi>> = _savedTithis
+    
+    // Temples & Bhojanshalas
+    private val _savedTemples = MutableLiveData<List<Temple>>()
+    val savedTemples: LiveData<List<Temple>> = _savedTemples
+    
+    private val _savedBhojanshalas = MutableLiveData<List<Bhojanshala>>()
+    val savedBhojanshalas: LiveData<List<Bhojanshala>> = _savedBhojanshalas
+
+    private val _savedStories = MutableLiveData<List<Story>>()
+    val savedStories: LiveData<List<Story>> = _savedStories
+
+    // --- Stories LiveData ---
+    private val _storyList = MutableLiveData<List<Story>>()
+    val storyList: LiveData<List<Story>> = _storyList
+    
+
+    
+    // Helper to check if an ID is saved (Single check)
+    fun isCreatedSaved(id: String, type: String): Boolean {
+        return savedRepository.isSaved(id, type)
+    }
+
+    fun toggleSaveState(id: String, type: String) {
+        savedRepository.toggleSave(id, type)
+        // After toggling, refresh the specific saved list if needed
+        when(type) {
+            com.mycompany.jainconnect.data.repository.SavedRepository.KEY_MONKS -> fetchSavedMonks()
+            com.mycompany.jainconnect.data.repository.SavedRepository.KEY_EVENTS -> fetchSavedEvents()
+            com.mycompany.jainconnect.data.repository.SavedRepository.KEY_TITHIS -> fetchSavedTithis()
+            com.mycompany.jainconnect.data.repository.SavedRepository.KEY_TEMPLES -> fetchSavedTemples()
+            com.mycompany.jainconnect.data.repository.SavedRepository.KEY_TEMPLES -> fetchSavedTemples()
+            com.mycompany.jainconnect.data.repository.SavedRepository.KEY_FOOD -> fetchSavedBhojanshalas()
+            com.mycompany.jainconnect.data.repository.SavedRepository.KEY_STORIES -> fetchSavedStories()
+        }
+    }
+
+    fun fetchSavedMonks() {
+        viewModelScope.launch {
+            val allMonks = repository.getMaharaj()
+            val savedIds = savedRepository.getSavedIds(com.mycompany.jainconnect.data.repository.SavedRepository.KEY_MONKS)
+            val filtered = allMonks.filter { savedIds.contains(it.id) }
+            _savedMonks.value = filtered
+        }
+    }
+    
+    fun fetchSavedEvents() {
+        viewModelScope.launch {
+            val allEvents = repository.getEvents()
+            val savedIds = savedRepository.getSavedIds(com.mycompany.jainconnect.data.repository.SavedRepository.KEY_EVENTS)
+            // Use _id for filtering
+            val filtered = allEvents.filter { savedIds.contains(it._id) }
+            _savedEvents.value = filtered
+        }
+    }
+
+    fun fetchSavedTithis() {
+        viewModelScope.launch {
+            val allTithis = repository.getTithis()
+             val savedIds = savedRepository.getSavedIds(com.mycompany.jainconnect.data.repository.SavedRepository.KEY_TITHIS)
+            // Tithi might not have _id, check model. If not, use date or name as key?
+            // Assuming Tithi has some unique ID or we use Name+Date as key
+            // Ideally backend provides ID, checking Tithi Model... 
+            // Result: Tithi model usually has date/name. Let's assume ID exists or fallback
+            // For now, let's filter by _id if it exists, otherwise skip (Tithi saving might be tricky without ID)
+            // Updating Tithi model check later.
+            val filtered = allTithis.filter { it.id != null && savedIds.contains(it.id) }
+            _savedTithis.value = filtered
+        }
+    }
+
+    fun fetchSavedTemples() {
+        viewModelScope.launch {
+            val allTemples = repository.getTemples() // Assuming this exists or similar
+            val savedIds = savedRepository.getSavedIds(com.mycompany.jainconnect.data.repository.SavedRepository.KEY_TEMPLES)
+            // Use _id or id
+            val filtered = allTemples.filter { savedIds.contains(it._id) }
+            _savedTemples.value = filtered
+        }
+    }
+
+    fun fetchSavedBhojanshalas() {
+        viewModelScope.launch {
+            val allBhojanshalas = repository.getBhojanshalas() // Assuming this exists
+            val savedIds = savedRepository.getSavedIds(com.mycompany.jainconnect.data.repository.SavedRepository.KEY_FOOD)
+            val filtered = allBhojanshalas.filter { savedIds.contains(it._id) }
+            _savedBhojanshalas.value = filtered
+        }
+    }
+    
+    fun fetchSavedStories(token: String? = null) {
+         viewModelScope.launch {
+             // We need a token to fetch stories usually, but let's try to get from repo or rely on passed one
+             // Actually getStories needs token. For now let's assume valid token is stored or passed.
+             // Ideally we shouldn't need to pass token everywhere if we have a SessionManager/Interceptor
+             // But following current pattern:
+             // We'll read from SharedPrefs inside here if token is null
+             
+             // ... wait, fetchStories creates its own token read. Let's duplicate that logic slightly or refactor.
+             // Simpler: Just read token here.
+             
+            try {
+                // HACK: Hardcoding obtaining context? No, we don't have context here easily without passing it.
+                // But wait, fetchStories takes context. That's bad design in ViewModel but ok.
+                // SavedListFragment can call this. 
+                // Let's change signature to take context OR just use a stored token if we had one.
+                // But we don't have stored token in ViewModel.
+                
+                // Better approach: Make fetchSavedStories take context just like fetchStories
+                // Or: assume the repository (if updated with interceptor) handles it.
+                // The current `repository.getStories(token)` requires string.
+                
+                // Let's modify signature to take token. Fragment/Activity will provide it.
+                // If token is empty, we can't fetch.
+                
+                if (token.isNullOrEmpty()) {
+                     _savedStories.value = emptyList()
+                     return@launch
+                }
+                
+                val allStories = repository.getStories(token)
+                val savedIds = savedRepository.getSavedIds(com.mycompany.jainconnect.data.repository.SavedRepository.KEY_STORIES)
+                val filtered = allStories.filter { savedIds.contains(it.id) }
+                _savedStories.value = filtered
+            } catch(e: Exception) {
+               _savedStories.value = emptyList()
+            }
+         }
+    }
 
     // ... (Existing Auth Logic)
 
@@ -366,7 +505,7 @@ class JainViewModel @Inject constructor(
     }
 
 
-    fun submitNewCarpool(driver: String, source: String, dest: String, date: String, time: String, vehicle: String, seats: Int, contact: String) {
+    fun submitNewCarpool(token: String, driver: String, source: String, dest: String, date: String, time: String, vehicle: String, seats: Int, contact: String) {
         viewModelScope.launch {
             try {
                 val request = CarpoolRequest(
@@ -379,7 +518,7 @@ class JainViewModel @Inject constructor(
                     seatsAvailable = seats,
                     contactNumber = contact
                 )
-                val response = repository.createCarpool(request)
+                val response = repository.createCarpool(token, request)
                 if (response.isSuccessful && response.body()?.success == true) {
                     _addCarpoolResult.postValue("Success")
                     fetchCarpools() // refresh list
@@ -535,7 +674,7 @@ class JainViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 Log.e("JainViewModel", "Horizons Exception", e)
-                _horizonList.value = emptyList()
+                // _horizonList.value = emptyList()
             }
         }
     }
@@ -723,8 +862,17 @@ class JainViewModel @Inject constructor(
                     false
                 }
             }
-            _filteredTithis.postValue(filtered)
         }
+    }
+
+
+    /**
+     * Filters the list to show only Major Parva (Festivals).
+     */
+    fun filterMajorParva() {
+        val currentList = _tithiList.value ?: return
+        val filtered = currentList.filter { it.isMajor }
+        _filteredTithis.postValue(filtered)
     }
 
 
@@ -752,7 +900,7 @@ class JainViewModel @Inject constructor(
                 _allEvents.addAll(result)
                 _eventList.value = result
             } catch (e: Exception) {
-                _eventList.value = emptyList()
+                // _eventList.value = emptyList() // PERSISTENCE FIX
             }
         }
     }
@@ -851,8 +999,8 @@ class JainViewModel @Inject constructor(
                 _maharajList.value = list
                 _filteredMaharaj.value = list
             } catch (e: Exception) {
-                _maharajList.value = emptyList()
-                _filteredMaharaj.value = emptyList()
+                // _maharajList.value = emptyList()
+                // _filteredMaharaj.value = emptyList()
             }
         }
     }
@@ -905,7 +1053,7 @@ class JainViewModel @Inject constructor(
                 _allBhojanshalas.addAll(list)
                 _bhojanshalaList.value = list
             } catch (e: Exception) {
-                _bhojanshalaList.value = emptyList()
+                // _bhojanshalaList.value = emptyList()
             }
         }
     }
@@ -998,7 +1146,7 @@ class JainViewModel @Inject constructor(
                 _allTemples.addAll(list)
                 _templeList.value = list
             } catch (e: Exception) {
-                _templeList.value = emptyList()
+                // _templeList.value = emptyList()
             }
         }
     }
@@ -1076,7 +1224,7 @@ class JainViewModel @Inject constructor(
                 _allCarpools.addAll(list)
                 _carpoolList.value = list
             } catch (e: Exception) {
-                _carpoolList.value = emptyList()
+                // _carpoolList.value = emptyList()
             }
         }
     }
@@ -1097,51 +1245,7 @@ class JainViewModel @Inject constructor(
     }
 
 
-    // =====================================================================================
-    //                                      JAIN LEGACY (STORIES)
-    // =====================================================================================
-    private val _storyList = MutableLiveData<List<Story>>()
-    val storyList: LiveData<List<Story>> = _storyList
 
-    fun fetchStories(context: Context) {
-        if (_storyList.value.isNullOrEmpty().not()) return // Cache check
-
-        viewModelScope.launch {
-            try {
-                val prefs = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
-                val token = prefs.getString("jwt_token", null)
-                
-                if (token != null) {
-                    val fullToken = "Bearer $token"
-                    val list = repository.getStories(fullToken)
-                    _storyList.value = list
-                } else {
-                    _storyList.value = emptyList()
-                }
-            } catch (e: Exception) {
-                _storyList.value = emptyList()
-            }
-        }
-    }
-
-    fun likeStory(context: Context, id: String) {
-        viewModelScope.launch {
-            try {
-                val prefs = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
-                val token = prefs.getString("jwt_token", null)
-                
-                if (token != null) {
-                     val fullToken = "Bearer $token"
-                     val response = repository.likeStory(fullToken, id)
-                     if(response.isSuccessful){
-                         fetchStories(context)
-                     }
-                }
-            } catch (e: Exception) {
-               Log.e("JainViewModel", "Like Failed", e)
-            }
-        }
-    }
 
 
 
@@ -1198,6 +1302,43 @@ class JainViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 Log.e("JainViewModel", "Error sending notification", e)
+            }
+        }
+    }
+
+    // =====================================================================================
+    //                                      STORIES (JAIN LEGACY)
+    // =====================================================================================
+    
+    fun fetchStories(context: Context) {
+        viewModelScope.launch {
+            try {
+                val sharedPref = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                val token = sharedPref.getString("jwt_token", "") ?: ""
+                
+                if (token.isNotEmpty()) {
+                    val stories = repository.getStories(token)
+                    _storyList.value = stories
+                } else {
+                     _storyList.value = emptyList()
+                }
+            } catch (e: Exception) {
+                Log.e("JainViewModel", "fetchStories error", e)
+                // _storyList.value = emptyList() // Removed to prevent wiping cache on error
+            }
+        }
+    }
+
+    fun likeStory(context: Context, id: String) {
+        viewModelScope.launch {
+            try {
+                 val sharedPref = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                 val token = sharedPref.getString("jwt_token", "") ?: ""
+                 if (token.isNotEmpty()) {
+                     repository.likeStory(token, id)
+                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }

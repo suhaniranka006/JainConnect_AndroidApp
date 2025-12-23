@@ -120,6 +120,20 @@
                 app:strokeWidth="1dp"
                 stateListAnimator="@null"
                 android:elevation="0dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonMajorParva"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Major Parva"
+                app:cornerRadius="20dp"
+                android:backgroundTint="#FFF3E0"
+                android:textColor="#E64A19"
+                app:strokeColor="#E64A19"
+                app:strokeWidth="1dp"
+                android:layout_marginStart="8dp"
+                stateListAnimator="@null"
+                android:elevation="0dp"/>
         </LinearLayout>
     </HorizontalScrollView>
 

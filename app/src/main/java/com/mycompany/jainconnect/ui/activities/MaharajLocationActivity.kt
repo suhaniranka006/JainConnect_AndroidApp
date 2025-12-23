@@ -70,6 +70,24 @@ class MaharajLocationActivity : AppCompatActivity() {
         }
         // ------------------
 
+        // 2b. Setup Adapter Logic
+        maharajAdapter.setOnSaveClickListener { maharaj ->
+            viewModel.toggleSaveState(maharaj.id ?: "", com.mycompany.jainconnect.data.repository.SavedRepository.KEY_MONKS)
+            // Optional: The observe below will auto-update UI if we were observing savedMonks list for IDs
+            // But here we are observing filteredMaharaj list which is the main list.
+            // We need to fetch saved monks to get the updated set of IDs for visual feedback
+            viewModel.fetchSavedMonks()
+        }
+        
+        // Observe Saved Monks to update icons
+        viewModel.savedMonks.observe(this) { savedList ->
+             val ids = savedList.mapNotNull { it.id }.toSet()
+             maharajAdapter.updateSavedIds(ids)
+        }
+        
+        // Initial fetch of saved to ensure icons are correct on load
+        viewModel.fetchSavedMonks()
+
         viewModel.filteredMaharaj.observe(this) {
             shimmerViewContainer.stopShimmer()
             shimmerViewContainer.visibility = android.view.View.GONE
