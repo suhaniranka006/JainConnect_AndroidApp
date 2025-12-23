@@ -5,31 +5,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@color/screen_background"
     tools:context=".ui.activities.EventDetailActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:fitsSystemWindows="true">
+        android:layout_height="280dp"
+        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:contentScrim="@color/saffron_dark"
+            app:contentScrim="@color/saffron"
             app:titleEnabled="false">
 
             <ImageView
                 android:id="@+id/ivEventImageDetail"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
+                android:scaleType="fitCenter"
                 android:src="@drawable/bg_gradient_header"
+                android:fitsSystemWindows="true"
                 app:layout_collapseMode="parallax"
-                android:fitsSystemWindows="true"/>
+                app:layout_collapseParallaxMultiplier="0.7"/>
+            
+
             
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbarDetail"
@@ -37,6 +41,7 @@
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
                 app:navigationIcon="@drawable/ic_back_arrow" 
+                app:title=""
                 app:titleTextColor="@color/white"/>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -45,194 +50,206 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="80dp" 
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:paddingHorizontal="16dp"
+            android:layout_marginTop="-30dp"> 
 
-            <!-- Title and Date Row -->
-            <LinearLayout
+            <!-- Main Info Card (Overlapping) -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                app:cardCornerRadius="16dp"
+                app:cardElevation="6dp"
+                android:backgroundTint="@color/white"
+                android:layout_marginBottom="16dp">
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="20dp">
 
                     <TextView
                         android:id="@+id/tvEventNameDetail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Event Title"
-                        android:textSize="24sp"
+                        android:textSize="22sp"
                         android:textStyle="bold"
-                        android:textColor="@color/black"/>
+                        android:layout_marginTop="@dimen/_20sdp"
+                        android:textColor="@color/black"
+                        android:fontFamily="sans-serif-medium"
+                        android:letterSpacing="0.01"/>
 
-                    <!-- Date removed from header, moved to info grid -->
-                </LinearLayout>
-
-                <!-- Clean Date Box (Optional, since full date is shown textually, but user liked the box style) -->
-                <!-- Let's keep it simple cleaner text for Detail view as per modern standards -->
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#EEE"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <!-- Start Date -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="12dp">
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_time"
-                        app:tint="#1976D2"/>
-                    <TextView
-                        android:id="@+id/tvEventStartDateDetail"
-                        android:layout_width="wrap_content"
+                    <!-- Date & Time Row -->
+                     <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        tools:text="Start: 25 Dec"
-                        android:textSize="14sp"
-                        android:textColor="#424242"
-                        android:layout_marginStart="12dp"/>
+                        android:orientation="horizontal"
+                        android:layout_marginTop="12dp"
+                        android:gravity="center_vertical">
+                        
+                         <ImageView
+                             android:layout_width="20dp"
+                             android:layout_height="20dp"
+                             android:src="@drawable/ic_time"
+                             app:tint="@color/saffron"/>
+                         
+                         <LinearLayout
+                             android:layout_width="wrap_content"
+                             android:layout_height="wrap_content"
+                             android:orientation="vertical"
+                             android:layout_marginStart="12dp">
+                             
+                             <TextView
+                                 android:id="@+id/tvEventStartDateDetail"
+                                 android:layout_width="wrap_content"
+                                 android:layout_height="wrap_content"
+                                 tools:text="Start: 25 Dec 2024"
+                                 android:textSize="14sp"
+                                 android:textStyle="bold"
+                                 android:textColor="#424242"/>
+
+                             <LinearLayout
+                                 android:id="@+id/layoutEndDate"
+                                 android:layout_width="wrap_content"
+                                 android:layout_height="wrap_content"
+                                 android:orientation="horizontal">
+                                 <TextView
+                                     android:id="@+id/tvEventEndDateDetail"
+                                     android:layout_width="wrap_content"
+                                     android:layout_height="wrap_content"
+                                     tools:text="End: 30 Dec 2024"
+                                     android:textSize="13sp"
+                                     android:textColor="#757575"/>
+                             </LinearLayout>
+                             
+                             <TextView
+                                 android:id="@+id/tvEventTimeDetail"
+                                 android:layout_width="wrap_content"
+                                 android:layout_height="wrap_content"
+                                 tools:text="10:00 AM"
+                                 android:textSize="13sp"
+                                 android:textColor="#757575"
+                                 android:layout_marginTop="2dp"/>
+                         </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-                <!-- End Date -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="12dp">
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_time"
-                        app:tint="#E64A19"/>
-                    <TextView
-                        android:id="@+id/tvEventEndDateDetail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:text="End: 30 Dec"
-                        android:textSize="14sp"
-                        android:textColor="#424242"
-                        android:layout_marginStart="12dp"/>
-                </LinearLayout>
-
-                <!-- Time -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="12dp">
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_time"
-                        app:tint="#757575"/>
-                    <TextView
-                        android:id="@+id/tvEventTimeDetail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="10:00 AM"
-                        android:textSize="14sp"
-                        android:textColor="#424242"
-                        android:layout_marginStart="12dp"/>
-                </LinearLayout>
-
-                <!-- Location -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="12dp">
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_location"
-                        app:tint="#757575"/>
-                    <TextView
-                        android:id="@+id/tvEventLocationDetail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Mumbai, India"
-                        android:textSize="14sp"
-                        android:textColor="#424242"
-                        android:layout_marginStart="12dp"/>
-                </LinearLayout>
-
-                 <!-- Contact (If available) -->
-                <LinearLayout
-                    android:id="@+id/layoutContactDetail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="12dp"
-                    android:paddingVertical="8dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="?attr/selectableItemBackground">
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_call_filled"
-                        app:tint="#43A047"/>
-                    <TextView
-                        android:id="@+id/tvEventContactDetail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:text="+91 9876543210"
-                        android:textSize="14sp"
-                        android:textColor="#424242"
-                        android:layout_marginStart="12dp"/>
-                </LinearLayout>
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="About Event"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@color/black"
-                android:layout_marginTop="16dp"/>
-
-            <TextView
-                android:id="@+id/tvEventDescDetail"
+            <!-- Location & Contact Card -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Full description goes here..."
-                android:textSize="15sp"
-                android:textColor="#616161"
-                android:lineSpacingExtra="4dp"
-                android:layout_marginTop="8dp"/>
-            
-            <Space android:layout_width="match_parent" android:layout_height="80dp"/> <!-- Space for FAB/Bottom Bar -->
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:backgroundTint="@color/white"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_location"
+                            app:tint="@color/saffron"/>
+                        <TextView
+                            android:id="@+id/tvEventLocationDetail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Mumbai, India"
+                            android:textSize="15sp"
+                            android:textColor="#424242"
+                            android:layout_marginStart="16dp"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#F0F0F0"
+                        android:layout_marginVertical="12dp"/>
+
+                    <LinearLayout
+                        android:id="@+id/layoutContactDetail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_call_filled"
+                            app:tint="@color/saffron"/>
+                        <TextView
+                            android:id="@+id/tvEventContactDetail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            tools:text="+91 9876543210"
+                            android:textSize="15sp"
+                            android:textColor="#424242"
+                            android:layout_marginStart="16dp"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- About Section -->
+             <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:backgroundTint="@color/white"
+                android:layout_marginBottom="24dp">
+                 
+                 <LinearLayout
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+                     android:orientation="vertical"
+                     android:padding="20dp">
+                     
+                     <TextView
+                         android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:text="About Event"
+                         android:textSize="18sp"
+                         android:textStyle="bold"
+                         android:textColor="@color/black"
+                         android:layout_marginBottom="12dp"/>
+                     
+                     <TextView
+                         android:id="@+id/tvEventDescDetail"
+                         android:layout_width="match_parent"
+                         android:layout_height="wrap_content"
+                         tools:text="Description goes here..."
+                         android:textSize="15sp"
+                         android:textColor="#616161"
+                         android:lineSpacingMultiplier="1.3"/>
+                 </LinearLayout>
+             </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
+    <!-- Floating Join Button -->
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/btnRsvpDetail"
         android:layout_width="wrap_content"
@@ -244,6 +261,6 @@
         android:textStyle="bold"
         app:icon="@drawable/ic_nav_community" 
         app:iconTint="@android:color/white"
-        app:backgroundTint="#E64A19"/>
+        android:backgroundTint="@color/saffron"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

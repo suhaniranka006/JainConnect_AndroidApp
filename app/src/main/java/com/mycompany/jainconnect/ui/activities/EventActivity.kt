@@ -138,6 +138,10 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
         findViewById<Button>(R.id.buttonUpcoming).setOnClickListener {
             viewModel.filterUpcomingEvents()
         }
+        findViewById<Button>(R.id.buttonOngoing).setOnClickListener {
+            viewModel.filterOngoingEvents()
+        }
+
         val btnDistance = findViewById<Button>(R.id.buttonDistance)
         btnDistance.setOnClickListener {
             if (currentUserLocation != null) {

@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.qualifiers.ApplicationContext // Added ApplicationContext import
 
 // 2. Coroutines (Background tasks)
 import kotlinx.coroutines.launch
@@ -43,6 +44,8 @@ import javax.inject.Inject
 import com.mycompany.jainconnect.R
 import com.mycompany.jainconnect.data.models.Event
 import com.mycompany.jainconnect.data.models.Maharaj
+import com.mycompany.jainconnect.data.network.NetworkResult
+import com.mycompany.jainconnect.data.models.RsvpResponse // Added Import
 import com.mycompany.jainconnect.data.models.Bhojanshala
 import com.mycompany.jainconnect.data.models.Temple
 import com.mycompany.jainconnect.data.models.Carpool
@@ -50,7 +53,6 @@ import com.mycompany.jainconnect.data.models.CarpoolRequest
 import com.mycompany.jainconnect.data.models.Story
 import com.mycompany.jainconnect.data.models.Tithi
 import com.mycompany.jainconnect.data.models.User
-import com.mycompany.jainconnect.data.network.NetworkResult
 import com.mycompany.jainconnect.data.repository.JainRepository
 import com.mycompany.jainconnect.data.models.AuthResponse
 import com.mycompany.jainconnect.data.models.HorizonItem
@@ -64,6 +66,7 @@ import com.mycompany.jainconnect.data.models.ApiResponse
  */
 @HiltViewModel
 class JainViewModel @Inject constructor(
+    @ApplicationContext private val context: Context, // Injected Context
     private val repository: JainRepository,
     private val tirthyatraRepository: com.mycompany.jainconnect.data.repository.TirthyatraRepository,
     private val savedRepository: com.mycompany.jainconnect.data.repository.SavedRepository
@@ -130,6 +133,37 @@ class JainViewModel @Inject constructor(
             // Use _id for filtering
             val filtered = allEvents.filter { savedIds.contains(it._id) }
             _savedEvents.value = filtered
+        }
+    }
+
+    // Event RSVP
+    private val _rsvpStatus = MutableLiveData<NetworkResult<RsvpResponse>>()
+    val rsvpStatus: LiveData<NetworkResult<RsvpResponse>> = _rsvpStatus
+
+    private fun getToken(): String? {
+        val sharedPref = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+        return sharedPref.getString("jwt_token", null)
+    }
+
+    fun toggleEventRsvp(eventId: String) {
+        viewModelScope.launch {
+            val token = getToken() // Now uses local helper
+            if (token != null) {
+                try {
+                    val response = repository.toggleEventRsvp(token, eventId)
+                    if (response.isSuccessful && response.body() != null) {
+                        _rsvpStatus.postValue(NetworkResult.Success(response.body()!!))
+                        // Refresh events to update list UI if needed
+                        fetchEvents() // Corrected function name
+                    } else {
+                        _rsvpStatus.postValue(NetworkResult.Error(response.message()))
+                    }
+                } catch (e: Exception) {
+                    _rsvpStatus.postValue(NetworkResult.Error(e.message ?: "Unknown Error"))
+                }
+            } else {
+                 _rsvpStatus.postValue(NetworkResult.Error("Please login to join events"))
+            }
         }
     }
 
@@ -922,6 +956,24 @@ class JainViewModel @Inject constructor(
         _eventList.value = filtered
     }
 
+
+    //filter events by states
+    fun filterOngoingEvents() {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val today = sdf.format(Calendar.getInstance().time)
+        
+        val ongoing = _allEvents.filter { event ->
+            // Case 1: Single Date Event (date == today)
+            // Case 2: Multi Date Event (startDate <= today <= endDate)
+            val isSingleDay = event.date == today
+            val isMultiDay = (event.startDate != null && event.endDate != null) &&
+                             (event.startDate <= today && event.endDate >= today)
+            
+            isSingleDay || isMultiDay
+        }
+        
+        _eventList.value = ongoing
+    }
 
     //filter by date
     fun filterUpcomingEvents() {

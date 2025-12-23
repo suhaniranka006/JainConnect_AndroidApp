@@ -10,8 +10,16 @@ import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.mycompany.jainconnect.R
 import com.mycompany.jainconnect.data.models.Event
+import com.mycompany.jainconnect.data.models.RsvpResponse // Added Import
+import androidx.activity.viewModels
+import dagger.hilt.android.AndroidEntryPoint
+import com.mycompany.jainconnect.ui.viewmodel.JainViewModel
+import com.mycompany.jainconnect.data.network.NetworkResult // Corrected Import
 
+@AndroidEntryPoint
 class EventDetailActivity : AppCompatActivity() {
+
+    private val viewModel: JainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,11 +62,12 @@ class EventDetailActivity : AppCompatActivity() {
         tvStartDate.text = "Start: ${event.startDate ?: event.date ?: "N/A"}"
 
         // End Date Binding & Visibility
+        val layoutEndDate = findViewById<View>(R.id.layoutEndDate)
         if (!event.endDate.isNullOrEmpty()) {
             tvEndDate.text = "End: ${event.endDate}"
-            (tvEndDate.parent as View).visibility = View.VISIBLE
+            layoutEndDate.visibility = View.VISIBLE
         } else {
-             (tvEndDate.parent as View).visibility = View.GONE
+            layoutEndDate.visibility = View.GONE
         }
 
         tvTime.text = event.time ?: "Time N/A"
@@ -85,11 +94,32 @@ class EventDetailActivity : AppCompatActivity() {
                 .into(ivImage)
         }
 
-        // Setup RSVP Button (Functionality can be added here later, for now just a UI stub or Toast)
+        // Setup RSVP Button
         btnRsvp.text = "Join (${event.rsvpCount})"
+        
+        // Observe ViewModel Result
+        viewModel.rsvpStatus.observe(this) { result ->
+            when (result) {
+                is NetworkResult.Success -> {
+                    val response = result.data
+                    if (response != null) {
+                        Toast.makeText(this, response.message, Toast.LENGTH_SHORT).show()
+                        // Update Count UI
+                        btnRsvp.text = "Join (${response.rsvpCount})"
+                        // TODO: Update 'Join' text to 'Joined' if we track state user-side
+                    }
+                }
+                is NetworkResult.Error -> {
+                    Toast.makeText(this, "Error: ${result.message}", Toast.LENGTH_SHORT).show()
+                }
+                is NetworkResult.Loading -> {
+                    // Optional: Show loading indicator
+                }
+            }
+        }
+
         btnRsvp.setOnClickListener {
-            Toast.makeText(this, "RSVP Feature coming in detail view!", Toast.LENGTH_SHORT).show()
-            // To implement real RSVP here, we'd need ViewModel / Repository access
+            viewModel.toggleEventRsvp(event._id)
         }
     }
 }
