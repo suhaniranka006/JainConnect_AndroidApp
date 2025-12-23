@@ -579,7 +579,9 @@ class JainViewModel @Inject constructor(
         time: String,
         desc: String,
         contact: String,
-        imageFile: File? = null
+        imageFile: File? = null,
+        latitude: Double? = null,
+        longitude: Double? = null
     ) {
         viewModelScope.launch {
             try {
@@ -594,10 +596,12 @@ class JainViewModel @Inject constructor(
                         time,
                         desc,
                         contact,
-                        imageFile
+                        imageFile,
+                        latitude,
+                        longitude
                     )
                 } else {
-                    repository.submitEvent(token, title, city, date, startDate, endDate, time, desc, contact)
+                    repository.submitEvent(token, title, city, date, startDate, endDate, time, desc, contact, latitude, longitude)
                 }
 
                 if (response.isSuccessful && response.body()?.success == true) {
@@ -925,6 +929,25 @@ class JainViewModel @Inject constructor(
         val today = sdf.format(Calendar.getInstance().time)
         val upcoming = _allEvents.filter { it.date > today }
         _eventList.value = upcoming
+    }
+
+    // Filter by Distance (e.g. 50km)
+    fun filterEventsByDistance(userLat: Double, userLng: Double, limitKm: Double) {
+        val filtered = _allEvents.filter { event ->
+            if (event.latitude != null && event.longitude != null) {
+                val results = FloatArray(1)
+                android.location.Location.distanceBetween(
+                    userLat, userLng,
+                    event.latitude, event.longitude,
+                    results
+                )
+                val distanceInKm = results[0] / 1000
+                distanceInKm <= limitKm
+            } else {
+                false
+            }
+        }
+        _eventList.value = filtered
     }
 
 

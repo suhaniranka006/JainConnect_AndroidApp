@@ -80,6 +80,8 @@ data class EventSubmissionRequest(
     val endDate: String,
     val time: String,  // ✅ Added
     val contact: String,
-    val description: String
+    val description: String,
+    val latitude: Double? = null,
+    val longitude: Double? = null
 )
 

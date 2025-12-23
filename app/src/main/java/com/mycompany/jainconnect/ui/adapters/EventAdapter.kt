@@ -33,14 +33,12 @@ class EventAdapter(
         notifyDataSetChanged()
     }
     // Location
-    // private var userLocation: android.location.Location? = null
+    private var userLocation: android.location.Location? = null
 
-    /*
     fun setUserLocation(location: android.location.Location) {
-        // userLocation = location
-        // notifyDataSetChanged() // Or use stricter update with Payload
+        userLocation = location
+        notifyDataSetChanged()
     }
-    */
     class EventViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val ivEventImage: android.widget.ImageView = itemView.findViewById(R.id.ivEventImage)
         val tvEventName: TextView = itemView.findViewById(R.id.tvEventName)
@@ -57,6 +55,7 @@ class EventAdapter(
         val btnRsvp: MaterialButton = itemView.findViewById(R.id.btnRsvp)
         val btnSave: android.widget.ImageView = itemView.findViewById(R.id.btnSave)
         val tvPostDate: TextView? = itemView.findViewById(R.id.tvPostDate)
+        val tvDistance: TextView? = itemView.findViewById(R.id.tvDistance)
  
     }
 
@@ -95,6 +94,22 @@ class EventAdapter(
         holder.tvEventName.text = event.name
         holder.tvEventTime.text = event.time ?: "--:--"
         holder.tvEventLocation.text = event.location
+
+        // --- DISTANCE LOGIC ---
+        if (userLocation != null && event.latitude != null && event.longitude != null) {
+            val results = FloatArray(1)
+            android.location.Location.distanceBetween(
+                userLocation!!.latitude, userLocation!!.longitude,
+                event.latitude, event.longitude,
+                results
+            )
+            val distanceInKm = results[0] / 1000
+            holder.tvDistance?.visibility = View.VISIBLE
+            holder.tvDistance?.text = String.format("%.1f km", distanceInKm)
+        } else {
+            holder.tvDistance?.visibility = View.GONE
+        }
+        // ---------------------
 
         // Bind Date
         if (holder.tvEventDateLinear != null) {

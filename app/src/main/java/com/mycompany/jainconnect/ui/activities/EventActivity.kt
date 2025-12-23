@@ -37,6 +37,7 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
     private lateinit var eventAdapter: EventAdapter
     private lateinit var recyclerViewEvents: RecyclerView
     private lateinit var etSearchEvents: EditText
+    private var currentUserLocation: android.location.Location? = null
 
     private lateinit var shimmerViewContainer: com.facebook.shimmer.ShimmerFrameLayout
 
@@ -133,8 +134,22 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
         findViewById<Button>(R.id.buttonAll).setOnClickListener {
             viewModel.filterEvents("")
         }
+
         findViewById<Button>(R.id.buttonUpcoming).setOnClickListener {
             viewModel.filterUpcomingEvents()
+        }
+        val btnDistance = findViewById<Button>(R.id.buttonDistance)
+        btnDistance.setOnClickListener {
+            if (currentUserLocation != null) {
+                viewModel.filterEventsByDistance(
+                    currentUserLocation!!.latitude,
+                    currentUserLocation!!.longitude,
+                    50.0 // 50km range
+                )
+            } else {
+                Toast.makeText(this, "Fetching location... Please wait.", Toast.LENGTH_SHORT).show()
+                getUserLocation() // Retry fetching explanation
+            }
         }
 
         etSearchEvents = findViewById(R.id.etSearchEvents)
@@ -147,9 +162,40 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
         })
 
 
+        // Initialize Location Client
+        fusedLocationClient = com.google.android.gms.location.LocationServices.getFusedLocationProviderClient(this)
+        getUserLocation()
     }
 
     // Location Logic
+    private lateinit var fusedLocationClient: com.google.android.gms.location.FusedLocationProviderClient
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                getUserLocation()
+            } else {
+                android.widget.Toast.makeText(this, "Location permission denied", android.widget.Toast.LENGTH_SHORT).show()
+            }
+        }
+
+    private fun getUserLocation() {
+        if (androidx.core.content.ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        ) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                if (location != null) {
+                    currentUserLocation = location // Store for filtering
+                    eventAdapter.setUserLocation(location)
+                }
+            }
+        } else {
+            // Request Permission
+            requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+    }
 
 
     override fun onRsvpClick(event: Event) {

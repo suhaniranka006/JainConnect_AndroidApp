@@ -179,10 +179,12 @@ class JainRepository @Inject constructor(
         endDate: String,
         time: String,
         desc: String,
-        contact: String
+        contact: String,
+        latitude: Double? = null,
+        longitude: Double? = null
     ): Response<ApiResponse> {
         // Map the function args to the Data Class
-        val request = EventSubmissionRequest(title, city, date, startDate, endDate, time, contact, desc)
+        val request = EventSubmissionRequest(title, city, date, startDate, endDate, time, contact, desc, latitude, longitude)
         return api.submitEvent("Bearer $token", request)
     }
 
@@ -196,7 +198,9 @@ class JainRepository @Inject constructor(
         time: String,
         desc: String,
         contact: String,
-        imageFile: File?
+        imageFile: File?,
+        latitude: Double? = null,
+        longitude: Double? = null
     ): Response<ApiResponse> {
         val partsMap = mutableMapOf<String, RequestBody>()
         partsMap["title"] = title.toRequestBody("text/plain".toMediaTypeOrNull()) // Note: Backend expects 'title'
@@ -207,6 +211,9 @@ class JainRepository @Inject constructor(
         partsMap["time"] = time.toRequestBody("text/plain".toMediaTypeOrNull())
         partsMap["contact"] = contact.toRequestBody("text/plain".toMediaTypeOrNull())
         partsMap["description"] = desc.toRequestBody("text/plain".toMediaTypeOrNull())
+
+        if (latitude != null) partsMap["latitude"] = latitude.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+        if (longitude != null) partsMap["longitude"] = longitude.toString().toRequestBody("text/plain".toMediaTypeOrNull())
 
         val imagePart: MultipartBody.Part? = imageFile?.let {
             val requestFile = it.asRequestBody("image/*".toMediaTypeOrNull())

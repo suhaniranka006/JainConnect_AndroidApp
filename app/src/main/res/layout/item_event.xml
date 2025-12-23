@@ -140,15 +140,36 @@
 
 
 
-            <TextView
-                android:id="@+id/tvRsvpCount"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                tools:text="12 Going"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:textColor="#E64A19"/>
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvRsvpCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="12 Going"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="#E64A19"/>
+
+                <TextView
+                    android:id="@+id/tvDistance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="5.2 km away"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="#E64A19"
+                    android:visibility="gone"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="4dp"
+                    android:drawablePadding="4dp"
+                    android:drawableStart="@drawable/ic_location"
+                    app:drawableTint="#E64A19"/>
+            </LinearLayout>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRsvp"

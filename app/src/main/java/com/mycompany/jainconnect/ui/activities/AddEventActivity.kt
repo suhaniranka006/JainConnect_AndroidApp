@@ -41,6 +41,10 @@ class AddEventActivity : AppCompatActivity() {
 
 
 
+    // Location - Auto-detected for Distance
+    private var currentLatitude: Double? = null
+    private var currentLongitude: Double? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_event)
@@ -88,9 +92,27 @@ class AddEventActivity : AppCompatActivity() {
 
 
 
-                // Submit directly (No Geocoding)
-                progressDialog.dismiss()
-                submitToViewModel(token, title, city, date, startDate, endDate, time, desc, contact)
+                // Auto-Geocode City for Distance Feature
+                lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                    try {
+                        val geocoder = Geocoder(this@AddEventActivity, Locale.getDefault())
+                        // Attempt to get location from city name
+                        @Suppress("DEPRECATION")
+                        val addresses = geocoder.getFromLocationName(city, 1)
+                        
+                        if (!addresses.isNullOrEmpty()) {
+                            currentLatitude = addresses[0].latitude
+                            currentLongitude = addresses[0].longitude
+                        }
+                    } catch (e: Exception) {
+                         e.printStackTrace()
+                    } finally {
+                        withContext(kotlinx.coroutines.Dispatchers.Main) {
+                            progressDialog.dismiss()
+                            submitToViewModel(token, title, city, date, startDate, endDate, time, desc, contact)
+                        }
+                    }
+                }
             } else {
                 Toast.makeText(this, "Please fill all fields (dates, contact, etc.)", Toast.LENGTH_SHORT).show()
             }
@@ -113,7 +135,7 @@ class AddEventActivity : AppCompatActivity() {
         startDate: String, endDate: String, time: String, desc: String, contact: String
     ) {
         val file = selectedImageUri?.let { getFileFromUri(it) }
-        viewModel.submitNewEvent(token, title, city, date, startDate, endDate, time, desc, contact, file)
+        viewModel.submitNewEvent(token, title, city, date, startDate, endDate, time, desc, contact, file, currentLatitude, currentLongitude)
     }
     
     // Helper to get File from URI
