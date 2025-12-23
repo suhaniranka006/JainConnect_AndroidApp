@@ -5,17 +5,22 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-
 import androidx.activity.viewModels
-import dagger.hilt.android.AndroidEntryPoint
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope 
 import com.mycompany.jainconnect.R
-import com.mycompany.jainconnect.data.models.Event
 import com.mycompany.jainconnect.ui.viewmodel.JainViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import android.location.Geocoder
+import java.util.Locale
+
 
 @AndroidEntryPoint
 class AddEventActivity : AppCompatActivity() {
+
+
 
     private val viewModel: JainViewModel by viewModels()
 
@@ -26,9 +31,15 @@ class AddEventActivity : AppCompatActivity() {
     private val pickImageLauncher = registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.GetContent()) { uri ->
         uri?.let {
             selectedImageUri = it
-            ivPreview.setImageURI(it)
+            // Safe Preview with Glide
+            com.bumptech.glide.Glide.with(this)
+                .load(it)
+                .centerCrop()
+                .into(ivPreview)
         }
     }
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,14 +51,13 @@ class AddEventActivity : AppCompatActivity() {
         
         val etTitle = findViewById<EditText>(R.id.etEventTitle)
         val etCity = findViewById<EditText>(R.id.etEventCity)
-        // val etDate = findViewById<EditText>(R.id.etEventDate) // Removed
         val etStartDate = findViewById<EditText>(R.id.etStartDate)
         val etEndDate = findViewById<EditText>(R.id.etEndDate)
         val etTime = findViewById<EditText>(R.id.etEventTime) 
         val etDesc = findViewById<EditText>(R.id.etEventDesc)
         val etContact = findViewById<EditText>(R.id.etEventContact)
         val btnSubmit = findViewById<Button>(R.id.btnSubmitEvent)
-
+        
         btnSelectImage.setOnClickListener {
             pickImageLauncher.launch("image/*")
         }
@@ -69,14 +79,23 @@ class AddEventActivity : AppCompatActivity() {
 
             // Validate
             if (token != null && title.isNotEmpty() && city.isNotEmpty() && startDate.isNotEmpty() && endDate.isNotEmpty() && time.isNotEmpty() && contact.isNotEmpty()) {
-                val file = selectedImageUri?.let { getFileFromUri(it) }
                 
-                // Submit to ViewModel
-                viewModel.submitNewEvent(token, title, city, date, startDate, endDate, time, desc, contact, file)
+                // Show Loading
+                val progressDialog = android.app.ProgressDialog(this)
+                progressDialog.setMessage("Submitting Event...")
+                progressDialog.setCancelable(false)
+                progressDialog.show()
+
+
+
+                // Submit directly (No Geocoding)
+                progressDialog.dismiss()
+                submitToViewModel(token, title, city, date, startDate, endDate, time, desc, contact)
             } else {
                 Toast.makeText(this, "Please fill all fields (dates, contact, etc.)", Toast.LENGTH_SHORT).show()
             }
         }
+
 
         // Observe Result
         viewModel.addEventResult.observe(this) { result ->
@@ -89,15 +108,28 @@ class AddEventActivity : AppCompatActivity() {
         }
     }
     
+    private fun submitToViewModel(
+        token: String, title: String, city: String, date: String, 
+        startDate: String, endDate: String, time: String, desc: String, contact: String
+    ) {
+        val file = selectedImageUri?.let { getFileFromUri(it) }
+        viewModel.submitNewEvent(token, title, city, date, startDate, endDate, time, desc, contact, file)
+    }
+    
     // Helper to get File from URI
     private fun getFileFromUri(uri: android.net.Uri): java.io.File? {
-        val inputStream = contentResolver.openInputStream(uri)
-        val tempFile = java.io.File(cacheDir, "temp_image_${System.currentTimeMillis()}.jpg")
-        inputStream?.use { input ->
-            java.io.FileOutputStream(tempFile).use { output ->
-                input.copyTo(output)
+        return try {
+            val inputStream = contentResolver.openInputStream(uri)
+            val tempFile = java.io.File(cacheDir, "temp_image_${System.currentTimeMillis()}.jpg")
+            inputStream?.use { input ->
+                java.io.FileOutputStream(tempFile).use { output ->
+                    input.copyTo(output)
+                }
             }
+            tempFile
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
-        return tempFile
     }
 }

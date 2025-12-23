@@ -30,6 +30,10 @@ import com.google.gson.reflect.TypeToken
 class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
 
     private val viewModel: JainViewModel by viewModels()
+    
+    @javax.inject.Inject
+    lateinit var savedRepository: com.mycompany.jainconnect.data.repository.SavedRepository
+
     private lateinit var eventAdapter: EventAdapter
     private lateinit var recyclerViewEvents: RecyclerView
     private lateinit var etSearchEvents: EditText
@@ -44,10 +48,30 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
         shimmerViewContainer = findViewById(R.id.shimmerViewContainer)
         shimmerViewContainer.startShimmer() // Start animation
 
+        // --- PRELOAD SAVED STATE (Synchronous) ---
+        val initialSavedIds = savedRepository.getSavedIds(com.mycompany.jainconnect.data.repository.SavedRepository.KEY_EVENTS)
+        // -----------------------------------------
+
         recyclerViewEvents = findViewById(R.id.recyclerViewEvents)
         recyclerViewEvents.layoutManager = LinearLayoutManager(this)
         eventAdapter = EventAdapter(emptyList(), this)
+        eventAdapter.updateSavedIds(initialSavedIds) // Set initial state
+        
+        // Handle Save Click
+        eventAdapter.setOnSaveClickListener { event ->
+             viewModel.toggleSaveState(event._id, com.mycompany.jainconnect.data.repository.SavedRepository.KEY_EVENTS)
+        }
+
         recyclerViewEvents.adapter = eventAdapter
+
+        // Observe LiveData to keep UI in sync if changed elsewhere
+        viewModel.savedEvents.observe(this) { savedList ->
+             val ids = savedList.map { it._id }.toSet()
+             eventAdapter.updateSavedIds(ids)
+        }
+        
+        // Fetch latest saved data
+        viewModel.fetchSavedEvents()
 
         // --- CACHE LOAD ---
         val sharedPref = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
@@ -62,8 +86,6 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
                     shimmerViewContainer.stopShimmer()
                     shimmerViewContainer.visibility = android.view.View.GONE
                     recyclerViewEvents.visibility = android.view.View.VISIBLE
-                    // DEBUG TOAST
-                    // Toast.makeText(this, "Loaded from Cache", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
                Log.e("EventActivity", "Cache Load Failed", e)
@@ -93,7 +115,6 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
                 val gson = Gson()
                 val json = gson.toJson(events)
                 sharedPref.edit().putString("cached_events", json).apply()
-                // Toast.makeText(this, "Cache Saved", Toast.LENGTH_SHORT).show()
             }
             // ------------------
         }
@@ -109,56 +130,11 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
 
         viewModel.fetchEvents()
 
-        val indianStates = listOf(
-            "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa",
-            "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala",
-            "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland",
-            "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura",
-            "Uttar Pradesh", "Uttarakhand", "West Bengal", "Andaman and Nicobar Islands", "Chandigarh",
-            "Dadra and Nagar Haveli and Daman and Diu", "Delhi", "Jammu and Kashmir", "Ladakh",
-            "Lakshadweep", "Puducherry"
-        )
-
-        val stateToCities = mapOf(
-            "Gujarat" to listOf("Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar", "Jamnagar", "Gandhinagar"),
-            "Maharashtra" to listOf("Mumbai", "Pune", "Nagpur", "Nashik", "Aurangabad", "Solapur", "Kolhapur"),
-            "Uttar Pradesh" to listOf("Lucknow", "Kanpur", "Noida", "Agra", "Varanasi", "Meerut", "Ghaziabad"),
-            "West Bengal" to listOf("Kolkata", "Howrah", "Durgapur", "Siliguri", "Asansol"),
-            "Tamil Nadu" to listOf("Chennai", "Coimbatore", "Madurai", "Trichy", "Salem"),
-            "Karnataka" to listOf("Bengaluru", "Mysore", "Mangalore", "Hubli"),
-            "Rajasthan" to listOf("Jaipur", "Jodhpur", "Udaipur", "Kota"),
-            "Kerala" to listOf("Kochi", "Thiruvananthapuram", "Kozhikode"),
-            "Punjab" to listOf("Amritsar", "Ludhiana", "Jalandhar", "Patiala"),
-            "Bihar" to listOf("Patna", "Gaya", "Muzaffarpur")
-        )
-
-        val stateButton = findViewById<Button>(R.id.buttonStateFilter)
-        stateButton.text = "All States"
-
-        stateButton.setOnClickListener {
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle("Select State")
-            val options = listOf("All") + indianStates
-            builder.setItems(options.toTypedArray()) { _, which ->
-                val choice = options[which]
-                if (choice == "All") {
-                    viewModel.filterEvents("")
-                    stateButton.text = "All"
-                } else {
-                    viewModel.filterEventsByState(choice, stateToCities)
-                    stateButton.text = choice
-                }
-            }
-            builder.show()
-        }
-
         findViewById<Button>(R.id.buttonAll).setOnClickListener {
             viewModel.filterEvents("")
-            stateButton.text = "All"
         }
         findViewById<Button>(R.id.buttonUpcoming).setOnClickListener {
             viewModel.filterUpcomingEvents()
-            stateButton.text = "All"
         }
 
         etSearchEvents = findViewById(R.id.etSearchEvents)
@@ -169,7 +145,12 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
             }
             override fun afterTextChanged(s: Editable?) {}
         })
+
+
     }
+
+    // Location Logic
+
 
     override fun onRsvpClick(event: Event) {
         Log.d("EventActivity", "RSVP button clicked for event: ${event.name} (ID: ${event._id})")

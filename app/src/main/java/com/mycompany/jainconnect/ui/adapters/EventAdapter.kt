@@ -32,15 +32,23 @@ class EventAdapter(
         this.savedIds = newSavedIds
         notifyDataSetChanged()
     }
+    // Location
+    // private var userLocation: android.location.Location? = null
 
+    /*
+    fun setUserLocation(location: android.location.Location) {
+        // userLocation = location
+        // notifyDataSetChanged() // Or use stricter update with Payload
+    }
+    */
     class EventViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val ivEventImage: android.widget.ImageView = itemView.findViewById(R.id.ivEventImage)
         val tvEventName: TextView = itemView.findViewById(R.id.tvEventName)
         val tvEventTime: TextView = itemView.findViewById(R.id.tvEventTime)
         val tvEventLocation: TextView = itemView.findViewById(R.id.tvEventLocation)
-        val tvEventDateLinear: TextView? = itemView.findViewById(R.id.tvEventDateLinear) // Nullable as it might not be in all layouts
+        val tvEventDateLinear: TextView? = itemView.findViewById(R.id.tvEventDateLinear)
         
-        // Old views (Keep ref if layout uses them, otherwise can remove)
+        // Old views
         val tvDateDay: TextView? = itemView.findViewById(R.id.tvDateDay)
         val tvDateMonth: TextView? = itemView.findViewById(R.id.tvDateMonth)
         
@@ -48,6 +56,8 @@ class EventAdapter(
         val tvRsvpCount: TextView = itemView.findViewById(R.id.tvRsvpCount)
         val btnRsvp: MaterialButton = itemView.findViewById(R.id.btnRsvp)
         val btnSave: android.widget.ImageView = itemView.findViewById(R.id.btnSave)
+        val tvPostDate: TextView? = itemView.findViewById(R.id.tvPostDate)
+ 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
@@ -62,10 +72,21 @@ class EventAdapter(
         // Load Image (Square)
         if (!event.image.isNullOrEmpty()) {
              holder.ivEventImage.visibility = View.VISIBLE
+             
+             // Handl full URL vs Relative Path
+             val imageUrl = if (event.image.startsWith("http")) {
+                 event.image
+             } else {
+                 // Replace backslashes (Windows) with forward slashes
+                 val cleanPath = event.image.replace("\\", "/")
+                 "https://jainconnect-backened-2.onrender.com/$cleanPath"
+             }
+
              com.bumptech.glide.Glide.with(holder.itemView.context)
-                 .load(event.image)
-                 .centerCrop() // Back to centerCrop for square thumbnail
+                 .load(imageUrl)
+                 .centerCrop()
                  .placeholder(R.drawable.bg_gradient_header)
+                 .error(R.drawable.ic_launcher_background)
                  .into(holder.ivEventImage)
         } else {
              holder.ivEventImage.setImageResource(R.drawable.ic_launcher_background)
@@ -75,16 +96,17 @@ class EventAdapter(
         holder.tvEventTime.text = event.time ?: "--:--"
         holder.tvEventLocation.text = event.location
 
-        // Bind Date (Start Date only as per request)
+        // Bind Date
         if (holder.tvEventDateLinear != null) {
             val dateText = event.startDate ?: event.date ?: "Date N/A"
             holder.tvEventDateLinear.text = dateText
         }
         
-        // Hide/Show Description (Usually hidden in compact visual, but if layout has it gone, it's fine)
         holder.tvEventDescription.visibility = View.GONE 
 
         holder.tvRsvpCount.text = "${event.rsvpCount} Going"
+
+
 
         holder.btnRsvp.setOnClickListener {
             rsvpClickListener.onRsvpClick(event)
@@ -111,6 +133,32 @@ class EventAdapter(
             } else {
                 savedIds = savedIds + event._id
                 holder.btnSave.setImageResource(R.drawable.ic_bookmark_filled)
+            }
+        }
+
+        // Bind Post Date
+        holder.tvPostDate?.let { textView ->
+            if (!event.createdAt.isNullOrEmpty()) {
+                textView.visibility = View.VISIBLE
+                try {
+                    // Parse ISO 8601 (2024-12-23T10:00:00.000Z)
+                    val inputFormat = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", java.util.Locale.getDefault())
+                    inputFormat.timeZone = java.util.TimeZone.getTimeZone("UTC")
+                    
+                    val date = inputFormat.parse(event.createdAt)
+                    
+                    if (date != null) {
+                        val outputFormat = java.text.SimpleDateFormat("d MMM, hh:mm a", java.util.Locale.getDefault())
+                        val formattedDate = outputFormat.format(date)
+                        textView.text = "Posted on $formattedDate"
+                    } else {
+                        textView.visibility = View.GONE
+                    }
+                } catch (e: Exception) {
+                    textView.visibility = View.GONE
+                }
+            } else {
+                textView.visibility = View.GONE
             }
         }
 

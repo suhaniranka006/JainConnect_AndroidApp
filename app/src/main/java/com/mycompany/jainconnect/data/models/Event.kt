@@ -48,7 +48,16 @@ data class Event(
     val image: String?,
 
     @SerializedName("contact")
-    val contact: String?
+    val contact: String?,
+
+    @SerializedName("createdAt")
+    val createdAt: String?,
+
+    @SerializedName("latitude")
+    val latitude: Double?,
+
+    @SerializedName("longitude")
+    val longitude: Double?
 ) : java.io.Serializable
 
 // Moved from JainRepository

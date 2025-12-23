@@ -138,6 +138,8 @@
             android:paddingHorizontal="12dp"
             android:paddingVertical="8dp">
 
+
+
             <TextView
                 android:id="@+id/tvRsvpCount"
                 android:layout_width="0dp"
@@ -171,6 +173,17 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:layout_marginStart="8dp"/>
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvPostDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Posted on 12 Dec, 10:00 AM"
+            android:textSize="10sp"
+            android:textColor="#9E9E9E"
+            android:gravity="end"
+            android:paddingHorizontal="12dp"
+            android:paddingBottom="8dp"/>
 
         <!-- Hidden Views for Adapter Compatibility -->
          <TextView

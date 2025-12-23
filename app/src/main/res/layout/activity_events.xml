@@ -125,18 +125,6 @@
                 stateListAnimator="@null"
                 android:elevation="0dp"/>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/buttonStateFilter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="States"
-                app:cornerRadius="20dp"
-                android:backgroundTint="#FFF3E0"
-                android:textColor="#E64A19"
-                app:strokeColor="#E64A19"
-                app:strokeWidth="1dp"
-                stateListAnimator="@null"
-                android:elevation="0dp"/>
         </LinearLayout>
     </HorizontalScrollView>
 
@@ -176,6 +164,19 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/tvNoData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No events available"
+        android:textSize="16sp"
+        android:textColor="#757575"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/scrollFilters"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddEvent"
