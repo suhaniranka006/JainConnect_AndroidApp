@@ -43,16 +43,33 @@
                 android:layout_marginStart="16dp"
                 android:gravity="center_vertical">
 
-                <TextView
-                    android:id="@+id/tvMaharajName"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:text="Acharya Shri Name"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/black"
-                    android:maxLines="1"
-                    android:ellipsize="end"/>
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    
+                    <TextView
+                        android:id="@+id/tvMaharajName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        tools:text="Acharya Shri Name"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:maxLines="1"
+                        android:ellipsize="end"/>
+
+                    <ImageView
+                        android:id="@+id/btnSave"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_bookmark_border"
+                        app:tint="#757575"
+                        android:background="?attr/selectableItemBackgroundBorderless"/>
+                </LinearLayout>
 
                 <!-- Sampraday (Title) -->
                 <TextView
@@ -89,6 +106,8 @@
                         android:layout_marginStart="6dp"
                         android:maxLines="1"
                         android:ellipsize="end"/>
+                    
+
                 </LinearLayout>
 
                 <!-- Date -->
@@ -133,31 +152,66 @@
             android:paddingHorizontal="16dp"
             android:paddingVertical="12dp">
 
-             <!-- Contact with Icon -->
-             <LinearLayout
-                 android:id="@+id/layoutMaharajContact"
-                 android:layout_width="0dp"
-                 android:layout_height="wrap_content"
-                 android:layout_weight="1"
-                 android:gravity="center_vertical"
-                 android:visibility="gone"
-                 tools:visibility="visible">
-                 
-                 <ImageView
-                     android:layout_width="18dp"
-                     android:layout_height="18dp"
-                     android:src="@drawable/ic_call_filled"
-                     app:tint="#424242"/>
-                 
-                 <TextView
-                     android:id="@+id/tvMaharajContact"
-                     android:layout_width="wrap_content"
-                     android:layout_height="wrap_content"
-                     tools:text="+91 9876543210"
-                     android:layout_marginStart="8dp"
-                     android:textSize="14sp"
-                     android:textColor="#424242"/>
-             </LinearLayout>
+            <!-- Wrapper for Left Side (Distance + Contact) -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <!-- Distance Section -->
+                <LinearLayout
+                    android:id="@+id/layoutDistanceContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:layout_marginEnd="12dp"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_location"
+                        app:tint="#E64A19"/>
+
+                    <TextView
+                        android:id="@+id/tvMaharajDistance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="5.2 km"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#E64A19"
+                        android:layout_marginStart="4dp"/>
+                </LinearLayout>
+
+                <!-- Contact with Icon -->
+                <LinearLayout
+                    android:id="@+id/layoutMaharajContact"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_call_filled"
+                        app:tint="#424242"/>
+
+                    <TextView
+                        android:id="@+id/tvMaharajContact"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="+91 9876543210"
+                        android:layout_marginStart="8dp"
+                        android:textSize="14sp"
+                        android:textColor="#424242"/>
+                </LinearLayout>
+            </LinearLayout>
 
              <!-- Explicit View Details Button -->
             <com.google.android.material.button.MaterialButton
@@ -173,15 +227,7 @@
                 android:insetBottom="0dp"
                 android:layout_gravity="end"/>
 
-            <ImageView
-                android:id="@+id/btnSave"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:padding="8dp"
-                android:src="@drawable/ic_bookmark_border"
-                app:tint="#757575"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:layout_marginStart="8dp"/>
+
         </LinearLayout>
 
     </LinearLayout>

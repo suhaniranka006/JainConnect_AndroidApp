@@ -32,6 +32,14 @@ class MaharajAdapter(private var maharajList: List<Maharaj>) :
         notifyDataSetChanged()
     }
 
+    // Location for Distance Calculation
+    private var userLocation: android.location.Location? = null
+
+    fun setUserLocation(location: android.location.Location) {
+        userLocation = location
+        notifyDataSetChanged()
+    }
+
     /**
      * ViewHolder class for Maharaj items.
      * Holds references to the views for each item.
@@ -41,6 +49,8 @@ class MaharajAdapter(private var maharajList: List<Maharaj>) :
         val tvMaharajName: TextView = itemView.findViewById(R.id.tvMaharajName)
 
         val tvMaharajCity: TextView = itemView.findViewById(R.id.tvMaharajCity)
+        val layoutDistanceContainer: View = itemView.findViewById(R.id.layoutDistanceContainer) // Added container
+        val tvMaharajDistance: TextView = itemView.findViewById(R.id.tvMaharajDistance)
         val tvMaharajDate: TextView = itemView.findViewById(R.id.tvMaharajDate)
         val tvMaharajSampraday: TextView = itemView.findViewById(R.id.tvMaharajSampraday)
         
@@ -72,8 +82,16 @@ class MaharajAdapter(private var maharajList: List<Maharaj>) :
         // Image Binding (Square)
         if (!maharaj.image.isNullOrEmpty()) {
             holder.ivMaharajImage.visibility = View.VISIBLE
+            
+            var imageUrl = maharaj.image!!
+            if (!imageUrl.startsWith("http")) {
+                // Fix backslashes for Windows paths and prepend Base URL
+                val cleanPath = imageUrl.replace("\\", "/")
+                imageUrl = "https://jainconnect-backened-2.onrender.com/$cleanPath"
+            }
+            
             com.bumptech.glide.Glide.with(holder.itemView.context)
-                .load(maharaj.image)
+                .load(imageUrl)
                 .centerCrop()
                 .placeholder(R.drawable.ic_launcher_background)
                 .into(holder.ivMaharajImage)
@@ -84,6 +102,22 @@ class MaharajAdapter(private var maharajList: List<Maharaj>) :
 
         // Optional fields
         holder.tvMaharajCity.text = maharaj.city ?: "City"
+
+        // --- DISTANCE LOGIC ---
+        if (userLocation != null && maharaj.latitude != null && maharaj.longitude != null) {
+            val results = FloatArray(1)
+            android.location.Location.distanceBetween(
+                userLocation!!.latitude, userLocation!!.longitude,
+                maharaj.latitude!!, maharaj.longitude!!,
+                results
+            )
+            val distanceInKm = results[0] / 1000
+            holder.layoutDistanceContainer.visibility = View.VISIBLE
+            holder.tvMaharajDistance.text = String.format("%.1f km", distanceInKm)
+        } else {
+            holder.layoutDistanceContainer.visibility = View.GONE
+        }
+        // ---------------------
         
         holder.tvMaharajDate.text = maharaj.arrivalDate ?: maharaj.relevantDate ?: "Date N/A"
         

@@ -37,9 +37,13 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
     private lateinit var navigationView: NavigationView
     private val viewModel: JainViewModel by viewModels()
 
-    // Network Monitor
+
+
+    // Network Monitor : Monitor internet connection
     private var networkReceiver: com.mycompany.jainconnect.utils.NetworkChangeReceiver? = null
+    //snackbar : show message to user
     private var internetSnackbar: com.google.android.material.snackbar.Snackbar? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,6 +96,8 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
         if (!hasPermissions()) {
             checkAndRequestPermissions()
         }
+
+        //check internet connection
         
         // Register Network Receiver
         if (networkReceiver == null) {
@@ -103,6 +109,9 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
         registerReceiver(networkReceiver, filter)
     }
 
+
+    //this code runs when activity is paused
+    //unregister the receiver
     override fun onPause() {
         super.onPause()
         try {
@@ -112,6 +121,9 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
         }
     }
 
+    
+
+    //show network status
     private fun showNetworkStatus(isConnected: Boolean) {
         if (!isConnected) {
             if (internetSnackbar == null) {

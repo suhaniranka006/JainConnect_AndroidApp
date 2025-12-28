@@ -62,8 +62,14 @@ class MaharajDetailActivity : AppCompatActivity() {
         }
 
         if (!maharaj.image.isNullOrEmpty()) {
-             Glide.with(this)
-                 .load(maharaj.image)
+            var imageUrl = maharaj.image!!
+            if (!imageUrl.startsWith("http")) {
+                val cleanPath = imageUrl.replace("\\", "/")
+                imageUrl = "https://jainconnect-backened-2.onrender.com/$cleanPath"
+            }
+
+            Glide.with(this)
+                 .load(imageUrl)
                  .placeholder(R.drawable.bg_gradient_header)
                  .into(ivImage)
         }

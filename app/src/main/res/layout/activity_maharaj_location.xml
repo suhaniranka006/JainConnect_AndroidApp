@@ -64,36 +64,77 @@
             android:background="@android:color/transparent"/>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Filters (e.g. City Selector) -->
-    <LinearLayout
-        android:id="@+id/layoutFilters"
-        android:layout_width="match_parent"
+    <!-- Filters horizontal scroll -->
+    <HorizontalScrollView
+        android:id="@+id/scrollFilters"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingHorizontal="24dp"
-        android:paddingVertical="12dp"
+        android:scrollbars="none"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cardSearch">
-        
-        <Button
-            android:id="@+id/buttonSelectCity"
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupFilters"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Select City"
-            android:backgroundTint="#FFF3E0"
-            android:textColor="#E64A19"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            app:icon="@drawable/ic_location"
-            app:iconTint="#E64A19"/>
-    </LinearLayout>
+            app:singleSelection="true"
+            app:selectionRequired="true"
+            android:paddingHorizontal="24dp">
 
-    <!-- Shimmer View Container -->
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="All"
+                android:checkable="true"
+                android:checked="true"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:textColor="@color/black"
+                app:chipBackgroundColor="@color/white"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipOngoing"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ongoing"
+                android:checkable="true"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:textColor="@color/black"
+                app:chipBackgroundColor="@color/white"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipUpcoming"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Upcoming"
+                android:checkable="true"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:textColor="@color/black"
+                app:chipBackgroundColor="@color/white"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipNearMe"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Near Me (&lt;50km)"
+                android:checkable="true"
+                app:chipIcon="@drawable/ic_location"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:textColor="@color/black"
+                app:chipBackgroundColor="@color/white"/>
+
+        </com.google.android.material.chip.ChipGroup>
+
+    </HorizontalScrollView>
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/shimmerViewContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:paddingHorizontal="12dp"
-        android:paddingTop="4dp"
-        app:layout_constraintTop_toBottomOf="@id/layoutFilters"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/scrollFilters"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -116,8 +157,9 @@
         android:layout_height="0dp"
         android:paddingHorizontal="12dp"
         android:clipToPadding="false"
+        android:layout_marginTop="8dp"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/layoutFilters"
+        app:layout_constraintTop_toBottomOf="@id/scrollFilters"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
