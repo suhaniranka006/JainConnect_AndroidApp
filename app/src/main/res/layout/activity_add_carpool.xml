@@ -138,6 +138,17 @@
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 
+
+
+        <CheckBox
+            android:id="@+id/cbLadiesOnly"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ladies Only Ride"
+            android:textStyle="bold"
+            android:textColor="#D81B60"
+            android:layout_marginTop="12dp"/>
+
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -166,3 +177,4 @@
 
     </LinearLayout>
 </ScrollView>
+

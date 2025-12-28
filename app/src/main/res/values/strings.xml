@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">JainConnect</string>
     <string name="event_list_description">chomasa tithi</string>
+    <string-array name="gender_array">
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
 </resources>

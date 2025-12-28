@@ -81,6 +81,9 @@
             android:name=".ui.activities.CarpoolActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.activities.NotificationsActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activities.AddCarpoolActivity"
             android:exported="false"
             android:screenOrientation="portrait" />

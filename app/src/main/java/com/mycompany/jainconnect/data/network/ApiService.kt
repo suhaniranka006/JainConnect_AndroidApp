@@ -32,6 +32,7 @@ import com.mycompany.jainconnect.data.models.SunResponse
 import com.mycompany.jainconnect.data.models.Bhojanshala
 import com.mycompany.jainconnect.data.models.Temple
 import com.mycompany.jainconnect.data.models.BhojanshalaSubmissionRequest
+import com.mycompany.jainconnect.data.models.SeatRequest
 import com.mycompany.jainconnect.data.models.Story
 import com.mycompany.jainconnect.data.models.Tirthyatra
 import com.mycompany.jainconnect.data.models.TirthyatraTemplate
@@ -39,6 +40,7 @@ import com.mycompany.jainconnect.data.models.TemplateListResponse
 import com.mycompany.jainconnect.data.models.YatraListResponse
 import com.mycompany.jainconnect.data.models.SingleYatraResponse
 import retrofit2.http.DELETE
+import retrofit2.http.PATCH
 
 /**
  * ApiService defines all the network API endpoints for the JainConnect app.
@@ -213,11 +215,46 @@ interface ApiService {
 
     // --- Carpool ---
     @GET("api/carpool/all")
-    suspend fun getCarpools(): List<Carpool>
+    suspend fun getCarpools(
+        @Query("source") source: String? = null,
+        @Query("destination") destination: String? = null,
+        @Query("date") date: String? = null,
+        @Query("ladiesOnly") ladiesOnly: Boolean? = null,
+        @Query("lat") lat: Double? = null,
+        @Query("lng") lng: Double? = null,
+        @Query("radius") radius: Int? = null
+    ): List<Carpool>
 
     @POST("api/carpool/create")
     suspend fun createCarpool(
         @Header("Authorization") token: String,
+        @Body request: CarpoolRequest
+    ): Response<ApiResponse>
+
+    @POST("api/carpool/request/{id}")
+    suspend fun requestSeat(
+        @Header("Authorization") token: String, 
+        @Path("id") id: String, 
+        @Body body: SeatRequest
+    ): Response<ApiResponse>
+
+    @PUT("api/carpool/manage/{id}")
+    suspend fun manageRequest(
+        @Header("Authorization") token: String, 
+        @Path("id") id: String, 
+        @Body body: Map<String, Any>
+    ): Response<ApiResponse>
+
+    @DELETE("api/carpool/{id}")
+    suspend fun deleteCarpool(
+        @Header("Authorization") token: String,
+        @Path("id") id: String
+    ): Response<ApiResponse>
+
+    @PUT("api/carpool/{id}")
+    suspend fun updateCarpool(
+        @Header("Authorization") token: String,
+        @Path("id") id: String,
         @Body request: CarpoolRequest
     ): Response<ApiResponse>
 
@@ -304,4 +341,14 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Part image: MultipartBody.Part
     ): Response<com.mycompany.jainconnect.data.models.UploadResponse>
+
+    // --- Notifications ---
+    @GET("api/v1/notifications")
+    suspend fun getNotifications(@Header("Authorization") token: String): Response<com.mycompany.jainconnect.data.models.NotificationResponse>
+
+    @PATCH("api/v1/notifications/{id}/read")
+    suspend fun markNotificationRead(
+        @Header("Authorization") token: String,
+        @Path("id") id: String
+    ): Response<ApiResponse>
 }

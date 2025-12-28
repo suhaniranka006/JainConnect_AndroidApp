@@ -539,7 +539,13 @@ class JainViewModel @Inject constructor(
     }
 
 
-    fun submitNewCarpool(token: String, driver: String, source: String, dest: String, date: String, time: String, vehicle: String, seats: Int, contact: String) {
+    fun submitNewCarpool(
+        token: String, driver: String, source: String, dest: String, 
+        date: String, time: String, vehicle: String, seats: Int, 
+        contact: String, isLadiesOnly: Boolean,
+        sourceLat: Double? = null, sourceLng: Double? = null,
+        destLat: Double? = null, destLng: Double? = null
+    ) {
         viewModelScope.launch {
             try {
                 val request = CarpoolRequest(
@@ -550,12 +556,20 @@ class JainViewModel @Inject constructor(
                     time = time,
                     vehicleType = vehicle,
                     seatsAvailable = seats,
-                    contactNumber = contact
+                    contactNumber = contact,
+                    isLadiesOnly = isLadiesOnly,
+                    sourceLat = sourceLat,
+                    sourceLng = sourceLng,
+                    destLat = destLat,
+                    destLng = destLng
                 )
                 val response = repository.createCarpool(token, request)
                 if (response.isSuccessful && response.body()?.success == true) {
                     _addCarpoolResult.postValue("Success")
-                    fetchCarpools() // refresh list
+                    // If we have current filters that might hide this, we should consider that.
+                    // For now, just fetching all again or keeping current filter might be best.
+                    // Let's just fetch default to show the new addition if filters allow.
+                    fetchCarpools() 
                 } else {
                     _addCarpoolResult.postValue("Failed: ${response.message()}")
                 }
@@ -1289,34 +1303,253 @@ class JainViewModel @Inject constructor(
     private val _addCarpoolResult = MutableLiveData<String>()
     val addCarpoolResult: LiveData<String> = _addCarpoolResult
 
-    fun fetchCarpools() {
-        if (_carpoolList.value.isNullOrEmpty().not()) return // Cache check
-
+    fun fetchCarpools(
+        source: String? = null,
+        destination: String? = null,
+        date: String? = null,
+        ladiesOnly: Boolean? = null,
+        currentUserId: String? = null, // Added param
+        currentUserLocation: String? = null, // Added param
+        lat: Double? = null,
+        lng: Double? = null,
+        radius: Int? = null,
+        onlyMyRides: Boolean = false
+    ) {
         viewModelScope.launch {
             try {
-                val list = repository.getCarpools()
-                _allCarpools.clear()
-                _allCarpools.addAll(list)
-                _carpoolList.value = list
+                // If filters are applied, ignore cache logic for now to get fresh results
+                
+                val list = repository.getCarpools(source, destination, date, ladiesOnly, lat, lng, radius)
+                
+                // Filter out Expired Rides (Past Date/Time) & Completed/Cancelled
+                var activeList = list.filter { ride ->
+                    // 1. Status Check
+                    if (ride.status.equals("Completed", ignoreCase = true) || 
+                        ride.status.equals("Cancelled", ignoreCase = true)) {
+                        return@filter false
+                    }
+                
+                    try {
+                        val sdfDate = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
+                        val rideDateObj = sdfDate.parse(ride.date ?: "")
+                        
+                        // Parse Ride Date Components
+                        val rideCal = java.util.Calendar.getInstance()
+                        if (rideDateObj != null) {
+                            rideCal.time = rideDateObj
+                        }
+
+                        val nowCal = java.util.Calendar.getInstance()
+                        
+                        val rideYear = rideCal.get(java.util.Calendar.YEAR)
+                        val rideMonth = rideCal.get(java.util.Calendar.MONTH)
+                        val rideDay = rideCal.get(java.util.Calendar.DAY_OF_MONTH)
+
+                        val currYear = nowCal.get(java.util.Calendar.YEAR)
+                        val currMonth = nowCal.get(java.util.Calendar.MONTH)
+                        val currDay = nowCal.get(java.util.Calendar.DAY_OF_MONTH)
+                        
+                        if (rideDateObj != null) {
+                            if (rideYear < currYear) {
+                                false
+                            } else if (rideYear == currYear && rideMonth < currMonth) {
+                                false
+                            } else if (rideYear == currYear && rideMonth == currMonth && rideDay < currDay) {
+                                false
+                            } else if (rideYear == currYear && rideMonth == currMonth && rideDay == currDay) {
+                                // SAME DAY -> Check Time
+                                val timeString = ride.time ?: ""
+                                var isTimePast = false
+                                
+                                // Robust Parsing
+                                if (timeString.contains(":")) {
+                                    val parts = timeString.split(":")
+                                    if (parts.size >= 2) {
+                                        var rHour = parts[0].trim().toIntOrNull()
+                                        val mPart = parts[1].trim()
+                                        val rMinStr = mPart.filter { it.isDigit() }
+                                        val finalMinStr = if (rMinStr.length > 2) rMinStr.take(2) else rMinStr
+                                        var rMin = finalMinStr.toIntOrNull()
+                                        
+                                        val amPm = if (timeString.contains("PM", ignoreCase = true)) "PM" else "AM"
+                                        
+                                        if (rHour != null && rMin != null) {
+                                            if (amPm == "PM" && rHour < 12) rHour += 12
+                                            if (amPm == "AM" && rHour == 12) rHour = 0
+                                            
+                                            val cHour = nowCal.get(java.util.Calendar.HOUR_OF_DAY)
+                                            val cMin = nowCal.get(java.util.Calendar.MINUTE)
+                                            
+                                            if (rHour < cHour) isTimePast = true
+                                            else if (rHour == cHour && rMin < cMin) isTimePast = true
+                                        }
+                                    }
+                                }
+                                !isTimePast
+                            } else {
+                                true // Future Date
+                            }
+                        } else {
+                            true // Parse failed -> Visible
+                        }
+                    } catch (e: Exception) {
+                        true // Error -> Visible (Safety net)
+                    }
+                }
+
+                // --- NEW FILTER: Only My Rides ---
+                if (onlyMyRides && currentUserId != null) {
+                    activeList = activeList.filter { it.userId == currentUserId }
+                }
+
+                // SORTING: 
+                // 1. My Rides
+                // 2. Rides from My Location (Source matches user location)
+                // 3. Date/Time (Backend order)
+                
+                val finalDetail = if (lat != null && lng != null) {
+                    // RIGID CLIENT-SIDE SORT BY DISTANCE
+                    // This ensures "Nearest" is always first, regardless of backend default sort
+                    val results = FloatArray(1)
+                    activeList.sortedBy { ride ->
+                        val coords = ride.sourceLocation?.coordinates
+                        if (coords != null && coords.size >= 2) {
+                            val rLng = coords[0] // GeoJSON: [Lng, Lat]
+                            val rLat = coords[1]
+                            android.location.Location.distanceBetween(lat, lng, rLat, rLng, results)
+                            val dist = results[0]
+                            ride.distanceFromUser = dist // SAVE DISTANCE
+                            dist
+                        } else {
+                            ride.distanceFromUser = null
+                            Float.MAX_VALUE // No coords -> Bottom
+                        }
+                    }
+                } else if (currentUserId != null || currentUserLocation != null) {
+                    activeList.sortedWith(
+                        compareByDescending<Carpool> { currentUserId != null && it.userId == currentUserId }
+                        .thenByDescending { 
+                            if (!currentUserLocation.isNullOrEmpty() && !it.source.isNullOrEmpty()) {
+                                it.source.contains(currentUserLocation, ignoreCase = true)
+                            } else {
+                                false
+                            }
+                        }
+                    )
+                } else {
+                    activeList
+                }
+
+                _carpoolList.value = finalDetail
+                
+                // Only update backup list if fetching ALL (no filters)
+                if (source == null && destination == null && date == null && ladiesOnly == null) {
+                    _allCarpools.clear()
+                    _allCarpools.addAll(finalDetail)
+                }
             } catch (e: Exception) {
-                // _carpoolList.value = emptyList()
+                // Handle error
             }
         }
     }
 
-    // Filter Carpools
-    // Filter Carpools
-    fun filterCarpools(query: String) {
+    fun sortCarpools(userId: String, userLocation: String? = null) {
+        val currentList = _carpoolList.value
+        if (currentList != null) {
+            val sorted = currentList.sortedWith(
+                compareByDescending<Carpool> { it.userId == userId }
+                .thenByDescending { 
+                     if (!userLocation.isNullOrEmpty() && !it.source.isNullOrEmpty()) {
+                         it.source.contains(userLocation, ignoreCase = true)
+                     } else {
+                         false
+                     }
+                }
+            )
+            _carpoolList.value = sorted
+        }
+    }
+
+    // Local Filter (Deprecated in favor of API filter, but kept for simple search bar if needed)
+    fun filterCarpoolsLocal(query: String) {
         val q = query.trim().lowercase()
         val filtered = _allCarpools.filter { item ->
             val driverMatches = item.driverName?.lowercase()?.contains(q) == true
             val sourceMatches = item.source?.lowercase()?.contains(q) == true
             val destMatches = item.destination?.lowercase()?.contains(q) == true
-            val dateMatches = item.date?.contains(q) == true
-
-            driverMatches || sourceMatches || destMatches || dateMatches
+            
+            driverMatches || sourceMatches || destMatches
         }
-        _carpoolList.value = filtered
+    }
+
+    // --- Carpool Booking ---
+    private val _carpoolRequestResult = MutableLiveData<String>()
+    val carpoolRequestResult: LiveData<String> = _carpoolRequestResult
+
+    fun requestSeat(token: String, carpoolId: String, name: String, contact: String, gender: String, seats: Int) {
+        viewModelScope.launch {
+            try {
+                val response = repository.requestSeat(token, carpoolId, name, contact, gender, seats)
+                if (response.isSuccessful && response.body()?.success == true) {
+                    _carpoolRequestResult.value = "Request Sent Successfully"
+                    fetchCarpools() // Refresh list
+                } else {
+                    val errorMsg = response.errorBody()?.string() ?: response.message()
+                    _carpoolRequestResult.value = "Failed: $errorMsg"
+                }
+            } catch (e: Exception) {
+                _carpoolRequestResult.value = "Error: ${e.message}"
+            }
+        }
+    }
+
+    // --- Notifications ---
+    private val _notificationList = MutableLiveData<List<com.mycompany.jainconnect.data.models.Notification>>()
+    val notificationList: LiveData<List<com.mycompany.jainconnect.data.models.Notification>> get() = _notificationList
+
+    fun fetchNotifications(token: String) {
+        viewModelScope.launch {
+            try {
+                val response = repository.getNotifications(token)
+                if (response.isSuccessful && response.body()?.success == true) {
+                    _notificationList.value = response.body()?.data
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun markNotificationRead(token: String, id: String) {
+        viewModelScope.launch {
+            try {
+                val response = repository.markNotificationRead(token, id)
+                if (response.isSuccessful) {
+                    // Update local list to reflect read status instantly
+                    _notificationList.value = _notificationList.value?.map {
+                        if (it.id == id) it.copy(isRead = true) else it
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun manageRequest(token: String, carpoolId: String, requestId: String, action: String) {
+        viewModelScope.launch {
+             try {
+                 val response = repository.manageRequest(token, carpoolId, requestId, action)
+                 if (response.isSuccessful && response.body()?.success == true) {
+                     _carpoolRequestResult.value = if (action == "approve") "Request Approved" else "Request Rejected"
+                     fetchCarpools()
+                 } else {
+                     _carpoolRequestResult.value = "Operation Failed: ${response.message()}"
+                 }
+             } catch (e: Exception) {
+                 _carpoolRequestResult.value = "Error: ${e.message}"
+             }
+        }
     }
 
 
@@ -1414,6 +1647,65 @@ class JainViewModel @Inject constructor(
                  }
             } catch (e: Exception) {
                 e.printStackTrace()
+            }
+        }
+    }
+
+    // --- Carpool Actions ---
+    private val _rideActionResult = MutableLiveData<String>()
+    val rideActionResult: LiveData<String> = _rideActionResult
+
+    fun deleteRide(token: String, rideId: String) {
+        viewModelScope.launch {
+            try {
+                val response = repository.deleteCarpool(token, rideId)
+                if (response.isSuccessful) {
+                    _rideActionResult.value = "Deleted"
+                    fetchCarpools() // Refresh
+                } else {
+                    _rideActionResult.value = "Error: ${response.message()}"
+                }
+            } catch (e: Exception) {
+                _rideActionResult.value = "Exception: ${e.message}"
+            }
+        }
+    }
+    
+    fun updateRide(token: String, rideId: String, currentRide: Carpool, 
+                   driver: String, source: String, dest: String, 
+                   date: String, time: String, vehicle: String, 
+                   seats: Int, contact: String, isLadiesOnly: Boolean,
+                   sourceLat: Double? = null, sourceLng: Double? = null,
+                   destLat: Double? = null, destLng: Double? = null) {
+        viewModelScope.launch {
+            try {
+                // Construct request with updated values
+                // NOTE: Using CarpoolRequest, same as Create
+                val request = CarpoolRequest(
+                    driverName = driver,
+                    source = source,
+                    destination = dest,
+                    date = date,
+                    time = time,
+                    vehicleType = vehicle,
+                    seatsAvailable = seats,
+                    contactNumber = contact,
+                    isLadiesOnly = isLadiesOnly,
+                    sourceLat = sourceLat,
+                    sourceLng = sourceLng,
+                    destLat = destLat,
+                    destLng = destLng
+                )
+                
+                val response = repository.updateCarpool(token, rideId, request)
+                if (response.isSuccessful && response.body()?.success == true) {
+                    _rideActionResult.value = "Updated"
+                    fetchCarpools()
+                } else {
+                    _rideActionResult.value = "Update Failed: ${response.message()}"
+                }
+            } catch (e: Exception) {
+                _rideActionResult.value = "Update Error: ${e.message}"
             }
         }
     }

@@ -273,7 +273,7 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
             startActivity(Intent(requireContext(), ExploreMapActivity::class.java))
         }
         cardNotif?.setOnClickListener {
-             Toast.makeText(requireContext(), "Notifications", Toast.LENGTH_SHORT).show()
+             startActivity(Intent(requireContext(), NotificationsActivity::class.java))
         }
         cardSaved?.setOnClickListener {
              startActivity(Intent(requireContext(), SavedActivity::class.java))

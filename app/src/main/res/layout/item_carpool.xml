@@ -8,6 +8,7 @@
     app:cardElevation="4dp">
 
     <LinearLayout
+        android:id="@+id/cardContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -29,6 +30,21 @@
                 android:textStyle="bold"
                 android:textColor="#D81B60" />
 
+            <!-- Status Chip -->
+            <TextView
+                android:id="@+id/tvStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Full"
+                android:background="@drawable/bg_available_chip"
+                app:backgroundTint="#9E9E9E"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:visibility="gone"/>
+
             <TextView
                 android:id="@+id/tvVehicleType"
                 android:layout_width="wrap_content"
@@ -39,7 +55,8 @@
                 android:paddingVertical="4dp"
                 android:textColor="#FFFFFF"
                 android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:layout_marginStart="8dp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -116,16 +133,65 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btnCallDriver"
-            android:layout_width="match_parent"
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipLadiesOnlyItem"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Call Driver"
-            android:backgroundTint="#D81B60"
+            android:text="Ladies Only"
             android:textColor="#FFFFFF"
-            android:drawableStart="@drawable/ic_call"
-            android:drawablePadding="8dp" />
+            android:textSize="12sp"
+            app:chipBackgroundColor="#E91E63"
+            android:visibility="gone"
+            android:layout_marginTop="4dp"/>
+
+            <Button
+                android:id="@+id/btnCallDriver"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Call Driver"
+                android:backgroundTint="#FFFFFF"
+                android:textColor="#D81B60"
+                app:strokeColor="#D81B60"
+                app:strokeWidth="1dp"
+                android:drawableStart="@drawable/ic_call"
+                android:drawablePadding="8dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+            <LinearLayout
+                android:id="@+id/layoutMyRideActions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                android:weightSum="2"
+                android:layout_marginTop="8dp">
+
+                <Button
+                    android:id="@+id/btnEditRide"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Edit"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="#2196F3"
+                    android:drawableStart="@drawable/ic_edit"
+                    android:drawableTint="#FFFFFF"
+                    android:layout_marginEnd="4dp"
+                    style="@style/Widget.MaterialComponents.Button"/>
+
+                <Button
+                    android:id="@+id/btnDeleteRide"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Delete"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="#F44336"
+                    android:drawableStart="@drawable/ic_delete"
+                    android:drawableTint="#FFFFFF"
+                    android:layout_marginStart="4dp"
+                    style="@style/Widget.MaterialComponents.Button"/>
+            </LinearLayout>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

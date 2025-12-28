@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     // Location
     implementation("com.google.android.gms:play-services-location:21.0.1")
     // implementation(libs.firebase.appdistribution.gradle) <-- REMOVED this line

@@ -28,6 +28,7 @@ import com.mycompany.jainconnect.data.models.LoginRequest
 import com.mycompany.jainconnect.data.models.MaharajSubmissionRequest
 import com.mycompany.jainconnect.data.models.BhojanshalaSubmissionRequest
 import com.mycompany.jainconnect.data.models.RsvpResponse
+import com.mycompany.jainconnect.data.models.SeatRequest
 import com.mycompany.jainconnect.data.models.SunResponse
 import com.mycompany.jainconnect.data.models.Tirthyatra
 import com.mycompany.jainconnect.data.models.TemplateListResponse
@@ -54,7 +55,15 @@ class JainRepository @Inject constructor(
     suspend fun getMaharaj(): List<Maharaj> = api.getMaharaj()
     suspend fun getBhojanshalas(): List<Bhojanshala> = api.getBhojanshalas()
     suspend fun getTemples(): List<Temple> = api.getTemples()
-    suspend fun getCarpools(): List<Carpool> = api.getCarpools()
+    suspend fun getCarpools(
+        source: String? = null,
+        destination: String? = null,
+        date: String? = null,
+        ladiesOnly: Boolean? = null,
+        lat: Double? = null,
+        lng: Double? = null,
+        radius: Int? = null
+    ): List<Carpool> = api.getCarpools(source, destination, date, ladiesOnly, lat, lng, radius)
 
     // === RSVP FUNCTION ===
     /**
@@ -339,6 +348,34 @@ class JainRepository @Inject constructor(
         return api.createCarpool("Bearer $token", request)
     }
 
+    suspend fun requestSeat(
+        token: String, 
+        id: String, 
+        name: String, 
+        contact: String, 
+        gender: String, 
+        seats: Int
+    ): Response<ApiResponse> {
+        val request = SeatRequest(name, contact, gender, seats)
+        return api.requestSeat("Bearer $token", id, request)
+    }
+
+    suspend fun manageRequest(token: String, id: String, requestId: String, action: String): Response<ApiResponse> {
+        val body = mapOf(
+            "requestId" to requestId,
+            "action" to action
+        )
+        return api.manageRequest("Bearer $token", id, body)
+    }
+
+    suspend fun deleteCarpool(token: String, id: String): Response<ApiResponse> {
+        return api.deleteCarpool("Bearer $token", id)
+    }
+
+    suspend fun updateCarpool(token: String, id: String, request: CarpoolRequest): Response<ApiResponse> {
+        return api.updateCarpool("Bearer $token", id, request)
+    }
+
     // --- Jain Legacy ---
     suspend fun getStories(token: String): List<Story> {
         return api.getStories("Bearer $token")
@@ -399,6 +436,15 @@ class JainRepository @Inject constructor(
         val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
         val body = MultipartBody.Part.createFormData("image", file.name, requestFile)
         return api.uploadTirthyatraImage("Bearer $token", body)
+    }
+
+    // --- Notifications ---
+    suspend fun getNotifications(token: String): Response<com.mycompany.jainconnect.data.models.NotificationResponse> {
+        return api.getNotifications("Bearer $token")
+    }
+
+    suspend fun markNotificationRead(token: String, id: String): Response<ApiResponse> {
+        return api.markNotificationRead("Bearer $token", id)
     }
 }
 

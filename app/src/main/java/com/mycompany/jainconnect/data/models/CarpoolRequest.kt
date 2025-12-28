@@ -10,5 +10,10 @@ data class CarpoolRequest(
     @SerializedName("time") val time: String,
     @SerializedName("vehicleType") val vehicleType: String,
     @SerializedName("seatsAvailable") val seatsAvailable: Int,
-    @SerializedName("contactNumber") val contactNumber: String
+    @SerializedName("contactNumber") val contactNumber: String,
+    @SerializedName("isLadiesOnly") val isLadiesOnly: Boolean,
+    @SerializedName("sourceLat") val sourceLat: Double? = null,
+    @SerializedName("sourceLng") val sourceLng: Double? = null,
+    @SerializedName("destLat") val destLat: Double? = null,
+    @SerializedName("destLng") val destLng: Double? = null
 )
