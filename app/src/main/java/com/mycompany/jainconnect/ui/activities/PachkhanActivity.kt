@@ -47,13 +47,20 @@ class PachkhanActivity : AppCompatActivity() {
                 val todayHorizon = horizonList.find { it.date == todayDateStr }
 
                 if (todayHorizon != null) {
-                    setupList(todayHorizon.sunrise, todayHorizon.sunset)
+                    // Try to find tomorrow's horizon for next sunrise
+                    val cal = Calendar.getInstance()
+                    cal.add(Calendar.DAY_OF_MONTH, 1)
+                    val tomorrowDateStr = sdf.format(cal.time)
+                    val tomorrowHorizon = horizonList.find { it.date == tomorrowDateStr }
+                    
+                    val nextSunrise = tomorrowHorizon?.sunrise ?: "06:30 AM" // Fallback
+                    
+                    setupList(todayHorizon.sunrise, todayHorizon.sunset, nextSunrise)
                 } else {
-                    // Fallback
-                    setupList("06:30 AM", "06:30 PM")
+                    setupList("06:30 AM", "06:30 PM", "06:30 AM")
                 }
             } else {
-                 setupList("06:30 AM", "06:30 PM")
+                 setupList("06:30 AM", "06:30 PM", "06:30 AM")
             }
         }
 
@@ -61,19 +68,50 @@ class PachkhanActivity : AppCompatActivity() {
         viewModel.fetchSunData(26.9124, 75.7873) // Jaipur defaults
     }
 
-    private fun setupList(sunrise: String, sunset: String) {
-        // Logic to parse time would go here. For now using basic offsets representation.
-        // Ideally we parse "06:45 AM" -> Date object -> Add minutes -> Format back.
-        // Doing simplified version for MVP.
+    private fun setupList(sunriseStr: String, sunsetStr: String, nextSunriseStr: String) {
+        // API sends "HH:mm" (24-hour), so input must match that.
+        val sdfInput = SimpleDateFormat("HH:mm", Locale.getDefault()) 
+        val sdfOutput = SimpleDateFormat("hh:mm a", Locale.getDefault())
+
+        fun calculateTime(baseTime: String, minutesToAdd: Int): String {
+            try {
+                val date = sdfInput.parse(baseTime) ?: return "N/A"
+                val calendar = Calendar.getInstance()
+                calendar.time = date
+                calendar.add(Calendar.MINUTE, minutesToAdd)
+                return sdfOutput.format(calendar.time)
+            } catch (e: Exception) {
+                return "N/A"
+            }
+        }
+
+        val navkarsiTime = calculateTime(sunriseStr, 48)
+        val porsiTime = calculateTime(sunriseStr, 180) // 3 hours
+        val sadhPorsiTime = calculateTime(sunriseStr, 270) // 4.5 hours
+        
+        // Use ic_sunny for morning, ic_sunset (or similar) for evening
+        val sunIcon = R.drawable.ic_sunrise 
+        val nightIcon = R.drawable.ic_sunset
 
         val list = listOf(
-            PachkhanItem("Navkarsi", "Sunrise + 48 mins", "Do not eat/drink until 48 mins after sunrise."),
-            PachkhanItem("Porsi", "Sunrise + 3 hrs", "Do not eat/drink until 3 hours after sunrise."),
-            PachkhanItem("Sadh-Porsi", "Sunrise + 4.5 hrs", "Do not eat/drink until 4.5 hours after sunrise."),
-            PachkhanItem("Purimaddh", "Sunrise + 6 hrs", "Do not eat/drink until 6 hours after sunrise."),
-            PachkhanItem("Avaddh", "Sunrise + 9 hrs", "Do not eat/drink until 9 hours after sunrise."),
-            PachkhanItem("Chauvihar", "Sunset ($sunset)", "No food or water after sunset."),
-            PachkhanItem("Tivihar", "Sunset ($sunset)", "No food after sunset, water allowed.")
+            PachkhanItem("Navkarsi", "End Time: $navkarsiTime", "Do not eat/drink until 48 mins after sunrise.", sunIcon),
+            PachkhanItem("Porsi", "End Time: $porsiTime", "Do not eat/drink until 3 hours after sunrise.", sunIcon),
+            PachkhanItem("Sadh-Porsi", "End Time: $sadhPorsiTime", "Do not eat/drink until 4.5 hours after sunrise.", sunIcon),
+            PachkhanItem("Chauvihar", "Sunset: $sunsetStr | Sunrise: $nextSunriseStr", "No food or water from Sunset to next Sunrise.", nightIcon),
+            PachkhanItem("Tivihar", "Sunset: $sunsetStr | Sunrise: $nextSunriseStr", "No food from Sunset to next Sunrise. Water allowed.", nightIcon),
+            
+            // General Vows (Audio Disabled)
+            PachkhanItem("Ekasam", "Valid for Today", "Eat only once in a day sitting in one place.", R.drawable.ic_pachkhan, false),
+            PachkhanItem("Biasan", "Valid for Today", "Eat only twice in a day sitting in one place.", R.drawable.ic_pachkhan, false),
+            PachkhanItem("Upvas", "Valid for Today", "Fasting for the whole day (No food).", R.drawable.ic_pachkhan, false),
+            PachkhanItem("Ayambil", "Valid for Today", "One meal, no spices/milk/sugar/ghee/oil.", R.drawable.ic_pachkhan, false),
+            
+            // Tyags (14 Niyam) (Audio Disabled)
+            PachkhanItem("Hari ka Tyag", "Valid for Today", "Avoid green vegetables/fruits today.", R.drawable.ic_pachkhan, false),
+            PachkhanItem("Jamikand ka Tyag", "Valid for Today", "Avoid root vegetables today.", R.drawable.ic_pachkhan, false),
+            PachkhanItem("Mukhvas ka Tyag", "Valid for Today", "Avoid mouth fresheners today.", R.drawable.ic_pachkhan, false),
+            PachkhanItem("Vigay ka Tyag", "Valid for Today", "Avoid 6 Vigayas (Milk, Curd, Ghee, Oil, Sugar, Jaggery).", R.drawable.ic_pachkhan, false),
+            PachkhanItem("Mahavigay ka Tyag", "Valid for Today", "Avoid Butter, Honey, Alcohol, Meat.", R.drawable.ic_pachkhan, false)
         )
 
         adapter = PachkhanAdapter(list) { item ->

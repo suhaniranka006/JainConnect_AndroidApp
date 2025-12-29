@@ -34,18 +34,19 @@ data class CreatorDetails(
     val name: String? = null,
     val age: String? = null,
     val gender: String? = null,
-    val contact: String? = null // New
+    val contact: String? = null,
+    val message: String? = null,
+    val peopleCount: String? = null 
 ) : Parcelable
 
 @Parcelize
 data class JoinRequest(
-    @SerializedName("_id") val id: String? = null, // Request ID if any (or just user object)
-    val userId: TirthyatraUser? = null, // Populated User
+    @SerializedName("_id") val id: String? = null,
+    val userId: TirthyatraUser? = null,
     val message: String? = null,
     val contactNumber: String? = null,
     val peopleCount: Int = 1,
     val status: String = "Pending",
-    // Manual details
     val name: String? = null,
     val age: String? = null,
     val gender: String? = null
@@ -59,7 +60,9 @@ data class TirthyatraUser(
     val gender: String? = null,
     val dob: String? = null,
     val phone: String? = null,
-    val mobileNumber: String? = null // Backend sometimes uses mobileNumber or phone? Stick to backend response. Controller sends 'phone' and 'mobileNumber'.
+    val mobileNumber: String? = null,
+    val message: String? = null, // Transient field for Yatra details
+    val peopleCount: String? = null // Transient field for Yatra details
 ) : Parcelable
 
 @Parcelize
@@ -72,7 +75,7 @@ data class ItineraryDay(
 
 @Parcelize
 data class Activity(
-    val type: String, // 'Temple', 'Dharamshala', 'Travel', 'Custom'
+    val type: String,
     val time: String? = null,
     val name: String,
     val details: String? = null,
@@ -94,5 +97,12 @@ data class ParticipantDetail(
     val name: String? = null,
     val age: String? = null,
     val gender: String? = null,
-    val contact: String? = null
+    val contact: String? = null,
+    val message: String? = null,
+    val peopleCount: String? = null // Backend sends string or int? Controller sends what comes from request.
+    // Backend schema says String/Number. Let's use Any? or String for safety, or Int if confident.
+    // Schema said 'peopleCount: String' initially then I updated to Number? No I used String in Schema. 
+    // Wait, step 208 I put 'peopleCount: String' in Schema.
+    // So let's use String here to be safe and convert if needed, or Int if Gson handles it. 
+    // Let's us String to match Schema.
 ) : Parcelable

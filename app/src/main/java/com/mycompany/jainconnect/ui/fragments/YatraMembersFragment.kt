@@ -51,7 +51,9 @@ class YatraMembersFragment : Fragment() {
                         name = details.name ?: user.name,
                         dob = details.age ?: user.dob, // Passing Age as DOB for AgeUtils
                         gender = details.gender ?: user.gender,
-                        phone = details.contact ?: user.phone
+                        phone = details.contact ?: user.phone,
+                        message = details.message,
+                        peopleCount = details.peopleCount
                     )
                 } 
                 // Check if there are specific participant details for this user (e.g. accepted member)
@@ -64,7 +66,9 @@ class YatraMembersFragment : Fragment() {
                             name = pDetail.name ?: user.name,
                             dob = pDetail.age ?: user.dob, // Passing Age as DOB for AgeUtils
                             gender = pDetail.gender ?: user.gender,
-                            phone = pDetail.contact ?: user.phone
+                            phone = pDetail.contact ?: user.phone,
+                            message = pDetail.message,
+                            peopleCount = pDetail.peopleCount
                          )
                      } else {
                          user
@@ -78,10 +82,17 @@ class YatraMembersFragment : Fragment() {
                  // Use AgeUtils for click dialog too
                  val age = com.mycompany.jainconnect.utils.AgeUtils.calculateAge(user.dob)
                  
-                 val message = "Name: ${user.name}\n" +
+                 var message = "Name: ${user.name}\n" +
                       "Age: $age\n" +
                       "Gender: ${user.gender ?: "N/A"}\n" +
-                      "Contact: ${user.phone ?: "N/A"}" 
+                      "Contact: ${user.phone ?: "N/A"}"
+                 
+                 if (!user.peopleCount.isNullOrEmpty()) {
+                     message += "\nPeople Count: ${user.peopleCount}"
+                 }
+                 if (!user.message.isNullOrEmpty()) {
+                     message += "\nMessage:\n${user.message}"
+                 }
                       
                  androidx.appcompat.app.AlertDialog.Builder(requireContext())
                     .setTitle("Member Details")

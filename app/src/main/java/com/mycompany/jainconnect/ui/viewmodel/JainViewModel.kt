@@ -357,9 +357,9 @@ class JainViewModel @Inject constructor(
         }
     }
 
-    fun toggleCompanionship(token: String, yatraId: String, enable: Boolean, name: String? = null, age: String? = null, gender: String? = null, contact: String? = null) {
+    fun toggleCompanionship(token: String, yatraId: String, enable: Boolean, name: String? = null, age: String? = null, gender: String? = null, contact: String? = null, message: String? = null, peopleCount: Int? = null) {
         viewModelScope.launch {
-            val result = tirthyatraRepository.toggleCompanionship(token, yatraId, enable, name, age, gender, contact)
+            val result = tirthyatraRepository.toggleCompanionship(token, yatraId, enable, name, age, gender, contact, message, peopleCount)
             if (result is NetworkResult.Success) {
                 _yatraOperationResult.value = if (enable) "Companionship Enabled" else "Companionship Disabled"
                 // Refresh details? The activity observing this should fetch details or update UI.

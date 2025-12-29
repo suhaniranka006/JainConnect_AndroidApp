@@ -11,7 +11,9 @@ import com.mycompany.jainconnect.R
 data class PachkhanItem(
     val name: String,
     val time: String,
-    val description: String
+    val description: String,
+    val iconResId: Int,
+    val hasAudio: Boolean = true
 )
 
 class PachkhanAdapter(
@@ -24,6 +26,7 @@ class PachkhanAdapter(
         val tvTime: TextView = itemView.findViewById(R.id.tvPachkhanTime)
         val tvDescription: TextView = itemView.findViewById(R.id.tvDescription)
         val btnAudio: ImageButton = itemView.findViewById(R.id.btnAudio)
+        val ivIcon: android.widget.ImageView = itemView.findViewById(R.id.ivIcon)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PachkhanViewHolder {
@@ -36,9 +39,18 @@ class PachkhanAdapter(
         holder.tvName.text = item.name
         holder.tvTime.text = item.time
         holder.tvDescription.text = item.description
+        
+        // Load Icon
+        holder.ivIcon.setImageResource(item.iconResId)
 
-        holder.btnAudio.setOnClickListener {
-            onAudioClick(item)
+        if (item.hasAudio) {
+            holder.btnAudio.visibility = View.VISIBLE
+            holder.btnAudio.setOnClickListener {
+                onAudioClick(item)
+            }
+        } else {
+            holder.btnAudio.visibility = View.GONE
+            holder.btnAudio.setOnClickListener(null)
         }
     }
 

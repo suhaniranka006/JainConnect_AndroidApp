@@ -50,12 +50,14 @@ class TirthyatraRepository @Inject constructor(
         return handleApi { apiService.cancelRequest("Bearer $token", id) }
     }
 
-    suspend fun toggleCompanionship(token: String, id: String, enable: Boolean, name: String? = null, age: String? = null, gender: String? = null, contact: String? = null): NetworkResult<SingleYatraResponse> {
+    suspend fun toggleCompanionship(token: String, id: String, enable: Boolean, name: String? = null, age: String? = null, gender: String? = null, contact: String? = null, message: String? = null, peopleCount: Int? = null): NetworkResult<SingleYatraResponse> {
         val body = mutableMapOf<String, Any>("enable" to enable)
         if (name != null) body["name"] = name
         if (age != null) body["age"] = age
         if (gender != null) body["gender"] = gender
         if (contact != null) body["contact"] = contact
+        if (message != null) body["message"] = message
+        if (peopleCount != null) body["peopleCount"] = peopleCount
         
         return handleApi { apiService.toggleCompanionship("Bearer $token", id, body) }
     }

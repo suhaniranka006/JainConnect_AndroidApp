@@ -81,6 +81,14 @@ class TirthyatraDetailsActivity : AppCompatActivity() {
             val end = yatra.endDate?.let { sdf.format(it) } ?: "??"
             binding.tvDateRange.text = "$start - $end"
 
+            // Description
+            if (!yatra.notes.isNullOrEmpty()) {
+                binding.tvDescription.text = yatra.notes
+                binding.tvDescription.visibility = View.VISIBLE
+            } else {
+                binding.tvDescription.visibility = View.GONE
+            }
+
             // Load Members Fragment
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, com.mycompany.jainconnect.ui.fragments.YatraMembersFragment.newInstance(yatra))
@@ -406,6 +414,15 @@ class TirthyatraDetailsActivity : AppCompatActivity() {
         // Try to prefill from user profile phone/mobileNumber if available? 
         // viewModel.userProfile.value?.phone ...
         layout.addView(etContact)
+        
+        val etMessage = android.widget.EditText(context)
+        etMessage.hint = "Message (e.g. We are looking for...)"
+        layout.addView(etMessage)
+        
+        val etPeopleCount = android.widget.EditText(context)
+        etPeopleCount.hint = "People Count (e.g. 3)"
+        etPeopleCount.inputType = android.text.InputType.TYPE_CLASS_NUMBER
+        layout.addView(etPeopleCount)
 
         androidx.appcompat.app.AlertDialog.Builder(context)
             .setTitle("Companionship Details")
@@ -416,13 +433,17 @@ class TirthyatraDetailsActivity : AppCompatActivity() {
                 val age = etAge.text.toString()
                 val gender = etGender.text.toString()
                 val contact = etContact.text.toString()
+                val message = etMessage.text.toString()
+                val peopleCountStr = etPeopleCount.text.toString()
                 
                 if (name.isEmpty() || age.isEmpty() || gender.isEmpty() || contact.isEmpty()) {
                     Toast.makeText(context, "All fields are required", Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }
                 
-                viewModel.toggleCompanionship(getToken(), yatraId, true, name, age, gender, contact)
+                val peopleCount = if (peopleCountStr.isNotEmpty()) peopleCountStr.toIntOrNull() else null
+                
+                viewModel.toggleCompanionship(getToken(), yatraId, true, name, age, gender, contact, message, peopleCount)
             }
             .setNegativeButton("Cancel", null)
             .show()
