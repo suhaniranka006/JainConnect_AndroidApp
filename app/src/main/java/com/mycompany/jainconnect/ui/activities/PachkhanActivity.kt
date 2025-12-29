@@ -100,23 +100,51 @@ class PachkhanActivity : AppCompatActivity() {
             PachkhanItem("Chauvihar", "Sunset: $sunsetStr | Sunrise: $nextSunriseStr", "No food or water from Sunset to next Sunrise.", nightIcon),
             PachkhanItem("Tivihar", "Sunset: $sunsetStr | Sunrise: $nextSunriseStr", "No food from Sunset to next Sunrise. Water allowed.", nightIcon),
             
-            // General Vows (Audio Disabled)
-            PachkhanItem("Ekasam", "Valid for Today", "Eat only once in a day sitting in one place.", R.drawable.ic_pachkhan, false),
-            PachkhanItem("Biasan", "Valid for Today", "Eat only twice in a day sitting in one place.", R.drawable.ic_pachkhan, false),
-            PachkhanItem("Upvas", "Valid for Today", "Fasting for the whole day (No food).", R.drawable.ic_pachkhan, false),
-            PachkhanItem("Ayambil", "Valid for Today", "One meal, no spices/milk/sugar/ghee/oil.", R.drawable.ic_pachkhan, false),
+            // General Vows
+            PachkhanItem("Ekasam", "Valid for Today", "Eat only once in a day sitting in one place.", R.drawable.ic_pachkhan),
+            PachkhanItem("Biasan", "Valid for Today", "Eat only twice in a day sitting in one place.", R.drawable.ic_pachkhan),
+            PachkhanItem("Upvas", "Valid for Today", "Fasting for the whole day (No food).", R.drawable.ic_pachkhan),
+            PachkhanItem("Ayambil", "Valid for Today", "One meal, no spices/milk/sugar/ghee/oil.", R.drawable.ic_pachkhan),
             
-            // Tyags (14 Niyam) (Audio Disabled)
-            PachkhanItem("Hari ka Tyag", "Valid for Today", "Avoid green vegetables/fruits today.", R.drawable.ic_pachkhan, false),
-            PachkhanItem("Jamikand ka Tyag", "Valid for Today", "Avoid root vegetables today.", R.drawable.ic_pachkhan, false),
-            PachkhanItem("Mukhvas ka Tyag", "Valid for Today", "Avoid mouth fresheners today.", R.drawable.ic_pachkhan, false),
-            PachkhanItem("Vigay ka Tyag", "Valid for Today", "Avoid 6 Vigayas (Milk, Curd, Ghee, Oil, Sugar, Jaggery).", R.drawable.ic_pachkhan, false),
-            PachkhanItem("Mahavigay ka Tyag", "Valid for Today", "Avoid Butter, Honey, Alcohol, Meat.", R.drawable.ic_pachkhan, false)
+            // Tyags (14 Niyam)
+            PachkhanItem("Hari ka Tyag", "Valid for Today", "Avoid green vegetables/fruits today.", R.drawable.ic_pachkhan),
+            PachkhanItem("Jamikand ka Tyag", "Valid for Today", "Avoid root vegetables today.", R.drawable.ic_pachkhan),
+            PachkhanItem("Mukhvas ka Tyag", "Valid for Today", "Avoid mouth fresheners today.", R.drawable.ic_pachkhan),
+            PachkhanItem("Vigay ka Tyag", "Valid for Today", "Avoid 6 Vigayas (Milk, Curd, Ghee, Oil, Sugar, Jaggery).", R.drawable.ic_pachkhan),
+            PachkhanItem("Mahavigay ka Tyag", "Valid for Today", "Avoid Butter, Honey, Alcohol, Meat.", R.drawable.ic_pachkhan)
         )
 
+        val sharedPref = getSharedPreferences("auth_prefs", android.content.Context.MODE_PRIVATE)
+        val token = sharedPref.getString("jwt_token", null)
+
         adapter = PachkhanAdapter(list) { item ->
-            Toast.makeText(this, "Playing ${item.name} audio...", Toast.LENGTH_SHORT).show()
+            if (token != null) {
+                viewModel.takePachkhan(token, item.name, 
+                    onSuccess = { msg -> 
+                        Toast.makeText(this, "🎉 $msg", Toast.LENGTH_LONG).show()
+                        // Refresh status to disable the checkbox locally
+                        viewModel.getTakenPachkhans(token)
+                    }, 
+                    onError = { err -> 
+                        Toast.makeText(this, "Error: $err", Toast.LENGTH_SHORT).show() 
+                    }
+                )
+            } else {
+                Toast.makeText(this, "Please login to earn coins", Toast.LENGTH_SHORT).show()
+            }
         }
+        
         recyclerView.adapter = adapter
+
+        // Observer for Taken Vows
+        viewModel.takenPachkhans.observe(this) { takenSet ->
+            adapter.takenVows = takenSet
+            adapter.notifyDataSetChanged()
+        }
+
+        // Fetch Status on Load
+        if (token != null) {
+            viewModel.getTakenPachkhans(token)
+        }
     }
 }

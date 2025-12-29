@@ -12,21 +12,22 @@ data class PachkhanItem(
     val name: String,
     val time: String,
     val description: String,
-    val iconResId: Int,
-    val hasAudio: Boolean = true
+    val iconResId: Int
 )
 
 class PachkhanAdapter(
     private val pachkhanList: List<PachkhanItem>,
-    private val onAudioClick: (PachkhanItem) -> Unit
+    private val onCheck: (PachkhanItem) -> Unit
 ) : RecyclerView.Adapter<PachkhanAdapter.PachkhanViewHolder>() {
+
+    var takenVows: Set<String> = emptySet()
 
     class PachkhanViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvName: TextView = itemView.findViewById(R.id.tvPachkhanName)
         val tvTime: TextView = itemView.findViewById(R.id.tvPachkhanTime)
         val tvDescription: TextView = itemView.findViewById(R.id.tvDescription)
-        val btnAudio: ImageButton = itemView.findViewById(R.id.btnAudio)
         val ivIcon: android.widget.ImageView = itemView.findViewById(R.id.ivIcon)
+        val cbPachkhan: android.widget.CheckBox = itemView.findViewById(R.id.cbPachkhan)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PachkhanViewHolder {
@@ -43,14 +44,19 @@ class PachkhanAdapter(
         // Load Icon
         holder.ivIcon.setImageResource(item.iconResId)
 
-        if (item.hasAudio) {
-            holder.btnAudio.visibility = View.VISIBLE
-            holder.btnAudio.setOnClickListener {
-                onAudioClick(item)
+        // Reset listener to avoid recycling issues
+        holder.cbPachkhan.setOnCheckedChangeListener(null)
+        
+        // Check if taken
+        val isTaken = takenVows.contains(item.name)
+        holder.cbPachkhan.isChecked = isTaken
+        holder.cbPachkhan.isEnabled = !isTaken // Disable if already taken
+
+        holder.cbPachkhan.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                onCheck(item)
+                holder.cbPachkhan.isEnabled = false // Disable after taking
             }
-        } else {
-            holder.btnAudio.visibility = View.GONE
-            holder.btnAudio.setOnClickListener(null)
         }
     }
 

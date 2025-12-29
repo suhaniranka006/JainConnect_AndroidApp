@@ -446,10 +446,23 @@ class JainRepository @Inject constructor(
     suspend fun markNotificationRead(token: String, id: String): Response<ApiResponse> {
         return api.markNotificationRead("Bearer $token", id)
     }
+
+
+
+
+
+
+
+    suspend fun takePachkhan(token: String, name: String): Response<ApiResponse> {
+        val body = mapOf("pachkhanName" to name)
+        return api.takePachkhan("Bearer $token", body)
+    }
+
+    suspend fun getPachkhanStatus(token: String): Response<com.mycompany.jainconnect.data.models.PachkhanStatusResponse> {
+        return api.getPachkhanStatus("Bearer $token")
+    }
+
+    suspend fun getLeaderboard(token: String, type: String): Response<com.mycompany.jainconnect.data.models.LeaderboardResponse> {
+        return api.getLeaderboard("Bearer $token", type)
+    }
 }
-
-
-
-
-
-

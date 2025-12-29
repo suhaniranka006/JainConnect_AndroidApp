@@ -197,7 +197,71 @@ class JainViewModel @Inject constructor(
             val allBhojanshalas = repository.getBhojanshalas() // Assuming this exists
             val savedIds = savedRepository.getSavedIds(com.mycompany.jainconnect.data.repository.SavedRepository.KEY_FOOD)
             val filtered = allBhojanshalas.filter { savedIds.contains(it._id) }
-            _savedBhojanshalas.value = filtered
+        }
+    }
+
+    // --- Pachkhan & Leaderboard ---
+    fun takePachkhan(token: String, name: String, onSuccess: (String) -> Unit, onError: (String) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val response = repository.takePachkhan(token, name)
+                if (response.isSuccessful && response.body()?.success == true) {
+                    onSuccess(response.body()?.message ?: "Vow taken successfully!")
+                } else {
+                    // Parse error body for message
+                    val errorMsg = try {
+                        val errorStr = response.errorBody()?.string()
+                        val jsonObj = org.json.JSONObject(errorStr ?: "")
+                        jsonObj.getString("message")
+                    } catch (e: Exception) {
+                        "Failed to take vow"
+                    }
+                    onError(errorMsg)
+                }
+            } catch (e: Exception) {
+                onError(e.message ?: "An error occurred")
+            }
+        }
+    }
+
+    // --- Taken Pachkhans State ---
+    private val _takenPachkhans = MutableLiveData<Set<String>>(emptySet())
+    val takenPachkhans: LiveData<Set<String>> get() = _takenPachkhans
+
+    fun getTakenPachkhans(token: String) {
+        viewModelScope.launch {
+            try {
+                val response = repository.getPachkhanStatus(token)
+                if (response.isSuccessful && response.body()?.success == true) {
+                    val takenList = response.body()?.takenVows ?: emptyList()
+                    _takenPachkhans.postValue(takenList.toSet())
+                }
+            } catch (e: Exception) {
+                // Silently fail or log, as this is just UI state
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private val _leaderboardData = MutableLiveData<List<com.mycompany.jainconnect.data.models.LeaderboardUser>>()
+    val leaderboardData: LiveData<List<com.mycompany.jainconnect.data.models.LeaderboardUser>> get() = _leaderboardData
+    
+    // Simple error live data if not exists, or reuse usage logic
+    private val _error = MutableLiveData<String>()
+    val error: LiveData<String> = _error
+
+    fun getLeaderboard(token: String, type: String) {
+        viewModelScope.launch {
+            try {
+                val response = repository.getLeaderboard(token, type)
+                if (response.isSuccessful && response.body()?.success == true) {
+                    _leaderboardData.postValue(response.body()?.data ?: emptyList())
+                } else {
+                    _error.postValue("Failed to load leaderboard")
+                }
+            } catch (e: Exception) {
+                _error.postValue(e.message ?: "An error occurred")
+            }
         }
     }
     

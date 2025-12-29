@@ -284,6 +284,8 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
         cardMonksQuick?.setOnClickListener {
             startActivity(Intent(requireContext(), MaharajLocationActivity::class.java))
         }
+
+
     }
 
     // Helper for entry fade-in/slide-up animation

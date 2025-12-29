@@ -351,4 +351,22 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Path("id") id: String
     ): Response<ApiResponse>
+
+    // --- Pachkhan & Leaderboard ---
+    @POST("api/pachkhan/take")
+    suspend fun takePachkhan(
+        @Header("Authorization") token: String,
+        @Body body: Map<String, String> // { "pachkhanName": "Navkarsi" }
+    ): Response<ApiResponse> // message, newBalance
+
+    @GET("api/pachkhan/status")
+    suspend fun getPachkhanStatus(
+        @Header("Authorization") token: String
+    ): Response<com.mycompany.jainconnect.data.models.PachkhanStatusResponse>
+
+    @GET("api/pachkhan/leaderboard")
+    suspend fun getLeaderboard(
+        @Header("Authorization") token: String,
+        @Query("type") type: String // weekly, monthly, alltime
+    ): Response<com.mycompany.jainconnect.data.models.LeaderboardResponse>
 }
