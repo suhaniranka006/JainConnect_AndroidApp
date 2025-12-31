@@ -4,6 +4,10 @@ import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
+/**
+ * Represents a Bhojanshala (Community Dining Hall).
+ * Implements [Parcelable] to be passed between Activities/Fragments.
+ */
 @Parcelize
 data class Bhojanshala(
     @SerializedName("_id")
@@ -18,7 +22,7 @@ data class Bhojanshala(
     @SerializedName("address")
     val address: String,
 
-    @SerializedName("timings")
+    @SerializedName("timings") // Combined string e.g., "10:00 AM - 5:00 PM"
     val timings: String?,
 
     @SerializedName("openingTime")

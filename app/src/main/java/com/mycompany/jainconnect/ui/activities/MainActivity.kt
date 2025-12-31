@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
     private lateinit var bottomNavigation: BottomNavigationView
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
+    private lateinit var navigationViewRight: NavigationView // New Right Drawer
     private val viewModel: JainViewModel by viewModels()
 
 
@@ -52,9 +53,11 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
         bottomNavigation = findViewById(R.id.bottom_navigation)
         drawerLayout = findViewById(R.id.drawer_layout)
         navigationView = findViewById(R.id.nav_view)
+        navigationViewRight = findViewById(R.id.nav_view_right) // Bind Right Drawer
 
         setupBottomNavigation()
         setupDrawer()
+        setupRightDrawer() // Setup Right Drawer Logic
         
         // Check Permissions immediately on launch
         checkAndRequestPermissions()
@@ -140,9 +143,7 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
         }
     }
 
-    fun openDrawer() {
-        drawerLayout.openDrawer(GravityCompat.START)
-    }
+
 
     private fun setupDrawer() {
         navigationView.setNavigationItemSelectedListener { menuItem ->
@@ -448,5 +449,33 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
          }
          // Update UI immediately (remove badge)
          bottomNavigation.removeBadge(R.id.nav_community)
+    }
+
+    private fun setupRightDrawer() {
+        navigationViewRight.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_volunteer_right -> startActivity(Intent(this, VolunteerActivity::class.java))
+            }
+            drawerLayout.closeDrawer(GravityCompat.END)
+            true
+        }
+    }
+
+    // Called by Profile Image -> Opens LEFT Drawer
+    fun openDrawer() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            drawerLayout.openDrawer(GravityCompat.START)
+        }
+    }
+
+    // Called by Menu Icon (Right Top) -> Opens RIGHT Drawer
+    fun customToggleDrawer() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
+            drawerLayout.closeDrawer(GravityCompat.END)
+        } else {
+            drawerLayout.openDrawer(GravityCompat.END)
+        }
     }
 }

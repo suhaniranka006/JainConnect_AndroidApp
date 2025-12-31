@@ -1,26 +1,24 @@
 package com.mycompany.jainconnect.data.models
 
 import com.google.gson.annotations.SerializedName
-import com.mycompany.jainconnect.R
 
+/**
+ * Represents a Tithi (Jain Calendar Event).
+ */
 data class Tithi(
-    // Assuming you might add an "id" to your JSON later, or you generate it client-side.
-    // If your JSON will NEVER have an "id", you might reconsider if you need it here,
-    // or make it nullable and handle its absence. For now, let's assume it might exist or you need it.
-    // If your JSON truly has no ID and you don't generate one, you might remove this field
-    // or make it String? if it's optional. Let's make it optional for now.
-    @SerializedName("_id") // If your JSON *did* have an 'id' field
-    val id: String? = null, // Making it nullable as it's not in the current JSON
+    // Optional ID field, in case backend provides one.
+    @SerializedName("_id") 
+    val id: String? = null, 
 
-    @SerializedName("tithi") // Maps JSON "title" to Kotlin "name"
+    @SerializedName("tithi") // Field name matches JSON 'tithi' (The actual Tithi name)
     val name: String,
 
-    @SerializedName("date") // Maps JSON "date" to Kotlin "date" (already matches but good for clarity)
+    @SerializedName("date") // Date of the Tithi (YYYY-MM-DD)
     val date: String,
 
-    @SerializedName("description") // Maps JSON "description" to Kotlin "details"
+    @SerializedName("description") // Details/Significance of the Tithi
     val details: String?,
 
-    @SerializedName("isMajor")
+    @SerializedName("isMajor") // Boolean to highlight important festivals
     val isMajor: Boolean = false
 )

@@ -143,6 +143,11 @@
             android:screenOrientation="portrait"/>
 
         <activity
+            android:name=".ui.activities.VolunteerActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".ui.activities.SavedActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>

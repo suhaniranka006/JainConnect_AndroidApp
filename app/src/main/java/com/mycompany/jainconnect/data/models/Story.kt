@@ -2,6 +2,9 @@ package com.mycompany.jainconnect.data.models
 
 import com.google.gson.annotations.SerializedName
 
+/**
+ * Represents a "Jain Legacy" Story.
+ */
 data class Story(
     @SerializedName("_id") val id: String,
     @SerializedName("title") val title: String,
@@ -11,5 +14,7 @@ data class Story(
     @SerializedName("source") val source: String?,
     @SerializedName("likes") val likes: Int,
     @SerializedName("createdAt") val createdAt: String,
-    var isLiked: Boolean = false // Local functionality
+    
+    // Local state to track if the current user has liked this story
+    var isLiked: Boolean = false 
 )

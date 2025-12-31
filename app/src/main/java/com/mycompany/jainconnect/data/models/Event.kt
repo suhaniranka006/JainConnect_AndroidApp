@@ -1,13 +1,14 @@
 package com.mycompany.jainconnect.data.models
 
 import com.google.gson.annotations.SerializedName
-import com.mycompany.jainconnect.R
-import com.mycompany.jainconnect.data.network.ApiService
 
+/**
+ * Represents a Community Event.
+ * Maps to the 'Event' schema in the MongoDB backend.
+ */
 data class Event(
 
-    // === NAYA FIELD ===
-    // Humein event ki ID chahiye taaki hum API ko bata sakein ki KIS event par click hua
+    // Unique Identifier (maps to MongoDB `_id`)
     @SerializedName("_id")
     val _id: String,
 
@@ -23,6 +24,7 @@ data class Event(
     @SerializedName("endDate")
     val endDate: String?,
 
+    // Time of the event (e.g., "10:00 AM")
     @SerializedName("time")
     val time: String? = null,
 
@@ -32,21 +34,18 @@ data class Event(
     @SerializedName("description")
     val description: String?,
 
-    // === NAYA FIELD ===
-    // Yeh backend ke 'virtual' field (rsvpCount) se match karega
+    // Virtual Field: Total count of users attending
     @SerializedName("rsvpCount")
     val rsvpCount: Int,
 
-    // === NAYA FIELD ===
-    // Yeh unn users ki list hai jo event mein jaa rahe hain
-    // === NAYA FIELD ===
-    // Yeh unn users ki list hai jo event mein jaa rahe hain
+    // List of User IDs who have RSVP'd
     @SerializedName("rsvps")
     val rsvps: List<String>,
 
     @SerializedName("image") 
     val image: String?,
 
+    // Contact number for the event organizer
     @SerializedName("contact")
     val contact: String?,
 
@@ -60,7 +59,9 @@ data class Event(
     val longitude: Double?
 ) : java.io.Serializable
 
-// Moved from JainRepository
+/**
+ * Response received when a user RSVPs to an event.
+ */
 data class RsvpResponse(
     @SerializedName("message")
     val message: String,
@@ -68,17 +69,19 @@ data class RsvpResponse(
     val rsvpCount: Int
 )
 
+// --- Helper Models for API Requests ---
 
-// --- Helper Classes (Add at bottom of file) ---
-// Inside ApiService.kt (at the bottom)
-
+/**
+ * Data class for creating or updating an Event.
+ * This matches the FormData structure sent to the backend.
+ */
 data class EventSubmissionRequest(
-    val title: String, // Was 'name'
-    val city: String,  // Was 'location'
+    val title: String, 
+    val city: String, 
     val date: String,
     val startDate: String,
     val endDate: String,
-    val time: String,  // ✅ Added
+    val time: String,
     val contact: String,
     val description: String,
     val latitude: Double? = null,

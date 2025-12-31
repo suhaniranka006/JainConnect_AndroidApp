@@ -194,7 +194,7 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
 
         // Menu Icon -> Open Drawer
         view.findViewById<View>(R.id.btnMenu).setOnClickListener {
-             if (activity is MainActivity) (activity as MainActivity).openDrawer()
+             (activity as? MainActivity)?.customToggleDrawer()
         }
 
         view.findViewById<View>(R.id.btnHelp).setOnClickListener {

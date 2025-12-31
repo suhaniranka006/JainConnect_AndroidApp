@@ -1,15 +1,22 @@
 
-
-// Ek nayi file banayein, jaise User.kt
-
 package com.mycompany.jainconnect.data.models
 
 import com.google.gson.annotations.SerializedName
-import com.mycompany.jainconnect.R
-import com.mycompany.jainconnect.data.models.AuthResponse
-import com.mycompany.jainconnect.data.models.LoginRequest
 
-// Yeh class aapke backend ke 'user' object se match karti hai
+/**
+ * Represents a User in the system.
+ * This data class matches the 'User' object structure returned by the backend.
+ *
+ * @property id Unique identifier (maps to MongoDB `_id`).
+ * @property name User's full name.
+ * @property email User's email address (unique).
+ * @property phone User's phone number.
+ * @property location User's city or location.
+ * @property dob Date of Birth.
+ * @property gender User's gender.
+ * @property password Password (Note: Usually not returned by backend for security, but kept in model if needed for local logic).
+ * @property profileImage URL to the user's profile image (Cloudinary).
+ */
 data class User(
     @SerializedName("_id") val id: String,
     val name: String,
@@ -18,11 +25,18 @@ data class User(
     val location: String?,
     val dob: String?,
     val gender: String?,
-    val password: String?, // Yeh server se nahi aayega, but model me rehne dein
+    val password: String?, 
     val profileImage: String?
 ) : java.io.Serializable
 
-// Yeh class aapke poore Register/Login response se match karti hai
+/**
+ * Represents the response from Login/Register APIs.
+ *
+ * @property success Indicates if the request was successful.
+ * @property message Server message (e.g., "Login successful").
+ * @property token JWT Token for authentication (used in subsequent requests).
+ * @property user The user object containing profile details.
+ */
 data class AuthResponse(
     val success: Boolean,
     val message: String,
@@ -30,6 +44,9 @@ data class AuthResponse(
     val user: User?
 )
 
+/**
+ * Request body for the Login API.
+ */
 data class LoginRequest(
     val email: String,
     val password: String

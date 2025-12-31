@@ -1,16 +1,18 @@
 package com.mycompany.jainconnect.data.models
 
 import com.google.gson.annotations.SerializedName
-import com.mycompany.jainconnect.R
 
+/**
+ * Represents a Jain Monk/Saint (Maharaj).
+ */
 data class Maharaj(
-    @SerializedName("id") // Assuming no id from JSON for now
+    @SerializedName("id")
     val id: String? = null,
 
     @SerializedName("name")
     val name: String,
 
-    @SerializedName("title") // Mapping JSON "title" to sampraday
+    @SerializedName("title") // E.g., Acharya, Muni (Maps to 'sampraday' in Kotlin for legacy reasons, but logically Title)
     val sampraday: String?,
 
     @SerializedName("contactInfo")
@@ -41,12 +43,14 @@ data class Maharaj(
     val description: String? = null
 ) : java.io.Serializable
 
-// Update this Data Class at the bottom
+/**
+ * Request body for submitting a new Maharaj entry.
+ */
 data class MaharajSubmissionRequest(
     val name: String,
-    val title: String,       // ✅ Added
-    val city: String,    // This maps to 'city' or 'location' in backend
-    val date: String,        // ✅ Added
+    val title: String,
+    val city: String,
+    val date: String,
     val contactInfo: String,
     val arrivalDate: String?,
     val viharDate: String?,
