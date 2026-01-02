@@ -72,10 +72,7 @@ class BhojanshalaActivity : AppCompatActivity() {
             // ------------------
         }
 
-        findViewById<com.google.android.material.floatingactionbutton.FloatingActionButton>(R.id.fabAddBhojanshala).setOnClickListener {
-            val intent = android.content.Intent(this, AddBhojanshalaActivity::class.java)
-            startActivity(intent)
-        }
+        // FAB Logic removed - moved to Volunteer Panel
 
         progressBar.visibility = View.VISIBLE
         viewModel.fetchBhojanshalas()

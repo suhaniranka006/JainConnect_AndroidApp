@@ -153,10 +153,7 @@ class MaharajLocationActivity : AppCompatActivity() {
 
 
         // 6. ✅ FIXED: Floating Action Button logic moved INSIDE onCreate
-        val fabAdd = findViewById<FloatingActionButton>(R.id.fabAddMaharaj)
-        fabAdd.setOnClickListener {
-            startActivity(Intent(this, AddMaharajActivity::class.java))
-        }
+        // FAB Logic removed - moved to Volunteer Panel
         
         // 7. Try to fetch location for distances (Silent)
         fetchLocationForDistance()

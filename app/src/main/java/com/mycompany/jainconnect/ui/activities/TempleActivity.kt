@@ -75,10 +75,7 @@ class TempleActivity : AppCompatActivity() {
             // ------------------
         }
 
-        findViewById<com.google.android.material.floatingactionbutton.FloatingActionButton>(R.id.fabAddTemple).setOnClickListener {
-            val intent = android.content.Intent(this, AddTempleActivity::class.java)
-            startActivity(intent)
-        }
+        // FAB Logic removed - moved to Volunteer Panel
 
         progressBar.visibility = View.VISIBLE
         viewModel.fetchTemples()

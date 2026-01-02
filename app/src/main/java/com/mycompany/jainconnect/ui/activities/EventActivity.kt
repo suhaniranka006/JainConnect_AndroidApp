@@ -94,13 +94,7 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
         }
         // ------------------
 
-        // --- ADDED: Floating Action Button Logic ---
-        val fabAddEvent = findViewById<FloatingActionButton>(R.id.fabAddEvent)
-        fabAddEvent.setOnClickListener {
-            val intent = Intent(this, AddEventActivity::class.java)
-            startActivity(intent)
-        }
-        // -------------------------------------------
+        // FAB Logic removed - moved to Volunteer Panel
 
         viewModel.eventList.observe(this) { events ->
             // Stop and Hide Shimmer

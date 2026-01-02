@@ -152,6 +152,11 @@
             android:exported="false"
             android:screenOrientation="portrait"/>
 
+        <receiver
+            android:name=".receivers.AlarmReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
     </application>
 
 </manifest>
