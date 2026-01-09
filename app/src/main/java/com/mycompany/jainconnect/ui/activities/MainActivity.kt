@@ -95,13 +95,11 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
 
     override fun onResume() {
         super.onResume()
-        // Re-check permissions when coming back (e.g. from Settings)
+        // Re-check permissions when coming back
         if (!hasPermissions()) {
             checkAndRequestPermissions()
         }
 
-        //check internet connection
-        
         // Register Network Receiver
         if (networkReceiver == null) {
             networkReceiver = com.mycompany.jainconnect.utils.NetworkChangeReceiver { isConnected ->

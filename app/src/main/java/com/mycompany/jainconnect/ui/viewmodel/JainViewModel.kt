@@ -1677,10 +1677,6 @@ class JainViewModel @Inject constructor(
             }
         }
     }
-
-    // =====================================================================================
-    //                                      STORIES (JAIN LEGACY)
-    // =====================================================================================
     
     fun fetchStories(context: Context) {
         viewModelScope.launch {

@@ -83,8 +83,9 @@ class EventAdapter(
 
              com.bumptech.glide.Glide.with(holder.itemView.context)
                  .load(imageUrl)
+                 .transition(com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade()) // Smooth Fade In
                  .centerCrop()
-                 .placeholder(R.drawable.bg_gradient_header)
+                 .placeholder(R.drawable.bg_gradient_header) // Or a dedicated shimmer drawable
                  .error(R.drawable.ic_launcher_background)
                  .into(holder.ivEventImage)
         } else {

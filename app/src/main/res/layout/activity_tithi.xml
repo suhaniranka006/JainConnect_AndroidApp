@@ -137,38 +137,58 @@
         </LinearLayout>
     </HorizontalScrollView>
 
-    <!-- Shimmer & RecyclerView -->
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/shimmerViewContainer"
+    <!-- Swipe Refresh Layout -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/scrollFilters"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
-         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-             <!-- Placeholder shimmers -->
-            <include layout="@layout/item_tithi_shimmer" />
-            <include layout="@layout/item_tithi_shimmer" />
-            <include layout="@layout/item_tithi_shimmer" />
-            <include layout="@layout/item_tithi_shimmer" />
-            <include layout="@layout/item_tithi_shimmer" />
-         </LinearLayout>
-    </com.facebook.shimmer.ShimmerFrameLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewTithi"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:paddingBottom="20dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/scrollFilters"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- Shimmer View Container -->
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/shimmerViewContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="12dp"
+                android:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <!-- Placeholder shimmers -->
+                    <include layout="@layout/item_tithi_shimmer" />
+                    <include layout="@layout/item_tithi_shimmer" />
+                    <include layout="@layout/item_tithi_shimmer" />
+                    <include layout="@layout/item_tithi_shimmer" />
+                    <include layout="@layout/item_tithi_shimmer" />
+                </LinearLayout>
+            </com.facebook.shimmer.ShimmerFrameLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewTithi"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingHorizontal="16dp"
+                android:clipToPadding="false"
+                android:visibility="gone"/>
+
+            <include
+                android:id="@+id/layoutEmptyState"
+                layout="@layout/include_empty_state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
+        </FrameLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

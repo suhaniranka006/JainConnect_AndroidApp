@@ -30,7 +30,7 @@ import com.google.gson.reflect.TypeToken
 class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
 
     private val viewModel: JainViewModel by viewModels()
-    
+
     @javax.inject.Inject
     lateinit var savedRepository: com.mycompany.jainconnect.data.repository.SavedRepository
 
@@ -57,7 +57,7 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
         recyclerViewEvents.layoutManager = LinearLayoutManager(this)
         eventAdapter = EventAdapter(emptyList(), this)
         eventAdapter.updateSavedIds(initialSavedIds) // Set initial state
-        
+
         // Handle Save Click
         eventAdapter.setOnSaveClickListener { event ->
              viewModel.toggleSaveState(event._id, com.mycompany.jainconnect.data.repository.SavedRepository.KEY_EVENTS)
@@ -70,7 +70,7 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
              val ids = savedList.map { it._id }.toSet()
              eventAdapter.updateSavedIds(ids)
         }
-        
+
         // Fetch latest saved data
         viewModel.fetchSavedEvents()
 
@@ -96,23 +96,7 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
 
         // FAB Logic removed - moved to Volunteer Panel
 
-        viewModel.eventList.observe(this) { events ->
-            // Stop and Hide Shimmer
-            shimmerViewContainer.stopShimmer()
-            shimmerViewContainer.visibility = android.view.View.GONE
-            recyclerViewEvents.visibility = android.view.View.VISIBLE
-
-            eventAdapter.updateData(events)
-
-            // --- CACHE SAVE ---
-            if (events.isNotEmpty()) {
-                val sharedPref = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
-                val gson = Gson()
-                val json = gson.toJson(events)
-                sharedPref.edit().putString("cached_events", json).apply()
-            }
-            // ------------------
-        }
+        // Observer moved to SwipeRefresh setup below
 
         viewModel.rsvpResult.observe(this) { success ->
             if (success) {
@@ -163,6 +147,41 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
         // Initialize Location Client
         fusedLocationClient = com.google.android.gms.location.LocationServices.getFusedLocationProviderClient(this)
         getUserLocation()
+
+        // Setup Swipe Refresh
+        val swipeRefresh = findViewById<androidx.swiperefreshlayout.widget.SwipeRefreshLayout>(R.id.swipeRefreshLayout)
+        swipeRefresh.setOnRefreshListener {
+            viewModel.fetchEvents()
+        }
+
+        // Update Observer to stop Refreshing
+        viewModel.eventList.observe(this) { events ->
+            swipeRefresh.isRefreshing = false // Stop spinner
+
+            // Stop and Hide Shimmer
+            shimmerViewContainer.stopShimmer()
+            shimmerViewContainer.visibility = android.view.View.GONE
+
+            // Empty State Logic
+            val emptyView = findViewById<android.view.View>(R.id.layoutEmptyState)
+            if (events.isNullOrEmpty()) {
+                recyclerViewEvents.visibility = android.view.View.GONE
+                emptyView.visibility = android.view.View.VISIBLE
+            } else {
+                recyclerViewEvents.visibility = android.view.View.VISIBLE
+                emptyView.visibility = android.view.View.GONE
+                eventAdapter.updateData(events)
+            }
+
+            // --- CACHE SAVE ---
+            if (events.isNotEmpty()) {
+                val sharedPref = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                val gson = Gson()
+                val json = gson.toJson(events)
+                sharedPref.edit().putString("cached_events", json).apply()
+            }
+            // ------------------
+        }
     }
 
     // Location Logic
@@ -212,3 +231,4 @@ class EventActivity : AppCompatActivity(), OnRsvpButtonClickListener {
         return sharedPref.getString("jwt_token", null)
     }
 }
+    

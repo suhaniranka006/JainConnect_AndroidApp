@@ -92,13 +92,29 @@ class TithiActivity : AppCompatActivity() {
             }
         }
 
+        // Initialize Swipe Refresh
+        val swipeRefresh = findViewById<androidx.swiperefreshlayout.widget.SwipeRefreshLayout>(R.id.swipeRefreshLayout)
+        swipeRefresh.setOnRefreshListener {
+            viewModel.fetchTithis() // Refresh data
+        }
+
         // Observe FILTERED tithis for updating RecyclerView UI
         viewModel.filteredTithis.observe(this) { filteredList ->
+            swipeRefresh.isRefreshing = false // Stop spinner
             shimmerViewContainer.stopShimmer()
             shimmerViewContainer.visibility = android.view.View.GONE
-            recyclerViewTithi.visibility = android.view.View.VISIBLE
-
-            tithiAdapter.updateData(filteredList)                // Update adapter
+            
+            // Empty State Logic
+            val emptyView = findViewById<android.view.View>(R.id.layoutEmptyState)
+            if (filteredList.isNullOrEmpty()) {
+                recyclerViewTithi.visibility = android.view.View.GONE
+                emptyView.visibility = android.view.View.VISIBLE
+            } else {
+                recyclerViewTithi.visibility = android.view.View.VISIBLE
+                emptyView.visibility = android.view.View.GONE
+                tithiAdapter.updateData(filteredList)
+            }
+            
             Log.d(TAG, "Filtered list observed, count = ${filteredList.size}")
 
              // --- CACHE SAVE ---
