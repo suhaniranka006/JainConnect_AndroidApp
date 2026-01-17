@@ -76,15 +76,15 @@ data class RsvpResponse(
  * This matches the FormData structure sent to the backend.
  */
 data class EventSubmissionRequest(
-    val title: String, 
-    val city: String, 
-    val date: String,
-    val startDate: String,
-    val endDate: String,
-    val time: String,
-    val contact: String,
-    val description: String,
-    val latitude: Double? = null,
-    val longitude: Double? = null
+    @SerializedName("title") val title: String, 
+    @SerializedName("city") val city: String, 
+    @SerializedName("date") val date: String,
+    @SerializedName("startDate") val startDate: String,
+    @SerializedName("endDate") val endDate: String,
+    @SerializedName("time") val time: String,
+    @SerializedName("contact") val contact: String,
+    @SerializedName("description") val description: String,
+    @SerializedName("latitude") val latitude: Double? = null,
+    @SerializedName("longitude") val longitude: Double? = null
 )
 

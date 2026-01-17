@@ -19,14 +19,14 @@ import com.google.gson.annotations.SerializedName
  */
 data class User(
     @SerializedName("_id") val id: String,
-    val name: String,
-    val email: String,
-    val phone: String?,
-    val location: String?,
-    val dob: String?,
-    val gender: String?,
-    val password: String?, 
-    val profileImage: String?
+    @SerializedName("name") val name: String,
+    @SerializedName("email") val email: String,
+    @SerializedName("phone") val phone: String?,
+    @SerializedName("location") val location: String?,
+    @SerializedName("dob") val dob: String?,
+    @SerializedName("gender") val gender: String?,
+    @SerializedName("password") val password: String?, 
+    @SerializedName("profileImage") val profileImage: String?
 ) : java.io.Serializable
 
 /**
@@ -38,16 +38,16 @@ data class User(
  * @property user The user object containing profile details.
  */
 data class AuthResponse(
-    val success: Boolean,
-    val message: String,
-    val token: String?,
-    val user: User?
+    @SerializedName("success") val success: Boolean,
+    @SerializedName("message") val message: String,
+    @SerializedName("token") val token: String?,
+    @SerializedName("user") val user: User?
 )
 
 /**
  * Request body for the Login API.
  */
 data class LoginRequest(
-    val email: String,
-    val password: String
+    @SerializedName("email") val email: String,
+    @SerializedName("password") val password: String
 )

@@ -7,12 +7,12 @@ import java.io.Serializable
  * Implements [Serializable] for simple object passing.
  */
 data class Temple(
-    val _id: String,
-    val name: String,
-    val city: String,
-    val address: String?,
-    val description: String?,
-    val image: String?,
-    val contact: String?,
-    val isApproved: Boolean
+    @SerializedName("_id") val _id: String,
+    @SerializedName("name") val name: String,
+    @SerializedName("city") val city: String,
+    @SerializedName("address") val address: String?,
+    @SerializedName("description") val description: String?,
+    @SerializedName("image") val image: String?,
+    @SerializedName("contact") val contact: String?,
+    @SerializedName("isApproved") val isApproved: Boolean
 ) : Serializable

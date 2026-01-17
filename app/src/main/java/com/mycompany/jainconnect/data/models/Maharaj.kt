@@ -47,12 +47,12 @@ data class Maharaj(
  * Request body for submitting a new Maharaj entry.
  */
 data class MaharajSubmissionRequest(
-    val name: String,
-    val title: String,
-    val city: String,
-    val date: String,
-    val contactInfo: String,
-    val arrivalDate: String?,
-    val viharDate: String?,
-    val description: String?
+    @SerializedName("name") val name: String,
+    @SerializedName("title") val title: String,
+    @SerializedName("city") val city: String,
+    @SerializedName("date") val date: String,
+    @SerializedName("contactInfo") val contactInfo: String,
+    @SerializedName("arrivalDate") val arrivalDate: String?,
+    @SerializedName("viharDate") val viharDate: String?,
+    @SerializedName("description") val description: String?
 )

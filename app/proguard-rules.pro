@@ -26,8 +26,17 @@
 # 1. Retrofit & GSON (Keep Models)
 # Prevent obfuscation of your Data Transfer Objects (DTOs)/Models
 # so GSON can map JSON response to them.
--keep class com.mycompany.jainconnect.models.** { *; }
--keep class com.mycompany.jainconnect.** { *; } # Keeping root package classes (User, Tithi etc if there)
+# FIXED: Pointed to the correct package 'data.models' instead of 'models'
+-keep class com.mycompany.jainconnect.data.models.** { *; }
+
+# General Gson rules to prevent issues with generic types and field renaming
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class sun.misc.Unsafe { *; }
+-keep class com.google.gson.stream.** { *; }
+
+# If you have other classes that are serialized, keep them too
+-keep class com.mycompany.jainconnect.** { *; }
 
 # 2. Hilt / Dagger
 -keep class com.mycompany.jainconnect.JainConnectApp { *; }
@@ -48,3 +57,8 @@
     public static *** bind(android.view.View);
     public static *** inflate(...);
 }
+
+# 5. Razorpay
+-keep class com.razorpay.** { *; }
+-dontwarn com.razorpay.**
+-dontwarn proguard.annotation.**

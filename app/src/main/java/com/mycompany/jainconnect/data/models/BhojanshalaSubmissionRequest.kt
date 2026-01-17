@@ -1,12 +1,14 @@
 package com.mycompany.jainconnect.data.models
 
+import com.google.gson.annotations.SerializedName
+
 data class BhojanshalaSubmissionRequest(
-    val name: String,
-    val city: String,
-    val address: String,
-    val timings: String?,
-    val openingTime: String?,
-    val closingTime: String?,
-    val contact: String?,
-    val description: String?
+    @SerializedName("name") val name: String,
+    @SerializedName("city") val city: String,
+    @SerializedName("address") val address: String,
+    @SerializedName("timings") val timings: String?,
+    @SerializedName("openingTime") val openingTime: String?,
+    @SerializedName("closingTime") val closingTime: String?,
+    @SerializedName("contact") val contact: String?,
+    @SerializedName("description") val description: String?
 )
