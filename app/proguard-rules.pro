@@ -62,3 +62,61 @@
 -keep class com.razorpay.** { *; }
 -dontwarn com.razorpay.**
 -dontwarn proguard.annotation.**
+
+# 6. Coroutines
+-keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
+-keepnames class kotlinx.coroutines.CoroutineExceptionHandler {}
+-keepclassmembers class kotlinx.coroutines.android.AndroidExceptionPreHandler {
+    <init>();
+}
+
+# 7. WorkManager
+-keep class androidx.work.Worker { *; }
+-keep class androidx.work.ListenableWorker { *; }
+-keep class androidx.work.impl.background.systemjob.SystemJobService { *; }
+-keep class androidx.work.impl.utils.ForceStopRunnable$BroadcastReceiver { *; }
+-keep class androidx.work.impl.background.systemalarm.ConstraintProxy* { *; }
+
+# 8. OkHttp & Retrofit & GSON (Aggressive Fix for Generic Casting)
+-keepattributes Signature, InnerClasses, EnclosingMethod, *Annotation*
+-keepattributes Exceptions
+
+# Keep all Retrofit & Gson classes
+-keep class retrofit2.** { *; }
+-keep interface retrofit2.** { *; }
+-keep class okhttp3.** { *; }
+-keep class com.google.gson.** { *; }
+-keep class com.google.gson.reflect.TypeToken { *; }
+-keep class * extends com.google.gson.reflect.TypeToken
+
+# CRITICAL: Keep Kotlin Coroutines & Continuation (Fixes ClassCastException)
+-keep class kotlin.coroutines.Continuation { *; }
+-keep interface kotlin.coroutines.Continuation { *; }
+-keepattributes Signature, *Annotation*, EnclosingMethod
+
+# Keep ApiService and all its return types explicitly
+-keep class com.mycompany.jainconnect.data.network.ApiService { *; }
+-keep interface com.mycompany.jainconnect.data.network.ApiService { *; }
+-keepclassmembers interface com.mycompany.jainconnect.data.network.ApiService {
+    @retrofit2.http.* <methods>;
+}
+
+# Keep NetworkResult wrapper
+-keep class com.mycompany.jainconnect.data.network.NetworkResult { *; }
+-keep class com.mycompany.jainconnect.data.network.NetworkResult$* { *; }
+
+# Ensure attributes are kept for all our code
+-keep class com.mycompany.jainconnect.data.network.** { *; }
+-keep class com.mycompany.jainconnect.data.models.** { *; }
+
+-dontwarn okhttp3.**
+-dontwarn retrofit2.**
+-dontwarn javax.annotation.**
+-dontwarn okio.**
+-dontwarn kotlin.coroutines.**
+-dontwarn kotlin.reflect.**
+
+# Prevent R8 from removing generic signatures from Suspend functions
+-keepclassmembers class * {
+    suspend <methods>;
+}

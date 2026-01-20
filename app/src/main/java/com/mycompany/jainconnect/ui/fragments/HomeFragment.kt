@@ -63,6 +63,13 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
+            // FIX: Explicitly set preference to TRUE so the app remembers it's ON
+            sharedPreferences.edit().putBoolean("is_location_on", true).apply()
+            
+            // Refresh Header UI instantly to show "Locating..."
+            setupLocationHeader(requireView())
+            
+            // Start fetching
             setupLocationListener()
         } else {
             // Permission denied
@@ -529,13 +536,32 @@ class HomeFragment : Fragment(), PaymentResultListener, AmountDialogFragment.Amo
         }
 
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+        
+        // Use getCurrentLocation for a fresh, high-accuracy fix (Essential after fresh permission grant)
+        // This might take a few seconds, so "Locating..." in UI is important.
+        fusedLocationClient.getCurrentLocation(
+            com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY, 
+            object : com.google.android.gms.tasks.CancellationToken() {
+                override fun onCanceledRequested(p0: com.google.android.gms.tasks.OnTokenCanceledListener) = this
+                override fun isCancellationRequested() = false
+            }
+        ).addOnSuccessListener { location: Location? ->
             if (location != null) {
                 fetchCityName(location.latitude, location.longitude)
             } else {
-                Toast.makeText(context, "Unable to fetch location. Using default.", Toast.LENGTH_SHORT).show()
-                updateUIWithLocation("Jaipur", 26.9124, 75.7873)
+                // Fallback to LastKnown if Current fails (rare with correct settings)
+                fusedLocationClient.lastLocation.addOnSuccessListener { lastLoc ->
+                     if (lastLoc != null) {
+                         fetchCityName(lastLoc.latitude, lastLoc.longitude)
+                     } else {
+                         Toast.makeText(context, "GPS Signal Weak. defaulting to Jaipur.", Toast.LENGTH_SHORT).show()
+                         updateUIWithLocation("Jaipur", 26.9124, 75.7873)
+                     }
+                }
             }
+        }.addOnFailureListener {
+             Toast.makeText(context, "Location Error: ${it.message}", Toast.LENGTH_SHORT).show()
+             updateUIWithLocation("Jaipur", 26.9124, 75.7873)
         }
     }
 

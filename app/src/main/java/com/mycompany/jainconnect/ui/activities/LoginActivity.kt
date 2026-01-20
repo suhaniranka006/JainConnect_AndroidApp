@@ -156,7 +156,7 @@ class LoginActivity : AppCompatActivity() {
                     // Hybrid Auth Fix: If Firebase is logged in but Backend fails (e.g. Password Sync issue)
                     if (FirebaseAuth.getInstance().currentUser != null) {
                          // Instead of forcing entry immediately, try to SYNC the password
-                         Toast.makeText(this, "Syncing password with backend...", Toast.LENGTH_SHORT).show()
+                         Toast.makeText(this, "Login Error: ${result.message}. Syncing...", Toast.LENGTH_LONG).show()
                          val email = etLoginEmail.text.toString().trim()
                          val password = etLoginPassword.text.toString().trim()
                          viewModel.syncUser(email, password)
@@ -185,15 +185,22 @@ class LoginActivity : AppCompatActivity() {
                 }
                 is NetworkResult.Error -> {
                     // Sync Failed (maybe backend endpoint missing), Fallback to Force Entry
-                    Toast.makeText(this, "Sync Failed. Entering Offline Mode.", Toast.LENGTH_SHORT).show()
                     
-                    val session = SessionManager(this)
-                    session.saveLoginStatus(true)
-                    
-                    val intent = Intent(this, MainActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-                    finish()
+                    val dialogBuilder = AlertDialog.Builder(this)
+                    dialogBuilder.setTitle("Sync Failed")
+                    dialogBuilder.setMessage("Error: ${result.message}\nEntering Offline Mode.")
+                    dialogBuilder.setPositiveButton("OK") { dialog, _ ->
+                        dialog.dismiss()
+                        val session = SessionManager(this)
+                        session.saveLoginStatus(true)
+                        
+                        val intent = Intent(this, MainActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+                        finish()
+                    }
+                    dialogBuilder.setCancelable(false)
+                    dialogBuilder.show()
                 }
             }
         }
